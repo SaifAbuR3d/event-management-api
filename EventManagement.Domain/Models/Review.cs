@@ -7,6 +7,6 @@ public class Review : Entity
     public string Comment { get; set; } = default!;
     public int EventId { get; set; }
     public Event Event { get; set; } = default!;
-    public Guid AttendeeId { get; set; }
+    public int AttendeeId { get; set; }
     public Attendee Attendee { get; set; } = default!;
 }

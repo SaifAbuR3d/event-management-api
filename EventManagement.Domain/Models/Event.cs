@@ -14,9 +14,9 @@ public class Event : Entity
     // TODO: Add EventLimitation object if needed, (e.g. 18+, 21+, female only, etc.)
 
 
-    public Guid OrganizerId { get; set; }
+    public int OrganizerId { get; set; }
     public Organizer Organizer { get; set; } = default!;
-    public Guid EventCategoryId { get; set; }
+    public int EventCategoryId { get; set; }
     public EventCategory EventCategory { get; set; } = default!;
     public ICollection<EventImage> EventImages { get; set; } = new List<EventImage>();
     public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();

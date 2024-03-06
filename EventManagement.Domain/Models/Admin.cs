@@ -2,5 +2,5 @@
 
 public class Admin : Entity 
 {
-    public Guid UserId { get; set; }
+    public int UserId { get; set; }
 }

@@ -10,8 +10,7 @@ public class Profile : Entity
     public string? LinkedIn { get; set; }
     public string? Instagram { get; set; }
 
-
-    public Guid OrganizerId { get; set; }
+    public int OrganizerId { get; set; }
     public Organizer Organizer { get; set; } = default!;
     public ICollection<ProfileImage> ProfileImages { get; set; } = new List<ProfileImage>();
 }

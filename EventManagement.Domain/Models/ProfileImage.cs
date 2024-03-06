@@ -4,5 +4,5 @@ public class ProfileImage : Entity
 {
     public string ImageUrl { get; set; } = default!;
     public Profile Profile { get; set; } = default!;
-    public Guid ProfileId { get; set; }
+    public int ProfileId { get; set; }
 }

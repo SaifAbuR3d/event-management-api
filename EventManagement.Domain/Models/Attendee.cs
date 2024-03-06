@@ -2,9 +2,9 @@
 
 public class Attendee : Entity
 {
-    public Guid UserId { get; set; }
     public DateOnly DateOfBirth { get; set; }
     public string Gender { get; set; } = default!;
+    public int UserId { get; set; }
     public ICollection<Following> Followings { get; set; } = new List<Following>();
     public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
     public ICollection<Report> Reports { get; set; } = new List<Report>();

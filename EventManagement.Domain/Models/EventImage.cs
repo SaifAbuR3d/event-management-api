@@ -4,5 +4,5 @@ public class EventImage : Entity
 {
     public string ImageUrl { get; set; } = default!;
     public Event Event { get; set; } = default!;
-    public Guid EventId { get; set; }
+    public int EventId { get; set; }
 }
