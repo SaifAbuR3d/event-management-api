@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using EventManagement.Domain.Abstractions.Repositories;
+using EventManagement.Infrastructure.Persistence.Repositories;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,7 +11,8 @@ public static class PersistenceConfiguration
     public static IServiceCollection AddPersistenceInfrastructure(
         this IServiceCollection services, IConfiguration configuration, bool isDevelopment)
         => services
-            .AddDatabase(configuration.GetConnectionString("SqlServer"), isDevelopment);
+            .AddDatabase(configuration.GetConnectionString("SqlServer"), isDevelopment)
+            .AddRepositories();
 
     private static IServiceCollection AddDatabase(
     this IServiceCollection services, string connectionString, bool isDevelopment)
@@ -18,5 +21,13 @@ public static class PersistenceConfiguration
             opt.UseSqlServer(connectionString)
                .EnableSensitiveDataLogging(isDevelopment)
                .EnableDetailedErrors(isDevelopment));
+
+    public static IServiceCollection AddRepositories(
+    this IServiceCollection services)
+    => services
+        .AddScoped<IUnitOfWork, UnitOfWork>()
+        .AddScoped<IAdminRepository, AdminRepository>()
+        .AddScoped<IAttendeeRepository, AttendeeRepository>()
+        .AddScoped<IOrganizerRepository, OrganizerRepository>();
 
 }
