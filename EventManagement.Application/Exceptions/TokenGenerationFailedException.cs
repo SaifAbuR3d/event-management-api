@@ -1,6 +1,6 @@
 ﻿namespace EventManagement.Application.Exceptions;
 
-public class TokenGenerationFailedException : Exception
+public class TokenGenerationFailedException : CustomException
 {
     public TokenGenerationFailedException(string message) : base(message)
     {
