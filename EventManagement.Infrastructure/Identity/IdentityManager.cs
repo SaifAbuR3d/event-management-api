@@ -1,9 +1,7 @@
 ﻿using EventManagement.Application.Exceptions;
 using EventManagement.Application.Identity;
-using EventManagement.Domain.Enums;
 using EventManagement.Domain.Models;
 using Microsoft.AspNetCore.Identity;
-using System.Text.Json;
 
 namespace EventManagement.Infrastructure.Identity;
 
@@ -12,15 +10,10 @@ public class IdentityManager(UserManager<ApplicationUser> userManager,
                              IJwtTokenGenerator jwtTokenGenerator) : IIdentityManager
 {
 
-    public Task<string> AuthenticateCredentials(string email, string password)
-    {
-        throw new NotImplementedException();
-    }
-
     public async Task<int> RegisterUser(string email, string userName, string password,
-        string firstName, string lastName, string role)
+    string firstName, string lastName, string role)
     {
-        var user = new ApplicationUser(firstName, lastName, email, userName); 
+        var user = new ApplicationUser(firstName, lastName, email, userName);
 
         var result = await userManager.CreateAsync(user, password);
 
@@ -56,18 +49,41 @@ public class IdentityManager(UserManager<ApplicationUser> userManager,
         }
     }
 
-    public Task<Attendee> RegisterAttendee(string email, string password, string firstName, string lastName, string gender, DateTime dateOfBirth)
+
+
+    public async Task<string> AuthenticateCredentials(string email, string password)
     {
-        throw new NotImplementedException();
+        var user = await CheckCredentials(email, password);
+
+        var roles = await GetUserRole(user);
+
+        var token = jwtTokenGenerator.GenerateToken(user, roles)
+            ?? throw new TokenGenerationFailedException("null token");
+
+        return token; 
     }
 
-    public Task<Organizer> RegisterOrganizer(string email, string password, string firstName, string lastName, string? companyName)
+    private async Task<ApplicationUser> CheckCredentials(string email, string password)
     {
-        throw new NotImplementedException();
+        var user = await userManager.FindByEmailAsync(email);
+        if (user == null || !await userManager.CheckPasswordAsync(user, password))
+        {
+            throw new UnauthenticatedException("Invalid Credentials");
+        }
+
+        return user;
     }
 
-    public Task<Admin> RegisterAdmin(string email, string password, string firstName, string lastName)
+    private async Task<IList<string>> GetUserRole(ApplicationUser user)
     {
-        throw new NotImplementedException();
+        var roles = await userManager.GetRolesAsync(user);
+        if (roles.Count == 0)
+        {
+            throw new NoRolesException(user.Id);
+        }
+
+        return roles;
     }
+
+
 }
