@@ -1,11 +1,20 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using EventManagement.API.Middlewares;
+using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Text.Json.Serialization;
 
 namespace EventManagement.API;
 
+/// <summary>
+/// Register services in the DI container
+/// </summary>
 public static class WebConfiguration
 {
+    /// <summary>
+    /// Register services
+    /// </summary>
+    /// <param name="services"></param>
+    /// <returns></returns>
     public static IServiceCollection AddWeb(
            this IServiceCollection services, IConfiguration configuration)
     {
@@ -15,6 +24,9 @@ public static class WebConfiguration
                 options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
             });
+
+        services.AddProblemDetails()
+            .AddExceptionHandler<GlobalExceptionHandler>();
 
         services.AddEndpointsApiExplorer();
 

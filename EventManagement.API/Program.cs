@@ -21,7 +21,13 @@ if (isDevelopment)
     app.UseSwaggerUI();
 }
 
+app.Migrate(); // apply any pending migration
+
 app.UseHttpsRedirection();
+
+app.UseExceptionHandler();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

@@ -9,7 +9,7 @@ public enum IdentityVerificationRequestStatus
 
 public class IdentityVerificationRequest : Entity
 {
-    public string Status { get; set; } = default!;
+    public IdentityVerificationRequestStatus Status { get; set; } = default!;
     public string? UserMessage { get; set; }
     public string? AdminMessage { get; set; }
     public int UserId { get; set; }

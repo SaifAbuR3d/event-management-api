@@ -1,5 +1,6 @@
 ﻿using EventManagement.Domain.Abstractions.Repositories;
 using EventManagement.Infrastructure.Persistence.Repositories;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,5 +30,14 @@ public static class PersistenceConfiguration
         .AddScoped<IAdminRepository, AdminRepository>()
         .AddScoped<IAttendeeRepository, AttendeeRepository>()
         .AddScoped<IOrganizerRepository, OrganizerRepository>();
+
+    // check if there is any pending migration and apply it
+    public static IApplicationBuilder Migrate(this IApplicationBuilder app)
+    {
+        using var scope = app.ApplicationServices.CreateScope();
+        using var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        context.Database.Migrate();
+        return app;
+    }
 
 }

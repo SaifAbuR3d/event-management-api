@@ -1,11 +1,25 @@
 ﻿using EventManagement.Application.Exceptions;
+using FluentValidation;
 using MediatR;
 
 namespace EventManagement.Application.Identity.Login;
 
-public record LoginResponse(string Token); // token contains userId, email and role
-
 public record LoginCommand(string Email, string Password) : IRequest<LoginResponse>;
+
+public class LoginCommandValidator : AbstractValidator<LoginCommand>
+{
+    public LoginCommandValidator()
+    {
+        RuleFor(x => x.Email)
+            .NotEmpty()
+            .WithMessage("Email is required")
+            .EmailAddress().WithMessage("Email is not valid");
+
+        RuleFor(x => x.Password)
+            .NotEmpty()
+            .WithMessage("Password is required");
+    }
+}
 
 public class LoginCommandHandler(IIdentityManager identityManager)
     : IRequestHandler<LoginCommand, LoginResponse>
@@ -19,3 +33,5 @@ public class LoginCommandHandler(IIdentityManager identityManager)
         return new LoginResponse(token);
     }
 }
+
+public record LoginResponse(string Token); // token contains userId, email and role

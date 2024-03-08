@@ -4,6 +4,7 @@ using EventManagement.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using System.Reflection.Emit;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 
 namespace EventManagement.Infrastructure.Persistence;
@@ -54,6 +55,31 @@ public class ApplicationDbContext
         SetPrecisionForFloatingPointTypes(modelBuilder);
 
         ConfigureDeleteBehavior(modelBuilder);
+
+       //ConfigureEnumToString(modelBuilder); if needed
+    }
+
+    private static void ConfigureEnumToString(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Attendee>()
+            .Property(a => a.Gender)
+            .HasConversion<string>();
+
+        modelBuilder.Entity<Document>()
+            .Property(d => d.DocumentType)
+            .HasConversion<string>();
+
+        modelBuilder.Entity<IdentityVerificationRequest>()
+            .Property(ivr => ivr.Status)
+            .HasConversion<string>();
+
+        modelBuilder.Entity<RegistrationRequest>()
+            .Property(rr => rr.Status)
+            .HasConversion<string>();
+
+        modelBuilder.Entity<Report>()
+            .Property(r => r.Status)
+            .HasConversion<string>();
     }
 
     private void ConfigureApplicationUser(ModelBuilder modelBuilder)
