@@ -1,9 +1,16 @@
-﻿namespace EventManagement.Domain.Models;
+﻿using EventManagement.Domain.Enums;
 
+namespace EventManagement.Domain.Models;
+
+public enum Gender
+{
+    Male,
+    Female
+}
 public class Attendee : Entity
 {
     public DateOnly DateOfBirth { get; set; }
-    public string Gender { get; set; } = default!;
+    public Gender Gender { get; set; } = default!;
     public int UserId { get; set; }
     public ICollection<Following> Followings { get; set; } = new List<Following>();
     public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
