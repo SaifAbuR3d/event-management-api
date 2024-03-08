@@ -23,6 +23,10 @@ if (isDevelopment)
 
 app.UseHttpsRedirection();
 
+app.UseExceptionHandler();
+
+app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.MapControllers();
