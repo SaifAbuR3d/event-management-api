@@ -4,6 +4,7 @@ using EventManagement.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventManagement.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240312144511_AddCategoriesToAttendees")]
+    partial class AddCategoriesToAttendees
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,21 +38,6 @@ namespace EventManagement.Infrastructure.Migrations
                     b.HasIndex("CategoriesId");
 
                     b.ToTable("AttendeeCategory");
-                });
-
-            modelBuilder.Entity("CategoryEvent", b =>
-                {
-                    b.Property<int>("CategoriesId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("EventsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("CategoriesId", "EventsId");
-
-                    b.HasIndex("EventsId");
-
-                    b.ToTable("CategoryEvent");
                 });
 
             modelBuilder.Entity("EventManagement.Domain.Models.Admin", b =>
@@ -166,7 +154,7 @@ namespace EventManagement.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("EventCategories");
                 });
 
             modelBuilder.Entity("EventManagement.Domain.Models.Document", b =>
@@ -213,6 +201,9 @@ namespace EventManagement.Infrastructure.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("EventCategoryId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("LastModified")
                         .HasColumnType("datetime2");
 
@@ -231,6 +222,8 @@ namespace EventManagement.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EventCategoryId");
 
                     b.HasIndex("OrganizerId");
 
@@ -835,21 +828,6 @@ namespace EventManagement.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("CategoryEvent", b =>
-                {
-                    b.HasOne("EventManagement.Domain.Models.Category", null)
-                        .WithMany()
-                        .HasForeignKey("CategoriesId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("EventManagement.Domain.Models.Event", null)
-                        .WithMany()
-                        .HasForeignKey("EventsId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("EventManagement.Domain.Models.Admin", b =>
                 {
                     b.HasOne("EventManagement.Infrastructure.Identity.ApplicationUser", null)
@@ -897,11 +875,19 @@ namespace EventManagement.Infrastructure.Migrations
 
             modelBuilder.Entity("EventManagement.Domain.Models.Event", b =>
                 {
+                    b.HasOne("EventManagement.Domain.Models.Category", "EventCategory")
+                        .WithMany("Events")
+                        .HasForeignKey("EventCategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("EventManagement.Domain.Models.Organizer", "Organizer")
                         .WithMany("Events")
                         .HasForeignKey("OrganizerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("EventCategory");
 
                     b.Navigation("Organizer");
                 });
@@ -1131,6 +1117,11 @@ namespace EventManagement.Infrastructure.Migrations
                     b.Navigation("Reports");
 
                     b.Navigation("Reviews");
+                });
+
+            modelBuilder.Entity("EventManagement.Domain.Models.Category", b =>
+                {
+                    b.Navigation("Events");
                 });
 
             modelBuilder.Entity("EventManagement.Domain.Models.Event", b =>

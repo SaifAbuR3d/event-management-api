@@ -16,8 +16,7 @@ public class Event : Entity
 
     public int OrganizerId { get; set; }
     public Organizer Organizer { get; set; } = default!;
-    public int EventCategoryId { get; set; }
-    public EventCategory EventCategory { get; set; } = default!;
+    public ICollection<Category> Categories { get; set; } = new List<Category>();
     public ICollection<EventImage> EventImages { get; set; } = new List<EventImage>();
     public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
     public ICollection<RegistrationRequest>? RegistrationRequests { get; set; } = new List<RegistrationRequest>();

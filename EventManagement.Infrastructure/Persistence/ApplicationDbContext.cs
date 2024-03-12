@@ -3,8 +3,6 @@ using EventManagement.Domain.Models;
 using EventManagement.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
-using System.Reflection.Emit;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 
 namespace EventManagement.Infrastructure.Persistence;
@@ -28,7 +26,7 @@ public class ApplicationDbContext
 
     public DbSet<Profile> Profiles { get; set; } = default!;
     public DbSet<Event> Events { get; set; } = default!;
-    public DbSet<EventCategory> EventCategories { get; set; } = default!;
+    public DbSet<Category> Categories { get; set; } = default!;
     public DbSet<Ticket> Tickets { get; set; } = default!;
 
     public DbSet<RegistrationRequest> RegistrationRequests { get; set; } = default!;
