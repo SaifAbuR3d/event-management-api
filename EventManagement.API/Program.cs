@@ -25,7 +25,7 @@ app.Migrate(); // apply any pending migration
 
 app.UseHttpsRedirection();
 
-app.UseCors();
+app.UseCors("AllowOrigin");
 
 app.UseExceptionHandler();
 
