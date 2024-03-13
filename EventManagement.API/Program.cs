@@ -25,6 +25,8 @@ app.Migrate(); // apply any pending migration
 
 app.UseHttpsRedirection();
 
+app.UseCors();
+
 app.UseExceptionHandler();
 
 app.UseAuthentication();
