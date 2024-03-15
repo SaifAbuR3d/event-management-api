@@ -29,7 +29,9 @@ public static class PersistenceConfiguration
         .AddScoped<IUnitOfWork, UnitOfWork>()
         .AddScoped<IAdminRepository, AdminRepository>()
         .AddScoped<IAttendeeRepository, AttendeeRepository>()
-        .AddScoped<IOrganizerRepository, OrganizerRepository>();
+        .AddScoped<IOrganizerRepository, OrganizerRepository>()
+        .AddScoped<ICategoryRepository, CategoryRepository>()
+        .AddScoped<IEventRepository, EventRepository>();
 
     // check if there is any pending migration and apply it
     public static IApplicationBuilder Migrate(this IApplicationBuilder app)

@@ -1,5 +1,4 @@
 ﻿using EventManagement.Domain.Abstractions.Repositories;
-using Microsoft.EntityFrameworkCore;
 
 namespace EventManagement.Infrastructure.Persistence.Repositories;
 
