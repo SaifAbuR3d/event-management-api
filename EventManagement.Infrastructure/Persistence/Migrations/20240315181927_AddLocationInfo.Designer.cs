@@ -4,6 +4,7 @@ using EventManagement.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventManagement.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240315181927_AddLocationInfo")]
+    partial class AddLocationInfo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,7 +37,7 @@ namespace EventManagement.Infrastructure.Migrations
 
                     b.HasIndex("CategoriesId");
 
-                    b.ToTable("AttendeeCategory", (string)null);
+                    b.ToTable("AttendeeCategory");
                 });
 
             modelBuilder.Entity("CategoryEvent", b =>
@@ -49,7 +52,7 @@ namespace EventManagement.Infrastructure.Migrations
 
                     b.HasIndex("EventsId");
 
-                    b.ToTable("CategoryEvent", (string)null);
+                    b.ToTable("CategoryEvent");
                 });
 
             modelBuilder.Entity("EventManagement.Domain.Models.Admin", b =>
@@ -74,7 +77,7 @@ namespace EventManagement.Infrastructure.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Admins", (string)null);
+                    b.ToTable("Admins");
                 });
 
             modelBuilder.Entity("EventManagement.Domain.Models.Attendee", b =>
@@ -105,7 +108,7 @@ namespace EventManagement.Infrastructure.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Attendees", (string)null);
+                    b.ToTable("Attendees");
                 });
 
             modelBuilder.Entity("EventManagement.Domain.Models.Booking", b =>
@@ -139,7 +142,7 @@ namespace EventManagement.Infrastructure.Migrations
 
                     b.HasIndex("TicketId");
 
-                    b.ToTable("Bookings", (string)null);
+                    b.ToTable("Bookings");
                 });
 
             modelBuilder.Entity("EventManagement.Domain.Models.Category", b =>
@@ -166,7 +169,7 @@ namespace EventManagement.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("EventManagement.Domain.Models.City", b =>
@@ -199,7 +202,7 @@ namespace EventManagement.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Cities", (string)null);
+                    b.ToTable("City");
                 });
 
             modelBuilder.Entity("EventManagement.Domain.Models.CityImage", b =>
@@ -227,7 +230,7 @@ namespace EventManagement.Infrastructure.Migrations
 
                     b.HasIndex("CityId");
 
-                    b.ToTable("CityImages", (string)null);
+                    b.ToTable("CityImage");
                 });
 
             modelBuilder.Entity("EventManagement.Domain.Models.Document", b =>
@@ -253,7 +256,7 @@ namespace EventManagement.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Documents", (string)null);
+                    b.ToTable("Documents");
                 });
 
             modelBuilder.Entity("EventManagement.Domain.Models.Event", b =>
@@ -274,8 +277,8 @@ namespace EventManagement.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateOnly>("EndDate")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<TimeOnly>("EndTime")
                         .HasColumnType("time");
@@ -287,12 +290,10 @@ namespace EventManagement.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<double?>("Latitude")
-                        .HasPrecision(8, 6)
-                        .HasColumnType("float(8)");
+                        .HasColumnType("float");
 
                     b.Property<double?>("Longitude")
-                        .HasPrecision(9, 6)
-                        .HasColumnType("float(9)");
+                        .HasColumnType("float");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -301,8 +302,8 @@ namespace EventManagement.Infrastructure.Migrations
                     b.Property<int>("OrganizerId")
                         .HasColumnType("int");
 
-                    b.Property<DateOnly>("StartDate")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<TimeOnly>("StartTime")
                         .HasColumnType("time");
@@ -319,7 +320,7 @@ namespace EventManagement.Infrastructure.Migrations
 
                     b.HasIndex("OrganizerId");
 
-                    b.ToTable("Events", (string)null);
+                    b.ToTable("Events");
                 });
 
             modelBuilder.Entity("EventManagement.Domain.Models.EventImage", b =>
@@ -347,7 +348,7 @@ namespace EventManagement.Infrastructure.Migrations
 
                     b.HasIndex("EventId");
 
-                    b.ToTable("EventImages", (string)null);
+                    b.ToTable("EventImages");
                 });
 
             modelBuilder.Entity("EventManagement.Domain.Models.Following", b =>
@@ -376,7 +377,7 @@ namespace EventManagement.Infrastructure.Migrations
 
                     b.HasIndex("OrganizerId");
 
-                    b.ToTable("Followings", (string)null);
+                    b.ToTable("Followings");
                 });
 
             modelBuilder.Entity("EventManagement.Domain.Models.IdentityVerificationRequest", b =>
@@ -415,7 +416,7 @@ namespace EventManagement.Infrastructure.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("IdentityVerificationRequests", (string)null);
+                    b.ToTable("IdentityVerificationRequests");
                 });
 
             modelBuilder.Entity("EventManagement.Domain.Models.Organizer", b =>
@@ -443,7 +444,7 @@ namespace EventManagement.Infrastructure.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Organizers", (string)null);
+                    b.ToTable("Organizers");
                 });
 
             modelBuilder.Entity("EventManagement.Domain.Models.Profile", b =>
@@ -489,7 +490,7 @@ namespace EventManagement.Infrastructure.Migrations
                     b.HasIndex("OrganizerId")
                         .IsUnique();
 
-                    b.ToTable("Profiles", (string)null);
+                    b.ToTable("Profiles");
                 });
 
             modelBuilder.Entity("EventManagement.Domain.Models.ProfileImage", b =>
@@ -517,7 +518,7 @@ namespace EventManagement.Infrastructure.Migrations
 
                     b.HasIndex("ProfileId");
 
-                    b.ToTable("ProfileImages", (string)null);
+                    b.ToTable("ProfileImages");
                 });
 
             modelBuilder.Entity("EventManagement.Domain.Models.RegistrationRequest", b =>
@@ -554,7 +555,7 @@ namespace EventManagement.Infrastructure.Migrations
 
                     b.HasIndex("TicketId");
 
-                    b.ToTable("RegistrationRequests", (string)null);
+                    b.ToTable("RegistrationRequests");
                 });
 
             modelBuilder.Entity("EventManagement.Domain.Models.Report", b =>
@@ -590,7 +591,7 @@ namespace EventManagement.Infrastructure.Migrations
 
                     b.HasIndex("EventId");
 
-                    b.ToTable("Reports", (string)null);
+                    b.ToTable("Reports");
                 });
 
             modelBuilder.Entity("EventManagement.Domain.Models.Review", b =>
@@ -629,7 +630,7 @@ namespace EventManagement.Infrastructure.Migrations
 
                     b.HasIndex("EventId");
 
-                    b.ToTable("Reviews", (string)null);
+                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("EventManagement.Domain.Models.Ticket", b =>
@@ -664,7 +665,7 @@ namespace EventManagement.Infrastructure.Migrations
 
                     b.HasIndex("EventId");
 
-                    b.ToTable("Tickets", (string)null);
+                    b.ToTable("Tickets");
                 });
 
             modelBuilder.Entity("EventManagement.Domain.Models.UserImage", b =>
@@ -693,7 +694,7 @@ namespace EventManagement.Infrastructure.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("UserImages", (string)null);
+                    b.ToTable("UserImages");
                 });
 
             modelBuilder.Entity("EventManagement.Infrastructure.Identity.ApplicationUser", b =>
