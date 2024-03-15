@@ -45,7 +45,7 @@ public class RegisterAdminCommandHandler(IIdentityManager identityManager,
         CancellationToken cancellationToken)
     {
         var userId = await identityManager.RegisterUser(request.Email, request.UserName, request.Password,
-            request.FirstName, request.LastName, Role.Admin.ToString());
+            request.FirstName, request.LastName, UserRole.Admin.ToString());
 
         var admin = new Admin
         {

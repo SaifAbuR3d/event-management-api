@@ -53,7 +53,7 @@ public class RegisterAttendeeCommandHandler(IIdentityManager identityManager,
         CancellationToken cancellationToken)
     {
         var userId = await identityManager.RegisterUser(request.Email, request.UserName, 
-               request.Password, request.FirstName, request.LastName, Role.Attendee.ToString());
+               request.Password, request.FirstName, request.LastName, UserRole.Attendee.ToString());
 
         var attendee = new Attendee
         {

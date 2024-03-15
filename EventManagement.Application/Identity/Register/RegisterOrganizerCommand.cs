@@ -51,7 +51,7 @@ public class RegisterOrganizerCommandHandler(IIdentityManager identityManager,
         CancellationToken cancellationToken)
     {
         var userId = await identityManager.RegisterUser(request.Email, request.UserName, 
-                       request.Password, request.FirstName, request.LastName, Role.Organizer.ToString());
+                       request.Password, request.FirstName, request.LastName, UserRole.Organizer.ToString());
 
         var organizer = new Organizer
         {

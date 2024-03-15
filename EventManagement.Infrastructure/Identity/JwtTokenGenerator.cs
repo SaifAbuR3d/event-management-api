@@ -41,7 +41,7 @@ public class JwtTokenGenerator : IJwtTokenGenerator
 
     private static List<Claim> GetClaims(ApplicationUser user, IList<string> roles)
     {
-        if (user.Email == null || roles.IsNullOrEmpty())
+        if (user.Email == null || user.UserName == null || roles.IsNullOrEmpty())
         {
             throw new UnauthenticatedException();
         }
@@ -49,6 +49,7 @@ public class JwtTokenGenerator : IJwtTokenGenerator
         var claims = new List<Claim>
                 {
                     new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new(ClaimTypes.Name, user.UserName),
                     new(ClaimTypes.Email, user.Email)
                 };
 

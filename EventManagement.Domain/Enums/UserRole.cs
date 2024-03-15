@@ -1,6 +1,6 @@
 ﻿namespace EventManagement.Domain.Enums;
 
-public enum Role
+public enum UserRole
 {
     Admin,
     Attendee,
