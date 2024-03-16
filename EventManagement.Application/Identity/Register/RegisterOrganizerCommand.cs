@@ -20,7 +20,7 @@ public class RegisterOrganizerCommandValidator : AbstractValidator<RegisterOrgan
 
         RuleFor(x => x.UserName)
             .NotEmpty().WithMessage("Username is required")
-            .Length(3, 20).WithMessage("Username must be between 2 and 20 characters");
+            .Length(3, 20).WithMessage("Username must be between 3 and 20 characters");
 
         // password requirements which are specified in IdentityConfigurations.cs
         // are validated with Identity framework

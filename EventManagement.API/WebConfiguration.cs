@@ -83,6 +83,8 @@ public static class WebConfiguration
                     }
             });
 
+            setup.UseDateOnlyTimeOnlyStringConverters();
+
             #region include xml comments
             var actionMethodsXmlCommentsFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             var actionMethodsXmlCommentsFullPath = Path.Combine(AppContext.BaseDirectory, actionMethodsXmlCommentsFile);
