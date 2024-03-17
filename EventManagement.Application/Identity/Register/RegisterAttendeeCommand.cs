@@ -21,7 +21,7 @@ public class RegisterAttendeeCommandValidator : AbstractValidator<RegisterAttend
 
         RuleFor(x => x.UserName)
             .NotEmpty().WithMessage("Username is required")
-            .Length(3, 20).WithMessage("Username must be between 2 and 20 characters");
+            .Length(3, 20).WithMessage("Username must be between 3 and 20 characters");
 
         // password requirements which are specified in IdentityConfigurations.cs
         // are validated with Identity framework
@@ -53,7 +53,7 @@ public class RegisterAttendeeCommandHandler(IIdentityManager identityManager,
         CancellationToken cancellationToken)
     {
         var userId = await identityManager.RegisterUser(request.Email, request.UserName, 
-               request.Password, request.FirstName, request.LastName, Role.Attendee.ToString());
+               request.Password, request.FirstName, request.LastName, UserRole.Attendee.ToString());
 
         var attendee = new Attendee
         {

@@ -22,8 +22,10 @@ public class ApplicationDbContext
     public DbSet<EventImage> EventImages { get; set; } = default!;
     public DbSet<ProfileImage> ProfileImages { get; set; } = default!;
     public DbSet<UserImage> UserImages { get; set; } = default!;
+    public DbSet<CityImage> CityImages { get; set; } = default!;
     public DbSet<Document> Documents { get; set; } = default!;
 
+    public DbSet<City> Cities { get; set; } = default!;
     public DbSet<Profile> Profiles { get; set; } = default!;
     public DbSet<Event> Events { get; set; } = default!;
     public DbSet<Category> Categories { get; set; } = default!;
@@ -118,6 +120,14 @@ public class ApplicationDbContext
         modelBuilder.Entity<Ticket>()
                     .Property(t => t.Price)
                     .HasPrecision(18, 2);
+
+        // set precision for location properties
+        modelBuilder.Entity<Event>()
+                    .Property(h => h.Latitude)
+                    .HasPrecision(8, 6);
+        modelBuilder.Entity<Event>()
+                    .Property(h => h.Longitude)
+                    .HasPrecision(9, 6);
     }
 
     private void ConfigureDeleteBehavior(ModelBuilder modelBuilder)

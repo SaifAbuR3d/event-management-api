@@ -1,4 +1,6 @@
 ﻿using EventManagement.API.Middlewares;
+using EventManagement.API.Services;
+using EventManagement.Application.Identity;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Text.Json.Serialization;
@@ -39,6 +41,9 @@ public static class WebConfiguration
                 options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
         });
 
+        services.AddHttpContextAccessor();
+        services.AddScoped<ICurrentUser, CurrentUser>();
+
         return services; 
     }
 
@@ -77,6 +82,8 @@ public static class WebConfiguration
                         Array.Empty<string>()
                     }
             });
+
+            setup.UseDateOnlyTimeOnlyStringConverters();
 
             #region include xml comments
             var actionMethodsXmlCommentsFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";

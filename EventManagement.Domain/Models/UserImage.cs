@@ -1,7 +1,6 @@
 ﻿namespace EventManagement.Domain.Models;
 
-public class UserImage: Entity
+public class UserImage: Image
 {
-    public string ImageUrl { get; set; } = default!;
     public int UserId { get; set; }
 }

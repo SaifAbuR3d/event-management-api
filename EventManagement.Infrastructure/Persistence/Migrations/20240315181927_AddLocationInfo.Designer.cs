@@ -4,6 +4,7 @@ using EventManagement.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventManagement.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240315181927_AddLocationInfo")]
+    partial class AddLocationInfo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -154,6 +157,7 @@ namespace EventManagement.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("LastModified")
@@ -198,7 +202,7 @@ namespace EventManagement.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Cities");
+                    b.ToTable("City");
                 });
 
             modelBuilder.Entity("EventManagement.Domain.Models.CityImage", b =>
@@ -219,9 +223,6 @@ namespace EventManagement.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsThumbnail")
-                        .HasColumnType("bit");
-
                     b.Property<DateTime>("LastModified")
                         .HasColumnType("datetime2");
 
@@ -229,7 +230,7 @@ namespace EventManagement.Infrastructure.Migrations
 
                     b.HasIndex("CityId");
 
-                    b.ToTable("CityImages");
+                    b.ToTable("CityImage");
                 });
 
             modelBuilder.Entity("EventManagement.Domain.Models.Document", b =>
@@ -276,8 +277,8 @@ namespace EventManagement.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateOnly>("EndDate")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<TimeOnly>("EndTime")
                         .HasColumnType("time");
@@ -289,12 +290,10 @@ namespace EventManagement.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<double?>("Latitude")
-                        .HasPrecision(8, 6)
-                        .HasColumnType("float(8)");
+                        .HasColumnType("float");
 
                     b.Property<double?>("Longitude")
-                        .HasPrecision(9, 6)
-                        .HasColumnType("float(9)");
+                        .HasColumnType("float");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -303,8 +302,8 @@ namespace EventManagement.Infrastructure.Migrations
                     b.Property<int>("OrganizerId")
                         .HasColumnType("int");
 
-                    b.Property<DateOnly>("StartDate")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<TimeOnly>("StartTime")
                         .HasColumnType("time");
@@ -341,9 +340,6 @@ namespace EventManagement.Infrastructure.Migrations
                     b.Property<string>("ImageUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsThumbnail")
-                        .HasColumnType("bit");
 
                     b.Property<DateTime>("LastModified")
                         .HasColumnType("datetime2");
@@ -511,9 +507,6 @@ namespace EventManagement.Infrastructure.Migrations
                     b.Property<string>("ImageUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsThumbnail")
-                        .HasColumnType("bit");
 
                     b.Property<DateTime>("LastModified")
                         .HasColumnType("datetime2");
@@ -689,9 +682,6 @@ namespace EventManagement.Infrastructure.Migrations
                     b.Property<string>("ImageUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsThumbnail")
-                        .HasColumnType("bit");
 
                     b.Property<DateTime>("LastModified")
                         .HasColumnType("datetime2");

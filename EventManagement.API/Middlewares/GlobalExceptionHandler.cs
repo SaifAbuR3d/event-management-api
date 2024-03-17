@@ -1,4 +1,5 @@
 ﻿using EventManagement.Application.Exceptions;
+using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
 
 namespace EventManagement.API.Middlewares;
@@ -33,9 +34,19 @@ public class GlobalExceptionHandler : IExceptionHandler
     {
         return exception switch
         {
+            NotFoundException => (StatusCodes.Status404NotFound, "Not Found", exception.Message),
+            BadFileException => (StatusCodes.Status400BadRequest, "Bad File", exception.Message),
             BadRequestException => (StatusCodes.Status400BadRequest, "Bad Request", exception.Message),
             UnauthenticatedException => (StatusCodes.Status401Unauthorized, "Unauthenticated", exception.Message),
             NoRolesException => (StatusCodes.Status403Forbidden, "Unauthorized", exception.Message),
+            UnauthorizedException => (StatusCodes.Status403Forbidden, "Unauthorized", exception.Message),
+
+
+            // FluentValidation exception, thrown explicitly with validator.ValidateAndThrowAsync when needed
+            // (e.g. when not using FluentValidationAutoValidation)
+            ValidationException validationException => (StatusCodes.Status400BadRequest, "Validation Error", validationException.Errors.First().ToString()),
+
+
             _ => (StatusCodes.Status500InternalServerError, "Something went wrong", "We made a mistake but we are working on it")
         };
     }
