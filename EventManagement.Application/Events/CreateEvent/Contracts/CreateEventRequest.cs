@@ -1,6 +1,7 @@
-﻿using EventManagement.Application.Events.CreateEvent;
+﻿using Microsoft.AspNetCore.Http;
+using System.Text.Json;
 
-namespace EventManagement.API.Requests;
+namespace EventManagement.Application.Events.CreateEvent.Contracts;
 
 /// <summary>
 /// The request to create a new event.
@@ -75,7 +76,13 @@ public class CreateEventRequest
     /// <summary>
     /// The images of the event.
     /// </summary>
-    public List<IFormFile>? Images { get; set; }
+    public List<IFormFile> Images { get; set; }
+
+    /// <summary>
+    /// The tickets of the event. (JSON string)
+    /// </summary>
+    public string Tickets { get; set; }
+
 
     /// <summary>
     /// Converts the <see cref="CreateEventRequest"/> object to a <see cref="CreateEventCommand"/> object.
@@ -84,10 +91,14 @@ public class CreateEventRequest
     /// <returns>The created <see cref="CreateEventCommand"/> object.</returns>
     public CreateEventCommand ToCommand(string baseUrl)
     {
+        var tickets = JsonSerializer.Deserialize<List<TicketDto>>(Tickets, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        }) ?? [];
+
         return new CreateEventCommand(Name, Description, CategoryId,
             StartDate, EndDate, StartTime, EndTime,
             Lat, Lon, Street, CityId, IsOnline,
-            Thumbnail, Images, baseUrl);
+            Thumbnail, Images, tickets, baseUrl);
     }
 }
-

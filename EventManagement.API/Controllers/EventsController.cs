@@ -1,4 +1,4 @@
-﻿using EventManagement.API.Requests;
+﻿using EventManagement.Application.Events.CreateEvent.Contracts;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

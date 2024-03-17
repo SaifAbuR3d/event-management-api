@@ -63,6 +63,20 @@ public class Event : Entity
         LastModified = DateTime.Now;
     }
 
+    public void AddTicket(Ticket ticket)
+    {
+        Tickets.Add(ticket);
+
+        LastModified = DateTime.Now;
+    }
+
+    public void AddTicket(string name, decimal price, int quantity, DateTime startSale, DateTime endSale)
+    {
+        var ticket = new Ticket(this, name, price, quantity, startSale, endSale);
+        Tickets.Add(ticket);
+
+        LastModified = DateTime.Now;
+    }
 
 
     // Basic info

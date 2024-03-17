@@ -1,4 +1,5 @@
 ﻿using EventManagement.Application.Abstractions;
+using EventManagement.Application.Events.CreateEvent.Contracts;
 using EventManagement.Application.Exceptions;
 using EventManagement.Application.Identity;
 using EventManagement.Domain.Abstractions.Repositories;
@@ -14,7 +15,8 @@ namespace EventManagement.Application.Events.CreateEvent;
 public record CreateEventCommand(string Name, string Description, int CategoryId,
     DateTime StartDate, DateTime EndDate, TimeOnly StartTime, TimeOnly EndTime, 
     double? Lat, double? Lon, string? Street, int? CityId, bool IsOnline, 
-    IFormFile Thumbnail, List<IFormFile>? Images, string BaseUrl
+    IFormFile Thumbnail, List<IFormFile> Images, List<TicketDto> Tickets,
+    string BaseUrl
     )
     : IRequest<int>;
 
@@ -63,8 +65,13 @@ public class CreateEventCommandHandler(IValidator<CreateEventCommand> validator,
 
         try
         {
-            await unitOfWork.SaveChangesAsync(cancellationToken);
-            await SetImages(request, addedEvent);
+            await unitOfWork.SaveChangesAsync(cancellationToken); // set id for the event
+
+            await SetImages(request, addedEvent); // we need the id of the addedEvent to persist the images
+
+            // do logic validation for tickets, e.g. tickets quantity should be within user plan limits...
+            SetTickets(request, addedEvent); 
+
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             await unitOfWork.CommitTransactionAsync(cancellationToken);
@@ -79,6 +86,14 @@ public class CreateEventCommandHandler(IValidator<CreateEventCommand> validator,
         return addedEvent.Id;
     }
 
+    private void SetTickets(CreateEventCommand request, Event addedEvent)
+    {
+        foreach (var ticket in request.Tickets)
+        {
+            addedEvent.AddTicket(ticket.Name, ticket.Price, ticket.Quantity, ticket.StartSale, ticket.EndSale);
+        }
+    }
+
     private async Task SetImages(CreateEventCommand request, Event @event)
     {
 
@@ -87,7 +102,7 @@ public class CreateEventCommandHandler(IValidator<CreateEventCommand> validator,
         var thumbnailUrl = await imageHandler.UploadImage(request.Thumbnail, eventDirectory, true);
         @event.SetThumbnail(thumbnailUrl);
 
-        foreach (var image in request.Images ?? Enumerable.Empty<IFormFile>())
+        foreach (var image in request.Images)
         {
             var newImageUrl = await imageHandler.UploadImage(image, eventDirectory, false);
             @event.AddImage(newImageUrl);
