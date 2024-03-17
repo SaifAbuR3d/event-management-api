@@ -1,11 +1,11 @@
-﻿using EventManagement.Application.Common;
+﻿using EventManagement.Application.Abstractions;
 using EventManagement.Application.Exceptions;
 using EventManagement.Application.Identity;
 using EventManagement.Domain.Abstractions.Repositories;
 using EventManagement.Domain.Models;
-using static EventManagement.Domain.Constants.Location;
 using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 
 namespace EventManagement.Application.Events.CreateEvent;
 
@@ -13,69 +13,25 @@ namespace EventManagement.Application.Events.CreateEvent;
 
 public record CreateEventCommand(string Name, string Description, int CategoryId,
     DateTime StartDate, DateTime EndDate, TimeOnly StartTime, TimeOnly EndTime, 
-    double? Lat, double? Lon, string? Street, int? CityId, bool IsOnline
+    double? Lat, double? Lon, string? Street, int? CityId, bool IsOnline, 
+    IFormFile Thumbnail, List<IFormFile>? Images, string BaseUrl
     )
     : IRequest<int>;
 
-public class CreateEventCommandValidator : AbstractValidator<CreateEventCommand>
-{
-    public CreateEventCommandValidator()
-    {
-        RuleFor(x => x.Name)
-            .NotEmpty()
-            .ValidName();
-
-        RuleFor(x => x.Description)
-            .NotEmpty()
-            .Length(3, 200).WithMessage("Description must be between 3 and 200 characters");
-
-        RuleFor(x => x.CategoryId)
-            .NotEmpty();
-
-        RuleFor(x => x.StartDate)
-            .NotEmpty()
-            .GreaterThan(DateTime.Now).WithMessage("Start date must be in the future");
-
-        RuleFor(x => x.EndDate)
-            .NotEmpty()
-            .GreaterThanOrEqualTo(x => x.StartDate).WithMessage("End date must be after than or equal to start date");
-
-        RuleFor(x => x.StartTime)
-            .NotEmpty();
-
-        RuleFor(x => x.EndTime)
-            .NotEmpty()
-            .GreaterThan(x => x.StartTime).WithMessage("End time must be after start time");
-
-        When(x => !x.IsOnline, () =>
-        {
-            RuleFor(h => h.Lat)
-                .NotEmpty()
-                .InclusiveBetween(MinLatitude, MaxLatitude);
-
-            RuleFor(h => h.Lon)
-                .NotEmpty()
-                .InclusiveBetween(MinLongitude, MaxLongitude);
-
-            RuleFor(x => x.Street)
-                .NotEmpty();
-
-            RuleFor(x => x.CityId)
-                .NotEmpty();
-        });
-    }
-}
-
-public class CreateEventCommandHandler(IEventRepository eventRepository, 
+public class CreateEventCommandHandler(IValidator<CreateEventCommand> validator, 
+    IEventRepository eventRepository, 
     ICategoryRepository categoryRepository, 
     IOrganizerRepository organizerRepository,
     IUnitOfWork unitOfWork, 
-    ICurrentUser currentUser)
+    ICurrentUser currentUser,
+    IImageHandler imageHandler)
     : IRequestHandler<CreateEventCommand, int>
 {
     public async Task<int> Handle(CreateEventCommand request, CancellationToken cancellationToken)
     {
-        if(!currentUser.IsOrganizer)
+        await validator.ValidateAndThrowAsync(request, cancellationToken);
+
+        if (!currentUser.IsOrganizer)
             throw new UnauthorizedException("Only organizers can create events.");
 
         var organizer = await organizerRepository.GetOrganizerByUserIdAsync(currentUser.UserId, cancellationToken)
@@ -86,8 +42,6 @@ public class CreateEventCommandHandler(IEventRepository eventRepository,
 
         var startDate = DateOnly.FromDateTime(request.StartDate);
         var endDate = DateOnly.FromDateTime(request.EndDate);
-
-        // check date and time
 
         var newEvent = new Event(organizer, request.Name, request.Description,
             startDate, endDate, request.StartTime, request.EndTime,
@@ -104,8 +58,39 @@ public class CreateEventCommandHandler(IEventRepository eventRepository,
         newEvent.AddCategory(category);
 
         var addedEvent = await eventRepository.AddEventAsync(newEvent, cancellationToken);
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        await unitOfWork.BeginTransactionAsync(cancellationToken);
+
+        try
+        {
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+            await SetImages(request, addedEvent);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+
+            await unitOfWork.CommitTransactionAsync(cancellationToken);
+        }
+        catch (Exception)
+        {
+            await unitOfWork.RollbackTransactionAsync(cancellationToken);
+            throw;
+        }
+
 
         return addedEvent.Id;
+    }
+
+    private async Task SetImages(CreateEventCommand request, Event @event)
+    {
+
+        var eventDirectory = Path.Combine(request.BaseUrl, "images", "events", @event.Id.ToString());
+
+        var thumbnailUrl = await imageHandler.UploadImage(request.Thumbnail, eventDirectory, true);
+        @event.SetThumbnail(thumbnailUrl);
+
+        foreach (var image in request.Images ?? Enumerable.Empty<IFormFile>())
+        {
+            var newImageUrl = await imageHandler.UploadImage(image, eventDirectory, false);
+            @event.AddImage(newImageUrl);
+        }
     }
 }

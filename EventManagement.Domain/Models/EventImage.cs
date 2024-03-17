@@ -1,8 +1,20 @@
 ﻿namespace EventManagement.Domain.Models;
 
-public class EventImage : Entity
+public class EventImage : Image
 {
-    public string ImageUrl { get; set; } = default!;
+    internal EventImage()
+    { }
+
+
+    public EventImage(Event @event, string imageUrl, bool isThumbnail = false)
+    {
+        ImageUrl = imageUrl;
+        Event = @event;
+        IsThumbnail = isThumbnail;
+        CreationDate = DateTime.Now;
+        LastModified = DateTime.Now;
+    }
+
     public Event Event { get; set; } = default!;
     public int EventId { get; set; }
 }

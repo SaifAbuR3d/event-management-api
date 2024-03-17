@@ -1,4 +1,4 @@
-﻿using EventManagement.Application.Events.CreateEvent;
+﻿using EventManagement.API.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,18 +9,21 @@ namespace EventManagement.API.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/events")]
-public class EventsController(IMediator mediator) : ControllerBase
+public class EventsController(IMediator mediator,
+    IWebHostEnvironment environment) : ControllerBase
 {
     /// <summary>
     /// Creates a new event
     /// </summary>
-    /// <param name="command">The data for the new event</param>
+    /// <param name="request">The data for the new event</param>
     /// <param name="cancellationToken">The cancellation token</param>
     /// <returns>The result of the creation</returns>
     [HttpPost]
-    public async Task<ActionResult<int>> CreateEvent(CreateEventCommand command, CancellationToken cancellationToken)
+    public async Task<ActionResult<int>> CreateEvent([FromForm] CreateEventRequest request, CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(command, cancellationToken);
-        return Ok(new { eventId = result });
+        var command = request.ToCommand(environment.WebRootPath);
+        var id = await mediator.Send(command, cancellationToken);
+        return Ok(new { eventId = id });
     }
+
 }

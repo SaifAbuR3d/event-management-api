@@ -49,6 +49,20 @@ public class Event : Entity
         LastModified = DateTime.Now;
     }
 
+    public void SetThumbnail(string thumbnailUrl)
+    {
+        EventImages.Add(new EventImage(this, thumbnailUrl, true));
+
+        LastModified = DateTime.Now;
+    }
+
+    public void AddImage(string imageUrl)
+    {
+        EventImages.Add(new EventImage(this, imageUrl));
+
+        LastModified = DateTime.Now;
+    }
+
 
 
     // Basic info
