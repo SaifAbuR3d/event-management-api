@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using EventManagement.Domain.Models;
+using Microsoft.AspNetCore.Http;
 using System.Text.Json;
 
 namespace EventManagement.Application.Events.CreateEvent.Contracts;
@@ -43,6 +44,7 @@ public class CreateEventRequest
     /// </summary>
     public TimeOnly EndTime { get; set; }
 
+
     /// <summary>
     /// The latitude of the event location.
     /// </summary>
@@ -68,6 +70,27 @@ public class CreateEventRequest
     /// </summary>
     public bool IsOnline { get; set; }
 
+
+    /// <summary>
+    /// Indicates whether the event is managed (require registration request to attend).
+    /// </summary>
+    public bool IsManaged { get; set; }
+
+    /// <summary>
+    /// The minimum age to attend the event.
+    /// </summary>
+    public int? MinAge { get; set; }
+
+    /// <summary>
+    /// The maximum age to attend the event.
+    /// </summary>
+    public int? MaxAge { get; set; }
+
+    /// <summary>
+    /// The allowed gender to attend the event (both genders are allowed if null).
+    public Gender? AllowedGender { get; set; }
+
+
     /// <summary>
     /// The thumbnail of the event.
     /// </summary>
@@ -76,12 +99,13 @@ public class CreateEventRequest
     /// <summary>
     /// The images of the event.
     /// </summary>
-    public List<IFormFile> Images { get; set; }
+    public List<IFormFile>? Images { get; set; }
 
     /// <summary>
-    /// The tickets of the event. (JSON string)
+    /// The tickets of the event. (As JSON string, array of objects with name, quantity, price, startSale, endSale)
+    /// e.x. [{"name":"VIP","quantity":100,"price":100,"startSale":"2024-05-05T00:00:00","endSale":"2024-06-06T00:00:00"}]
     /// </summary>
-    public string Tickets { get; set; }
+    public string Tickets { get; set; } = default!;
 
 
     /// <summary>
@@ -99,6 +123,9 @@ public class CreateEventRequest
         return new CreateEventCommand(Name, Description, CategoryId,
             StartDate, EndDate, StartTime, EndTime,
             Lat, Lon, Street, CityId, IsOnline,
-            Thumbnail, Images, tickets, baseUrl);
+            Thumbnail, Images,
+            tickets,
+            IsManaged, MinAge, MaxAge, AllowedGender,
+            baseUrl);
     }
 }

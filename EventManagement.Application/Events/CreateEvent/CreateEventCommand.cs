@@ -15,7 +15,8 @@ namespace EventManagement.Application.Events.CreateEvent;
 public record CreateEventCommand(string Name, string Description, int CategoryId,
     DateTime StartDate, DateTime EndDate, TimeOnly StartTime, TimeOnly EndTime, 
     double? Lat, double? Lon, string? Street, int? CityId, bool IsOnline, 
-    IFormFile Thumbnail, List<IFormFile> Images, List<TicketDto> Tickets,
+    IFormFile Thumbnail, List<IFormFile>? Images, List<TicketDto> Tickets,
+    bool IsManaged, int? MinAge, int? MaxAge, Gender? AllowedGender,
     string BaseUrl
     )
     : IRequest<int>;
@@ -65,12 +66,14 @@ public class CreateEventCommandHandler(IValidator<CreateEventCommand> validator,
 
         try
         {
+            SetLimitations(request, organizer, addedEvent);
+
             await unitOfWork.SaveChangesAsync(cancellationToken); // set id for the event
 
             await SetImages(request, addedEvent); // we need the id of the addedEvent to persist the images
 
             // do logic validation for tickets, e.g. tickets quantity should be within user plan limits...
-            SetTickets(request, addedEvent); 
+            SetTickets(request, addedEvent);
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
@@ -84,6 +87,19 @@ public class CreateEventCommandHandler(IValidator<CreateEventCommand> validator,
 
 
         return addedEvent.Id;
+    }
+
+    private void SetLimitations(CreateEventCommand request, Organizer organizer, Event addedEvent)
+    {
+        if (request.IsManaged)
+        {
+            // TODO: add logic for verification, then uncomment the following lines
+
+            //if (!organizer.IsVerified)
+            //    throw new BadRequestException("Organizer is not verified.");
+
+            addedEvent.SetLimitations(request.MinAge, request.MaxAge, request.AllowedGender);
+        }
     }
 
     private void SetTickets(CreateEventCommand request, Event addedEvent)
@@ -102,7 +118,7 @@ public class CreateEventCommandHandler(IValidator<CreateEventCommand> validator,
         var thumbnailUrl = await imageHandler.UploadImage(request.Thumbnail, eventDirectory, true);
         @event.SetThumbnail(thumbnailUrl);
 
-        foreach (var image in request.Images)
+        foreach (var image in request.Images ?? Enumerable.Empty<IFormFile>())
         {
             var newImageUrl = await imageHandler.UploadImage(image, eventDirectory, false);
             @event.AddImage(newImageUrl);

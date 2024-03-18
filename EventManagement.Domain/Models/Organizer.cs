@@ -3,6 +3,7 @@
 public class Organizer : Entity
 {
     public string? CompanyName { get; set; } = default!;
+    public bool IsVerified { get; set; } = default!;
 
     public int UserId { get; set; }
     public Profile? Profile { get; set; } = default!;

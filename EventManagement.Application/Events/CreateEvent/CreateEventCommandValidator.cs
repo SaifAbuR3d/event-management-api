@@ -59,8 +59,8 @@ public class CreateEventCommandValidator : AbstractValidator<CreateEventCommand>
         {
             RuleFor(x => x.Images)
                 .Must(x => x.Count <= 3).WithMessage("Maximum 3 images are allowed");
-        }); 
-        
+        });
+
         When(x => x.Tickets != null, () =>
         {
             RuleFor(x => x.Tickets)
@@ -70,7 +70,35 @@ public class CreateEventCommandValidator : AbstractValidator<CreateEventCommand>
             RuleForEach(x => x.Tickets)
                 .SetValidator(new TicketDtoValidator());
         });
-        
+
+        When(x => x.IsManaged == false, () =>
+        {
+            RuleFor(x => x.MinAge)
+                .Null().WithMessage("Minimum age is not applicable for unmanaged events");
+            RuleFor(x => x.MaxAge)
+                .Null().WithMessage("Maximum age is not applicable for unmanaged events");
+            RuleFor(x => x.AllowedGender)
+                .Null().WithMessage("Allowed gender is not applicable for unmanaged events");
+        });
+
+        When(x => x.MinAge != null, () =>
+        {
+            RuleFor(x => x.MinAge)
+                .InclusiveBetween(18, 100).WithMessage("Minimum age must be between 18 and 100");
+
+            RuleFor(x => x.MaxAge)
+                .NotEmpty().WithMessage("Cannot set only minimum age, " +
+                "you should provide both minimum age and maximum age")
+                .InclusiveBetween(18, 100).WithMessage("Maximum age must be between 18 and 100")
+                .GreaterThanOrEqualTo(x => x.MinAge).WithMessage("Maximum age must be greater than or equal to minimum age");
+        });
+
+        When(x => x.AllowedGender != null, () =>
+        {
+            RuleFor(x => x.AllowedGender)
+                .IsInEnum().WithMessage("Allowed gender should be either Male or Female");
+        }); 
+
     }
 }
 
