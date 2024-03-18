@@ -11,6 +11,7 @@ public class Attendee : Entity
 {
     public DateOnly DateOfBirth { get; set; }
     public Gender Gender { get; set; } = default!;
+    public bool IsVerified { get; set; }
     public int UserId { get; set; }
 
     public ICollection<Following> Followings { get; set; } = new List<Following>();

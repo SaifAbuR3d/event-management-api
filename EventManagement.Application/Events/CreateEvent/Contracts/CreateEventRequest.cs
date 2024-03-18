@@ -1,6 +1,8 @@
-﻿using EventManagement.Application.Events.CreateEvent;
+﻿using EventManagement.Domain.Models;
+using Microsoft.AspNetCore.Http;
+using System.Text.Json;
 
-namespace EventManagement.API.Requests;
+namespace EventManagement.Application.Events.CreateEvent.Contracts;
 
 /// <summary>
 /// The request to create a new event.
@@ -42,6 +44,7 @@ public class CreateEventRequest
     /// </summary>
     public TimeOnly EndTime { get; set; }
 
+
     /// <summary>
     /// The latitude of the event location.
     /// </summary>
@@ -67,6 +70,27 @@ public class CreateEventRequest
     /// </summary>
     public bool IsOnline { get; set; }
 
+
+    /// <summary>
+    /// Indicates whether the event is managed (require registration request to attend).
+    /// </summary>
+    public bool IsManaged { get; set; }
+
+    /// <summary>
+    /// The minimum age to attend the event.
+    /// </summary>
+    public int? MinAge { get; set; }
+
+    /// <summary>
+    /// The maximum age to attend the event.
+    /// </summary>
+    public int? MaxAge { get; set; }
+
+    /// <summary>
+    /// The allowed gender to attend the event (both genders are allowed if null).
+    public Gender? AllowedGender { get; set; }
+
+
     /// <summary>
     /// The thumbnail of the event.
     /// </summary>
@@ -78,16 +102,30 @@ public class CreateEventRequest
     public List<IFormFile>? Images { get; set; }
 
     /// <summary>
+    /// The tickets of the event. (As JSON string, array of objects with name, quantity, price, startSale, endSale)
+    /// e.x. [{"name":"VIP","quantity":100,"price":100,"startSale":"2024-05-05T00:00:00","endSale":"2024-06-06T00:00:00"}]
+    /// </summary>
+    public string Tickets { get; set; } = default!;
+
+
+    /// <summary>
     /// Converts the <see cref="CreateEventRequest"/> object to a <see cref="CreateEventCommand"/> object.
     /// </summary>
     /// <param name="baseUrl">The base URL.</param>
     /// <returns>The created <see cref="CreateEventCommand"/> object.</returns>
     public CreateEventCommand ToCommand(string baseUrl)
     {
+        var tickets = JsonSerializer.Deserialize<List<TicketDto>>(Tickets, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        }) ?? [];
+
         return new CreateEventCommand(Name, Description, CategoryId,
             StartDate, EndDate, StartTime, EndTime,
             Lat, Lon, Street, CityId, IsOnline,
-            Thumbnail, Images, baseUrl);
+            Thumbnail, Images,
+            tickets,
+            IsManaged, MinAge, MaxAge, AllowedGender,
+            baseUrl);
     }
 }
-

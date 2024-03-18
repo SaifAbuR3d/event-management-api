@@ -42,6 +42,16 @@ public class Event : Entity
 
     }
 
+    public void SetLimitations(int? minAge, int? maxAge, Gender? allowedGender)
+    {
+        IsManaged = true;
+
+        MinAge = minAge;
+        MaxAge = maxAge;
+        AllowedGender = allowedGender;
+
+        LastModified = DateTime.Now;
+    }
     public void AddCategory(Category category)
     {
         Categories.Add(category);
@@ -63,6 +73,20 @@ public class Event : Entity
         LastModified = DateTime.Now;
     }
 
+    public void AddTicket(Ticket ticket)
+    {
+        Tickets.Add(ticket);
+
+        LastModified = DateTime.Now;
+    }
+
+    public void AddTicket(string name, decimal price, int quantity, DateTime startSale, DateTime endSale)
+    {
+        var ticket = new Ticket(this, name, price, quantity, startSale, endSale);
+        Tickets.Add(ticket);
+
+        LastModified = DateTime.Now;
+    }
 
 
     // Basic info
@@ -73,6 +97,11 @@ public class Event : Entity
     public DateOnly EndDate { get; set; }
     public TimeOnly StartTime { get; set; }
     public TimeOnly EndTime { get; set; }
+
+    public bool IsManaged { get; set; }
+    public int? MinAge { get; set; }
+    public int? MaxAge { get; set; }
+    public Gender? AllowedGender { get; set; }
 
 
     // Location info
@@ -88,8 +117,6 @@ public class Event : Entity
     public int? CityId { get; set; }
     public City? City { get; set; } = default!;
 
-
-    // TODO: Add EventLimitation object if needed, (e.g. 18+, 21+, female only, etc.)
 
     public int OrganizerId { get; set; }
     public Organizer Organizer { get; set; } = default!;

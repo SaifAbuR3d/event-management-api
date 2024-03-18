@@ -1,4 +1,5 @@
 ﻿using EventManagement.Application.Abstractions;
+using EventManagement.Application.Events.CreateEvent.Contracts;
 using EventManagement.Application.Exceptions;
 using EventManagement.Application.Identity;
 using EventManagement.Domain.Abstractions.Repositories;
@@ -14,7 +15,9 @@ namespace EventManagement.Application.Events.CreateEvent;
 public record CreateEventCommand(string Name, string Description, int CategoryId,
     DateTime StartDate, DateTime EndDate, TimeOnly StartTime, TimeOnly EndTime, 
     double? Lat, double? Lon, string? Street, int? CityId, bool IsOnline, 
-    IFormFile Thumbnail, List<IFormFile>? Images, string BaseUrl
+    IFormFile Thumbnail, List<IFormFile>? Images, List<TicketDto> Tickets,
+    bool IsManaged, int? MinAge, int? MaxAge, Gender? AllowedGender,
+    string BaseUrl
     )
     : IRequest<int>;
 
@@ -63,8 +66,15 @@ public class CreateEventCommandHandler(IValidator<CreateEventCommand> validator,
 
         try
         {
-            await unitOfWork.SaveChangesAsync(cancellationToken);
-            await SetImages(request, addedEvent);
+            SetLimitations(request, organizer, addedEvent);
+
+            await unitOfWork.SaveChangesAsync(cancellationToken); // set id for the event
+
+            await SetImages(request, addedEvent); // we need the id of the addedEvent to persist the images
+
+            // do logic validation for tickets, e.g. tickets quantity should be within user plan limits...
+            SetTickets(request, addedEvent);
+
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             await unitOfWork.CommitTransactionAsync(cancellationToken);
@@ -77,6 +87,27 @@ public class CreateEventCommandHandler(IValidator<CreateEventCommand> validator,
 
 
         return addedEvent.Id;
+    }
+
+    private void SetLimitations(CreateEventCommand request, Organizer organizer, Event addedEvent)
+    {
+        if (request.IsManaged)
+        {
+            // TODO: add logic for verification, then uncomment the following lines
+
+            //if (!organizer.IsVerified)
+            //    throw new BadRequestException("Organizer is not verified.");
+
+            addedEvent.SetLimitations(request.MinAge, request.MaxAge, request.AllowedGender);
+        }
+    }
+
+    private void SetTickets(CreateEventCommand request, Event addedEvent)
+    {
+        foreach (var ticket in request.Tickets)
+        {
+            addedEvent.AddTicket(ticket.Name, ticket.Price, ticket.Quantity, ticket.StartSale, ticket.EndSale);
+        }
     }
 
     private async Task SetImages(CreateEventCommand request, Event @event)

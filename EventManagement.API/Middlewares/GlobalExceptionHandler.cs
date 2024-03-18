@@ -1,6 +1,7 @@
 ﻿using EventManagement.Application.Exceptions;
 using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
+using System.Text.Json;
 
 namespace EventManagement.API.Middlewares;
 
@@ -44,7 +45,8 @@ public class GlobalExceptionHandler : IExceptionHandler
 
             // FluentValidation exception, thrown explicitly with validator.ValidateAndThrowAsync when needed
             // (e.g. when not using FluentValidationAutoValidation)
-            ValidationException validationException => (StatusCodes.Status400BadRequest, "Validation Error", validationException.Errors.First().ToString()),
+            ValidationException validationException => (StatusCodes.Status400BadRequest, "Validation Error", 
+                      validationException.Errors.First().ToString()),
 
 
             _ => (StatusCodes.Status500InternalServerError, "Something went wrong", "We made a mistake but we are working on it")
