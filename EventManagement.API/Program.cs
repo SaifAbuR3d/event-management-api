@@ -25,11 +25,13 @@ if (isDevelopment)
 
 app.Migrate(); // apply any pending migration
 
+app.UseExceptionHandler();
+
 app.UseHttpsRedirection();
 
-app.UseCors("AllowOrigin");
+app.UseStaticFiles();
 
-app.UseExceptionHandler();
+app.UseCors("AllowOrigin");
 
 app.UseAuthentication();
 

@@ -1,8 +1,10 @@
-﻿using EventManagement.Domain.Models;
+﻿using EventManagement.Application.Contracts.Responses;
+using EventManagement.Application.Events.CreateEvent;
+using EventManagement.Domain.Models;
 using Microsoft.AspNetCore.Http;
 using System.Text.Json;
 
-namespace EventManagement.Application.Events.CreateEvent.Contracts;
+namespace EventManagement.Application.Contracts.Requests;
 
 /// <summary>
 /// The request to create a new event.

@@ -1,5 +1,5 @@
 ﻿using EventManagement.Application.Abstractions;
-using EventManagement.Application.Events.CreateEvent.Contracts;
+using EventManagement.Application.Contracts.Responses;
 using EventManagement.Application.Exceptions;
 using EventManagement.Application.Identity;
 using EventManagement.Domain.Abstractions.Repositories;
@@ -68,11 +68,11 @@ public class CreateEventCommandHandler(IValidator<CreateEventCommand> validator,
         {
             SetLimitations(request, organizer, addedEvent);
 
-            await unitOfWork.SaveChangesAsync(cancellationToken); // set id for the event
+            await unitOfWork.SaveChangesAsync(cancellationToken); // setting id for the event in database
 
             await SetImages(request, addedEvent); // we need the id of the addedEvent to persist the images
 
-            // do logic validation for tickets, e.g. tickets quantity should be within user plan limits...
+            // TODO: do logic validation for tickets, e.g. tickets quantity should be within user plan limits...
             SetTickets(request, addedEvent);
 
             await unitOfWork.SaveChangesAsync(cancellationToken);

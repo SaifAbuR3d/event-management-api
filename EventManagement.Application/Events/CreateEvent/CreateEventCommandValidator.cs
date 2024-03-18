@@ -1,7 +1,7 @@
 ﻿using EventManagement.Application.Common;
 using static EventManagement.Domain.Constants.Location;
 using FluentValidation;
-using EventManagement.Application.Events.CreateEvent.Contracts;
+using EventManagement.Application.Contracts.Responses;
 
 namespace EventManagement.Application.Events.CreateEvent;
 
