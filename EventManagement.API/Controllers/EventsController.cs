@@ -1,4 +1,6 @@
-﻿using EventManagement.Application.Events.CreateEvent.Contracts;
+﻿using EventManagement.Application.Contracts.Requests;
+using EventManagement.Application.Contracts.Responses;
+using EventManagement.Application.Events.EventPage;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,6 +26,20 @@ public class EventsController(IMediator mediator,
         var command = request.ToCommand(environment.WebRootPath);
         var id = await mediator.Send(command, cancellationToken);
         return Ok(new { eventId = id });
+    }
+
+    /// <summary>
+    /// Gets the event with the specified id
+    /// </summary>
+    /// <param name="eventId">The id of the event</param>
+    /// <param name="cancellationToken">The cancellation token</param>
+    /// <returns>The event with the specified id</returns>
+    [HttpGet("{eventId}")]
+    public async Task<ActionResult<EventDto>> GetEvent(int eventId, CancellationToken cancellationToken)
+    {
+        var query = new GetEventQuery(eventId);
+        var @event = await mediator.Send(query, cancellationToken);
+        return Ok(@event);
     }
 
 }

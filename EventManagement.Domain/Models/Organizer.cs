@@ -2,7 +2,7 @@
 
 public class Organizer : Entity
 {
-    public string? CompanyName { get; set; } = default!;
+    public string DisplayName { get; set; } = default!; // display name
     public bool IsVerified { get; set; } = default!;
 
     public int UserId { get; set; }

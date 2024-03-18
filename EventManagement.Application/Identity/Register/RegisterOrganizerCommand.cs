@@ -8,7 +8,7 @@ using MediatR;
 namespace EventManagement.Application.Identity.Register;
 
 public record RegisterOrganizerCommand(string Email, string UserName, string Password,
-    string FirstName, string LastName, string? CompanyName) : IRequest<RegisterOrganizerResponse>;
+    string FirstName, string LastName, string DisplayName) : IRequest<RegisterOrganizerResponse>;
 
 public class RegisterOrganizerCommandValidator : AbstractValidator<RegisterOrganizerCommand>
 {
@@ -35,11 +35,8 @@ public class RegisterOrganizerCommandValidator : AbstractValidator<RegisterOrgan
             .NotEmpty().WithMessage("Last name is required")
             .ValidName();
 
-        When(x => x.CompanyName != null, () =>
-        {
-            RuleFor(x => x.CompanyName)
-                .Length(3, 50).WithMessage("Company name must be between 2 and 50 characters");
-        });
+        RuleFor(x => x.DisplayName)
+            .Length(3, 50).WithMessage("Display name must be between 2 and 50 characters");
     }
 }
 
@@ -56,7 +53,7 @@ public class RegisterOrganizerCommandHandler(IIdentityManager identityManager,
         var organizer = new Organizer
         {
             UserId = userId,
-            CompanyName = request.CompanyName
+            DisplayName = request.DisplayName
         }; 
 
         var organizerEntity = await organizerRepository.AddOrganizerAsync(organizer, cancellationToken);

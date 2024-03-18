@@ -1,7 +1,7 @@
-﻿namespace EventManagement.Application.Events.CreateEvent.Contracts;
+﻿namespace EventManagement.Application.Contracts.Responses;
 
 /// <summary>
-/// The request to create a new ticket.
+/// The ticket Dto, used to create a new ticket or as response in EventDto.
 /// </summary>
 public class TicketDto
 {
