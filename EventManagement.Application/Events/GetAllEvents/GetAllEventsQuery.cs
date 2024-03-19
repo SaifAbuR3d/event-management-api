@@ -2,6 +2,7 @@
 using EventManagement.Application.Abstractions.Persistence;
 using EventManagement.Application.Contracts.Requests;
 using EventManagement.Application.Contracts.Responses;
+using EventManagement.Application.Exceptions;
 using MediatR;
 
 namespace EventManagement.Application.Events.GetAllEvents;
@@ -15,6 +16,11 @@ public class GetAllEventsQueryHandler(IEventRepository eventRepository, IMapper 
     public async Task<(IEnumerable<EventDto>, PaginationMetadata)> Handle(GetAllEventsQuery request,
         CancellationToken cancellationToken)
     {
+        if (request.Parameters.PreviousEvents && request.Parameters.UpcomingEvents)
+        {
+            request.Parameters.PreviousEvents = false;
+            request.Parameters.UpcomingEvents = false;
+        }
         var (events, paginationMetadata) = await eventRepository.GetEventsAsync(request.Parameters, cancellationToken);
         var eventsDto = mapper.Map<IEnumerable<EventDto>>(events);
         return (eventsDto, paginationMetadata);
