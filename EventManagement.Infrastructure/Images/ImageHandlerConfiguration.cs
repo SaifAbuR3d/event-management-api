@@ -1,4 +1,4 @@
-﻿using EventManagement.Application.Abstractions;
+﻿using EventManagement.Application.Abstractions.Images;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

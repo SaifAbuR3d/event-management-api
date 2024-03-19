@@ -1,5 +1,5 @@
-﻿using EventManagement.Domain.Abstractions.Repositories;
-using EventManagement.Domain.Models;
+﻿using EventManagement.Application.Abstractions.Persistence;
+using EventManagement.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace EventManagement.Infrastructure.Persistence.Repositories;

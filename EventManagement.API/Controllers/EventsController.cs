@@ -1,6 +1,6 @@
 ﻿using EventManagement.Application.Contracts.Requests;
 using EventManagement.Application.Contracts.Responses;
-using EventManagement.Application.Events.EventPage;
+using EventManagement.Application.Events.GetEvent;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

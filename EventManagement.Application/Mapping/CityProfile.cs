@@ -1,5 +1,6 @@
 ﻿using EventManagement.Application.Contracts.Responses;
-using EventManagement.Domain.Models;
+using EventManagement.Domain.Entities;
+
 namespace EventManagement.Application.Mapping;
 
 public class CityProfile : AutoMapper.Profile

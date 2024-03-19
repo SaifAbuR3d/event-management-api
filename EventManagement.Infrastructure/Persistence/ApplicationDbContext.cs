@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using EventManagement.Domain.Models;
 using EventManagement.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using EventManagement.Domain.Entities;
 
 
 namespace EventManagement.Infrastructure.Persistence;

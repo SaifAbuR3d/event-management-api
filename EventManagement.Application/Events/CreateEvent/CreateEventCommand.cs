@@ -1,9 +1,9 @@
-﻿using EventManagement.Application.Abstractions;
+﻿using EventManagement.Application.Abstractions.Images;
+using EventManagement.Application.Abstractions.Persistence;
 using EventManagement.Application.Contracts.Responses;
 using EventManagement.Application.Exceptions;
 using EventManagement.Application.Identity;
-using EventManagement.Domain.Abstractions.Repositories;
-using EventManagement.Domain.Models;
+using EventManagement.Domain.Entities;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Http;

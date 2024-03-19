@@ -1,4 +1,4 @@
-﻿using EventManagement.Domain.Abstractions.Repositories;
+﻿using EventManagement.Application.Abstractions.Persistence;
 
 namespace EventManagement.Infrastructure.Persistence.Repositories;
 

@@ -1,7 +1,4 @@
-﻿using EventManagement.Application.Identity.Login;
-using EventManagement.Domain.Models;
-
-namespace EventManagement.Application.Identity;
+﻿namespace EventManagement.Application.Identity;
 
 public interface IIdentityManager
 {

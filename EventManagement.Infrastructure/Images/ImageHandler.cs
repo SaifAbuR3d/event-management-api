@@ -1,4 +1,4 @@
-﻿using EventManagement.Application.Abstractions;
+﻿using EventManagement.Application.Abstractions.Images;
 using EventManagement.Application.Exceptions;
 using Microsoft.AspNetCore.Http;
 
