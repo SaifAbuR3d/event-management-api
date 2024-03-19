@@ -37,7 +37,9 @@ public class EventRepository(ApplicationDbContext context) : IEventRepository
             .Include(e => e.Categories)
             .AsQueryable();
 
-        query = SortingHelper.ApplySorting(query,queryParameters.SortOrder,
+        query = ApplyFilters(query, queryParameters);
+
+        query = SortingHelper.ApplySorting(query, queryParameters.SortOrder,
             SortingHelper.EventsSortingKeySelector(queryParameters.SortColumn));
 
         var paginationMetadata = await PaginationHelper.GetPaginationMetadataAsync(query,
@@ -50,6 +52,30 @@ public class EventRepository(ApplicationDbContext context) : IEventRepository
             .ToListAsync(cancellationToken);
 
         return (result, paginationMetadata);
+    }
 
+    private static IQueryable<Event> ApplyFilters(IQueryable<Event> query, GetAllEventsQueryParameters queryParameters)
+    {
+        if (queryParameters.CategoryId.HasValue)
+        {
+            query = query.Where(e => e.Categories.Any(c => c.Id == queryParameters.CategoryId));
+        }
+
+        if (queryParameters.OrganizerId.HasValue)
+        {
+            query = query.Where(e => e.Organizer.Id == queryParameters.OrganizerId);
+        }
+
+        if (queryParameters.PreviousEvents)
+        {
+            query = query.Where(e => e.EndDate < DateOnly.FromDateTime(DateTime.UtcNow));
+        }
+
+        if (queryParameters.UpcomingEvents)
+        {
+            query = query.Where(e => e.StartDate > DateOnly.FromDateTime(DateTime.UtcNow));
+        }
+
+        return query;
     }
 }
