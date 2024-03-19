@@ -1,8 +1,10 @@
 ﻿using EventManagement.Application.Contracts.Requests;
 using EventManagement.Application.Contracts.Responses;
+using EventManagement.Application.Events.GetAllEvents;
 using EventManagement.Application.Events.GetEvent;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace EventManagement.API.Controllers;
 
@@ -40,6 +42,23 @@ public class EventsController(IMediator mediator,
         var query = new GetEventQuery(eventId);
         var @event = await mediator.Send(query, cancellationToken);
         return Ok(@event);
+    }
+
+    /// <summary>
+    /// Gets all events, filtered, sorted, and paginated according to the specified parameters
+    /// </summary>
+    /// <param name="parameters"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>List of events</returns>
+    [HttpGet]
+    public async Task<ActionResult<(IEnumerable<EventDto>, PaginationMetadata)>> GetAllEvents(
+               [FromQuery] GetAllEventsQueryParameters parameters, CancellationToken cancellationToken)
+    {
+        var query = new GetAllEventsQuery(parameters);
+        var (events, paginationMetadata) = await mediator.Send(query, cancellationToken);
+        Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(paginationMetadata));
+
+        return Ok(events);
     }
 
 }
