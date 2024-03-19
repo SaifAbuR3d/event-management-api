@@ -1,12 +1,12 @@
 ﻿using EventManagement.Application.Exceptions;
 using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
-using System.Text.Json;
 
 namespace EventManagement.API.Middlewares;
 
 /// <summary>
 /// Middleware for exception handling, it will catch all exceptions and return a proper response
+/// </summary>
 public class GlobalExceptionHandler : IExceptionHandler
 {
     /// <summary>

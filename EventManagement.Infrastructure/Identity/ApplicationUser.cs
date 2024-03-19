@@ -1,5 +1,4 @@
-﻿using EventManagement.Domain.Models;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 
 namespace EventManagement.Infrastructure.Identity;
 

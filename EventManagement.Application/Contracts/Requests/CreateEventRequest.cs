@@ -1,6 +1,6 @@
 ﻿using EventManagement.Application.Contracts.Responses;
 using EventManagement.Application.Events.CreateEvent;
-using EventManagement.Domain.Models;
+using EventManagement.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using System.Text.Json;
 

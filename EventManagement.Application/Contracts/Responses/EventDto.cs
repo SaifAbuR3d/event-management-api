@@ -1,4 +1,4 @@
-﻿using EventManagement.Domain.Models;
+﻿using EventManagement.Domain.Entities;
 
 namespace EventManagement.Application.Contracts.Responses;
 

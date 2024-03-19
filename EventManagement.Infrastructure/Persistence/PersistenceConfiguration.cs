@@ -1,4 +1,4 @@
-﻿using EventManagement.Domain.Abstractions.Repositories;
+﻿using EventManagement.Application.Abstractions.Persistence;
 using EventManagement.Infrastructure.Persistence.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;

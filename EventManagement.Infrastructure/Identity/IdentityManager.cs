@@ -1,6 +1,5 @@
 ﻿using EventManagement.Application.Exceptions;
 using EventManagement.Application.Identity;
-using EventManagement.Domain.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace EventManagement.Infrastructure.Identity;

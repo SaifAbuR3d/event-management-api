@@ -1,6 +1,6 @@
-﻿using EventManagement.Application.Common;
-using EventManagement.Domain.Abstractions.Repositories;
-using EventManagement.Domain.Models;
+﻿using EventManagement.Application.Abstractions.Persistence;
+using EventManagement.Application.Common;
+using EventManagement.Domain.Entities;
 using FluentValidation;
 using MediatR;
 
