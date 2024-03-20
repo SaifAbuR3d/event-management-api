@@ -5,7 +5,7 @@ using EventManagement.Application.Exceptions;
 using EventManagement.Domain.Entities;
 using MediatR;
 
-namespace EventManagement.Application.Events.GetEvent;
+namespace EventManagement.Application.Features.Events.GetEvent;
 
 public record GetEventQuery(int EventId) : IRequest<EventDto>;
 

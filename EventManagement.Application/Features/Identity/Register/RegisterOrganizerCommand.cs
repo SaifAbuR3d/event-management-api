@@ -1,11 +1,12 @@
 ﻿using EventManagement.Application.Abstractions.Persistence;
 using EventManagement.Application.Common;
+using EventManagement.Application.Features.Identity;
 using EventManagement.Domain.Entities;
 using EventManagement.Domain.Enums;
 using FluentValidation;
 using MediatR;
 
-namespace EventManagement.Application.Identity.Register;
+namespace EventManagement.Application.Features.Identity.Register;
 
 public record RegisterOrganizerCommand(string Email, string UserName, string Password,
     string FirstName, string LastName, string DisplayName) : IRequest<RegisterOrganizerResponse>;
@@ -40,21 +41,21 @@ public class RegisterOrganizerCommandValidator : AbstractValidator<RegisterOrgan
     }
 }
 
-public class RegisterOrganizerCommandHandler(IIdentityManager identityManager, 
-    IOrganizerRepository organizerRepository, IUnitOfWork unitOfWork) 
+public class RegisterOrganizerCommandHandler(IIdentityManager identityManager,
+    IOrganizerRepository organizerRepository, IUnitOfWork unitOfWork)
     : IRequestHandler<RegisterOrganizerCommand, RegisterOrganizerResponse>
 {
     public async Task<RegisterOrganizerResponse> Handle(RegisterOrganizerCommand request,
         CancellationToken cancellationToken)
     {
-        var userId = await identityManager.RegisterUser(request.Email, request.UserName, 
+        var userId = await identityManager.RegisterUser(request.Email, request.UserName,
                        request.Password, request.FirstName, request.LastName, UserRole.Organizer.ToString());
 
         var organizer = new Organizer
         {
             UserId = userId,
             DisplayName = request.DisplayName
-        }; 
+        };
 
         var organizerEntity = await organizerRepository.AddOrganizerAsync(organizer, cancellationToken);
 

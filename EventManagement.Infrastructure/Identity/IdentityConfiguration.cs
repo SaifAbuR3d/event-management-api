@@ -1,5 +1,5 @@
 ﻿using EventManagement.Application.Exceptions;
-using EventManagement.Application.Identity;
+using EventManagement.Application.Features.Identity;
 using EventManagement.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;

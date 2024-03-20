@@ -1,11 +1,12 @@
 ﻿using EventManagement.Application.Abstractions.Persistence;
 using EventManagement.Application.Common;
+using EventManagement.Application.Features.Identity;
 using EventManagement.Domain.Entities;
 using EventManagement.Domain.Enums;
 using FluentValidation;
 using MediatR;
 
-namespace EventManagement.Application.Identity.Register;
+namespace EventManagement.Application.Features.Identity.Register;
 
 
 public record RegisterAttendeeCommand(string Email, string UserName, string Password,
@@ -30,14 +31,14 @@ public class RegisterAttendeeCommandValidator : AbstractValidator<RegisterAttend
 
         RuleFor(x => x.FirstName)
             .NotEmpty().WithMessage("First name is required")
-            .ValidName(); 
+            .ValidName();
 
         RuleFor(x => x.LastName)
             .NotEmpty().WithMessage("Last name is required")
             .ValidName();
 
         RuleFor(x => x.Gender)
-            .IsInEnum().WithMessage("Gender is only Male or Female"); 
+            .IsInEnum().WithMessage("Gender is only Male or Female");
 
         RuleFor(x => x.DateOfBirth)
             .NotEmpty().WithMessage("Date of birth is required")
@@ -45,14 +46,14 @@ public class RegisterAttendeeCommandValidator : AbstractValidator<RegisterAttend
     }
 }
 
-public class RegisterAttendeeCommandHandler(IIdentityManager identityManager, 
-    IAttendeeRepository attendeeRepository, IUnitOfWork unitOfWork) 
+public class RegisterAttendeeCommandHandler(IIdentityManager identityManager,
+    IAttendeeRepository attendeeRepository, IUnitOfWork unitOfWork)
     : IRequestHandler<RegisterAttendeeCommand, RegisterAttendeeResponse>
 {
     public async Task<RegisterAttendeeResponse> Handle(RegisterAttendeeCommand request,
         CancellationToken cancellationToken)
     {
-        var userId = await identityManager.RegisterUser(request.Email, request.UserName, 
+        var userId = await identityManager.RegisterUser(request.Email, request.UserName,
                request.Password, request.FirstName, request.LastName, UserRole.Attendee.ToString());
 
         var attendee = new Attendee
@@ -60,7 +61,7 @@ public class RegisterAttendeeCommandHandler(IIdentityManager identityManager,
             UserId = userId,
             DateOfBirth = DateOnly.FromDateTime(request.DateOfBirth),
             Gender = request.Gender
-        }; 
+        };
 
         var attendeeEntity = await attendeeRepository.AddAttendeeAsync(attendee, cancellationToken);
 

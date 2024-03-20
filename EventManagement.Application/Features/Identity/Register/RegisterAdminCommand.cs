@@ -1,11 +1,12 @@
 ﻿using EventManagement.Application.Abstractions.Persistence;
 using EventManagement.Application.Common;
+using EventManagement.Application.Features.Identity;
 using EventManagement.Domain.Entities;
 using EventManagement.Domain.Enums;
 using FluentValidation;
 using MediatR;
 
-namespace EventManagement.Application.Identity.Register;
+namespace EventManagement.Application.Features.Identity.Register;
 
 public record RegisterAdminCommand(string Email, string UserName, string Password,
     string FirstName, string LastName) : IRequest<RegisterAdminResponse>;
@@ -29,7 +30,7 @@ public class RegisterAdminCommandValidator : AbstractValidator<RegisterAdminComm
 
         RuleFor(x => x.FirstName)
             .NotEmpty().WithMessage("First name is required")
-            .ValidName(); 
+            .ValidName();
 
         RuleFor(x => x.LastName)
             .NotEmpty().WithMessage("Last name is required")
@@ -37,7 +38,7 @@ public class RegisterAdminCommandValidator : AbstractValidator<RegisterAdminComm
     }
 }
 
-public class RegisterAdminCommandHandler(IIdentityManager identityManager, 
+public class RegisterAdminCommandHandler(IIdentityManager identityManager,
     IAdminRepository adminRepository, IUnitOfWork unitOfWork) : IRequestHandler<RegisterAdminCommand, RegisterAdminResponse>
 
 {
@@ -50,7 +51,7 @@ public class RegisterAdminCommandHandler(IIdentityManager identityManager,
         var admin = new Admin
         {
             UserId = userId,
-        }; 
+        };
 
         var adminEntity = await adminRepository.AddAdminAsync(admin, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);

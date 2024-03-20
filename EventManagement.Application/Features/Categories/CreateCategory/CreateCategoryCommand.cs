@@ -4,7 +4,7 @@ using EventManagement.Domain.Entities;
 using FluentValidation;
 using MediatR;
 
-namespace EventManagement.Application.Categories.CreateCategory;
+namespace EventManagement.Application.Features.Categories.CreateCategory;
 
 public record CreateCategoryCommand(string Name, string? Description) : IRequest<CreateCategoryResponse>;
 
@@ -20,7 +20,7 @@ public class CreateCategoryCommandValidator : AbstractValidator<CreateCategoryCo
         {
             RuleFor(x => x.Description)
                 .Length(3, 200).WithMessage("Description must be between 3 and 100 characters");
-        }); 
+        });
 
     }
 }

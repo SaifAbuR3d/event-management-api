@@ -2,30 +2,30 @@
 using EventManagement.Application.Abstractions.Persistence;
 using EventManagement.Application.Contracts.Responses;
 using EventManagement.Application.Exceptions;
-using EventManagement.Application.Identity;
+using EventManagement.Application.Features.Identity;
 using EventManagement.Domain.Entities;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 
-namespace EventManagement.Application.Events.CreateEvent;
+namespace EventManagement.Application.Features.Events.CreateEvent;
 
 // support only one category for now
 
 public record CreateEventCommand(string Name, string Description, int CategoryId,
-    DateTime StartDate, DateTime EndDate, TimeOnly StartTime, TimeOnly EndTime, 
-    double? Lat, double? Lon, string? Street, int? CityId, bool IsOnline, 
+    DateTime StartDate, DateTime EndDate, TimeOnly StartTime, TimeOnly EndTime,
+    double? Lat, double? Lon, string? Street, int? CityId, bool IsOnline,
     IFormFile Thumbnail, List<IFormFile>? Images, List<TicketDto> Tickets,
     bool IsManaged, int? MinAge, int? MaxAge, Gender? AllowedGender,
     string BaseUrl
     )
     : IRequest<int>;
 
-public class CreateEventCommandHandler(IValidator<CreateEventCommand> validator, 
-    IEventRepository eventRepository, 
-    ICategoryRepository categoryRepository, 
+public class CreateEventCommandHandler(IValidator<CreateEventCommand> validator,
+    IEventRepository eventRepository,
+    ICategoryRepository categoryRepository,
     IOrganizerRepository organizerRepository,
-    IUnitOfWork unitOfWork, 
+    IUnitOfWork unitOfWork,
     ICurrentUser currentUser,
     IImageHandler imageHandler)
     : IRequestHandler<CreateEventCommand, int>
@@ -55,7 +55,7 @@ public class CreateEventCommandHandler(IValidator<CreateEventCommand> validator,
             if (request.Lat is null || request.Lon is null || request.Street is null || request.CityId is null)
                 throw new BadRequestException("Location information is required for offline events.");
 
-            newEvent.SetLocation((double)request.Lat, (double)request.Lon, (string)request.Street, (int)request.CityId);
+            newEvent.SetLocation((double)request.Lat, (double)request.Lon, request.Street, (int)request.CityId);
         }
 
         newEvent.AddCategory(category);
