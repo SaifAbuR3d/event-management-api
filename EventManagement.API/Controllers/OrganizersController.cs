@@ -63,8 +63,13 @@ public class OrganizersController(IMediator mediator) : ControllerBase
         return Ok(attendees);
     }
 
+    /// <summary>
+    /// Sets the profile of the logged in organizer
+    /// </summary>
+    /// <param name="command"></param>
+    /// <returns></returns>
     [HttpPost("my/profile")]
-    public async Task<ActionResult> UpdateOrganizerProfile(UpdateOrganizerProfileCommand command)
+    public async Task<ActionResult> UpdateOrganizerProfile(SetOrganizerProfileCommand command)
     {
         await mediator.Send(command);
         return Ok(new { message = "Operation Successful" });

@@ -14,26 +14,26 @@ public class Organizer : Entity
     public void SetProfile(string? bio, string? website, string? linkedIn, string instagram, string? facebook, string? twitter)
     {
         Profile ??= new Profile
-            {
-                Bio = bio,
-                Website = website,
-                LinkedIn = linkedIn,
-                Instagram = instagram,
-                Facebook = facebook,
-                Twitter = twitter
-            };
+        {
+            Bio = bio,
+            Website = website,
+            LinkedIn = linkedIn,
+            Instagram = instagram,
+            Facebook = facebook,
+            Twitter = twitter
+        };
 
         if (bio != null)
             Profile.Bio = bio;
-        if(website != null)
+        if (website != null)
             Profile.Website = website;
-        if(linkedIn != null)
+        if (linkedIn != null)
             Profile.LinkedIn = linkedIn;
-        if(instagram != null)
+        if (instagram != null)
             Profile.Instagram = instagram;
-        if(facebook != null)
+        if (facebook != null)
             Profile.Facebook = facebook;
-        if(twitter != null)
+        if (twitter != null)
             Profile.Twitter = twitter;
     }
 }
