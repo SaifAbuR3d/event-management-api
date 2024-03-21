@@ -3,6 +3,7 @@ using EventManagement.Application.Contracts.Responses;
 using EventManagement.Application.Features.Follow.GetOrganizerFollowers;
 using EventManagement.Application.Features.Organizers.GetOrganizer;
 using EventManagement.Application.Features.Organizers.UpdateProfile;
+using EventManagement.Application.Features.SetUserProfilePicture;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
@@ -13,9 +14,11 @@ namespace EventManagement.API.Controllers;
 /// Endpoints to retrieve/manage organizer information
 /// </summary>
 /// <param name="mediator"></param>
+/// <param name="environment"></param>
 [ApiController]
 [Route("api/[controller]")]
-public class OrganizersController(IMediator mediator) : ControllerBase
+public class OrganizersController(IMediator mediator,
+    IWebHostEnvironment environment) : ControllerBase
 {
     /// <summary>
     /// Gets an organizer by its id
@@ -73,6 +76,19 @@ public class OrganizersController(IMediator mediator) : ControllerBase
     {
         await mediator.Send(command);
         return Ok(new { message = "Operation Successful" });
+    }
+    /// <summary>
+    /// Sets the profile picture of the logged in organizer
+    /// </summary>
+    /// <param name="image"></param>
+    /// <returns></returns>
+    [HttpPost("my/profile-picture")]
+    public async Task<ActionResult> SetProfilePicture(IFormFile image)
+    {
+        var command = new SetProfilePictureCommand(image, environment.WebRootPath);
+        var imageUrl = await mediator.Send(command);
+
+        return Ok(new { imageUrl });
     }
 
 
