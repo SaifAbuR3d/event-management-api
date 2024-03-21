@@ -1,6 +1,8 @@
-﻿using EventManagement.Application.Contracts.Responses;
+﻿using EventManagement.Application.Contracts.Requests;
+using EventManagement.Application.Contracts.Responses;
+using EventManagement.Application.Features.Follow.GetOrganizerFollowers;
 using EventManagement.Application.Features.Organizers.GetOrganizer;
-using EventManagement.Application.Features.Organizers.GetOrganizerFollowers;
+using EventManagement.Application.Features.Organizers.UpdateProfile;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
@@ -19,11 +21,13 @@ public class OrganizersController(IMediator mediator) : ControllerBase
     /// Gets an organizer by its id
     /// </summary>
     /// <param name="id"></param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [HttpGet("{id:Int}")]
-    public async Task<ActionResult<OrganizerDto>> GetOrganizerById(int id)
+    public async Task<ActionResult<OrganizerDto>> GetOrganizerById(int id, CancellationToken cancellationToken)
     {
-        var organizer = await mediator.Send(new GetOrganizerByIdQuery(id));
+        var organizer = await mediator.Send(new GetOrganizerByIdQuery(id),
+            cancellationToken);
         return Ok(organizer);
     }
 
@@ -31,23 +35,40 @@ public class OrganizersController(IMediator mediator) : ControllerBase
     /// Gets an organizer by its username
     /// </summary>
     /// <param name="username"></param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [HttpGet("{username}")]
-    public async Task<ActionResult<OrganizerDto>> GetOrganizerByUserName(string username)
+    public async Task<ActionResult<OrganizerDto>> GetOrganizerByUserName(string username, CancellationToken cancellationToken)
     {
-        var organizer = await mediator.Send(new GetOrganizerByUserName(username));
+        var organizer = await mediator.Send(new GetOrganizerByUserName(username),
+            cancellationToken);
         return Ok(organizer);
     }
+
     /// <summary>
     /// Gets the followers of an organizer
     /// </summary>
     /// <param name="id"></param>
+    /// <param name="parameters"></param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [HttpGet("{id}/followers")]
-    public async Task<ActionResult<IEnumerable<AttendeeDto>>> GetOrganizerFollowers(int id)
+    public async Task<ActionResult<IEnumerable<AttendeeDto>>> GetOrganizerFollowers(int id, 
+        [FromQuery] GetAllQueryParameters parameters, CancellationToken cancellationToken)
     {
-        var (followers, paginationMetadata) = await mediator.Send(new GetOrganizerFollowersQuery(id));
+        var (attendees, paginationMetadata) = await mediator.Send(new GetAttendeesFollowingAnOrganizerQuery(id,
+            parameters), cancellationToken); 
+
         Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(paginationMetadata));
-        return Ok(followers);
+        return Ok(attendees);
     }
+
+    [HttpPost("my/profile")]
+    public async Task<ActionResult> UpdateOrganizerProfile(UpdateOrganizerProfileCommand command)
+    {
+        await mediator.Send(command);
+        return Ok(new { message = "Operation Successful" });
+    }
+
+
 }
