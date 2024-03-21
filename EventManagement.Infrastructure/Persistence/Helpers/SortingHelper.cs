@@ -21,9 +21,25 @@ public class SortingHelper
             "startDate" => e => e.StartDate,
             "endDate" => e => e.EndDate,
             "ticketsCount" => e => e.Tickets.Count,
-            "id" => e => e.Id,
             _ => e => e.Id
         }; 
+    }
+
+    public static Expression<Func<Attendee, object>> AttendeesSortingKeySelector(string? sortColumn)
+    {
+        return sortColumn?.ToLower() switch
+        {
+            _ => a => a.Id
+        };
+    }
+
+    public static Expression<Func<Organizer, object>> OrganizersSortingKeySelector(string? sortColumn)
+    {
+        return sortColumn?.ToLower() switch
+        {
+            "displayName" => o => o.DisplayName,
+            _ => o => o.Id
+        };
     }
     
 }

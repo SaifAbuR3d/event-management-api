@@ -1,4 +1,4 @@
-﻿using EventManagement.Application.Categories.CreateCategory;
+﻿using EventManagement.Application.Features.Categories.CreateCategory;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

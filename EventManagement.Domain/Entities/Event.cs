@@ -24,8 +24,8 @@ public class Event : Entity
         EndTime = endTime;
         IsOnline = isOnline;
 
-        CreationDate = DateTime.Now;
-        LastModified = DateTime.Now;
+        CreationDate = DateTime.UtcNow;
+        LastModified = DateTime.UtcNow;
     }
 
     public void SetLocation(double latitude, double longitude, string street, int cityId)
@@ -38,7 +38,7 @@ public class Event : Entity
         Street = street;
         CityId = cityId;
 
-        LastModified = DateTime.Now;
+        LastModified = DateTime.UtcNow;
 
     }
 
@@ -50,34 +50,34 @@ public class Event : Entity
         MaxAge = maxAge;
         AllowedGender = allowedGender;
 
-        LastModified = DateTime.Now;
+        LastModified = DateTime.UtcNow;
     }
     public void AddCategory(Category category)
     {
         Categories.Add(category);
 
-        LastModified = DateTime.Now;
+        LastModified = DateTime.UtcNow;
     }
 
     public void SetThumbnail(string thumbnailUrl)
     {
         EventImages.Add(new EventImage(this, thumbnailUrl, true));
 
-        LastModified = DateTime.Now;
+        LastModified = DateTime.UtcNow;
     }
 
     public void AddImage(string imageUrl)
     {
         EventImages.Add(new EventImage(this, imageUrl));
 
-        LastModified = DateTime.Now;
+        LastModified = DateTime.UtcNow;
     }
 
     public void AddTicket(Ticket ticket)
     {
         Tickets.Add(ticket);
 
-        LastModified = DateTime.Now;
+        LastModified = DateTime.UtcNow;
     }
 
     public void AddTicket(string name, decimal price, int quantity, DateTime startSale, DateTime endSale)
@@ -85,7 +85,7 @@ public class Event : Entity
         var ticket = new Ticket(this, name, price, quantity, startSale, endSale);
         Tickets.Add(ticket);
 
-        LastModified = DateTime.Now;
+        LastModified = DateTime.UtcNow;
     }
 
 

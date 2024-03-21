@@ -1,8 +1,9 @@
 ﻿using EventManagement.Application.Exceptions;
+using EventManagement.Application.Features.Identity;
 using FluentValidation;
 using MediatR;
 
-namespace EventManagement.Application.Identity.Login;
+namespace EventManagement.Application.Features.Identity.Login;
 
 public record LoginCommand(string Email, string Password) : IRequest<LoginResponse>;
 
@@ -28,7 +29,7 @@ public class LoginCommandHandler(IIdentityManager identityManager)
     public async Task<LoginResponse> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
         var token = await identityManager.AuthenticateCredentials(request.Email, request.Password)
-            ?? throw new UnauthenticatedException("Invalid Credentials"); 
+            ?? throw new UnauthenticatedException("Invalid Credentials");
 
         return new LoginResponse(token);
     }

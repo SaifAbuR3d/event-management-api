@@ -9,6 +9,12 @@ public enum Gender
 }
 public class Attendee : Entity
 {
+
+    public void Follow(Organizer organizer)
+    {
+        Followings.Add(new Following(this, organizer));
+    }
+
     public DateOnly DateOfBirth { get; set; }
     public Gender Gender { get; set; } = default!;
     public bool IsVerified { get; set; }

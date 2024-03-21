@@ -1,4 +1,4 @@
-﻿namespace EventManagement.Application.Identity;
+﻿namespace EventManagement.Application.Features.Identity;
 
 public interface IIdentityManager
 {

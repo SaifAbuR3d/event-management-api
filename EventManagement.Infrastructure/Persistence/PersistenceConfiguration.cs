@@ -31,7 +31,8 @@ public static class PersistenceConfiguration
         .AddScoped<IAttendeeRepository, AttendeeRepository>()
         .AddScoped<IOrganizerRepository, OrganizerRepository>()
         .AddScoped<ICategoryRepository, CategoryRepository>()
-        .AddScoped<IEventRepository, EventRepository>();
+        .AddScoped<IEventRepository, EventRepository>()
+        .AddScoped<IUserRepository, UserRepository>();
 
     // check if there is any pending migration and apply it
     public static IApplicationBuilder Migrate(this IApplicationBuilder app)

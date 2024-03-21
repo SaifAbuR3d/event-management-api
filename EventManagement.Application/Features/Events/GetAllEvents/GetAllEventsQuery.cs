@@ -5,7 +5,7 @@ using EventManagement.Application.Contracts.Responses;
 using EventManagement.Application.Exceptions;
 using MediatR;
 
-namespace EventManagement.Application.Events.GetAllEvents;
+namespace EventManagement.Application.Features.Events.GetAllEvents;
 
 public record GetAllEventsQuery(GetAllEventsQueryParameters Parameters)
     : IRequest<(IEnumerable<EventDto>, PaginationMetadata)>;

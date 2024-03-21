@@ -1,7 +1,7 @@
 ﻿using EventManagement.Application.Contracts.Requests;
 using EventManagement.Application.Contracts.Responses;
-using EventManagement.Application.Events.GetAllEvents;
-using EventManagement.Application.Events.GetEvent;
+using EventManagement.Application.Features.Events.GetAllEvents;
+using EventManagement.Application.Features.Events.GetEvent;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
@@ -54,10 +54,8 @@ public class EventsController(IMediator mediator,
     public async Task<ActionResult<(IEnumerable<EventDto>, PaginationMetadata)>> GetAllEvents(
                [FromQuery] GetAllEventsQueryParameters parameters, CancellationToken cancellationToken)
     {
-        var query = new GetAllEventsQuery(parameters);
-        var (events, paginationMetadata) = await mediator.Send(query, cancellationToken);
+        var (events, paginationMetadata) = await mediator.Send(new GetAllEventsQuery(parameters), cancellationToken);
         Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(paginationMetadata));
-
         return Ok(events);
     }
 

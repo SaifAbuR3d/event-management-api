@@ -3,7 +3,7 @@ using static EventManagement.Domain.Constants.Location;
 using FluentValidation;
 using EventManagement.Application.Contracts.Responses;
 
-namespace EventManagement.Application.Events.CreateEvent;
+namespace EventManagement.Application.Features.Events.CreateEvent;
 
 public class CreateEventCommandValidator : AbstractValidator<CreateEventCommand>
 {
@@ -97,7 +97,7 @@ public class CreateEventCommandValidator : AbstractValidator<CreateEventCommand>
         {
             RuleFor(x => x.AllowedGender)
                 .IsInEnum().WithMessage("Allowed gender should be either Male or Female");
-        }); 
+        });
 
     }
 }

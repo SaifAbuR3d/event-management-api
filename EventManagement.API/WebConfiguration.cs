@@ -1,6 +1,6 @@
 ﻿using EventManagement.API.Middlewares;
 using EventManagement.API.Services;
-using EventManagement.Application.Identity;
+using EventManagement.Application.Features.Identity;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Text.Json.Serialization;
