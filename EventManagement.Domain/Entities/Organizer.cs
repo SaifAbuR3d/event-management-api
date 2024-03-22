@@ -11,7 +11,7 @@ public class Organizer : Entity
     public ICollection<Event> Events { get; set; } = new List<Event>();
     public ICollection<Following> Followings { get; set; } = new List<Following>(); // Followers
 
-    public void SetProfile(string? bio, string? website, string? linkedIn, string instagram, string? facebook, string? twitter)
+    public void SetProfile(string? bio, string? website, string? linkedIn, string? instagram, string? facebook, string? twitter)
     {
         Profile ??= new Profile
         {
