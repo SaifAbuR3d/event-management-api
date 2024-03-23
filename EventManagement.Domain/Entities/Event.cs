@@ -28,7 +28,7 @@ public class Event : Entity
         LastModified = DateTime.UtcNow;
     }
 
-    public void SetLocation(double latitude, double longitude, string street, int cityId)
+    public void SetLocation(double latitude, double longitude, string? street, int? cityId)
     {
         if (IsOnline)
             throw new InvalidOperationException("Event is online, location cannot be set.");

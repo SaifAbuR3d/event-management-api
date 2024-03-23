@@ -15,7 +15,7 @@ public class CreateEventCommandValidator : AbstractValidator<CreateEventCommand>
 
         RuleFor(x => x.Description)
             .NotEmpty()
-            .Length(3, 200).WithMessage("Description must be between 3 and 200 characters");
+            .Length(3, 7000).WithMessage("Description must be between 3 and 7000 characters");
 
         RuleFor(x => x.CategoryId)
             .NotEmpty();
@@ -44,12 +44,6 @@ public class CreateEventCommandValidator : AbstractValidator<CreateEventCommand>
             RuleFor(h => h.Lon)
                 .NotEmpty()
                 .InclusiveBetween(MinLongitude, MaxLongitude);
-
-            RuleFor(x => x.Street)
-                .NotEmpty();
-
-            RuleFor(x => x.CityId)
-                .NotEmpty();
         });
 
         RuleFor(x => x.Thumbnail)
