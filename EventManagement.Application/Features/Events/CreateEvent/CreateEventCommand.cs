@@ -52,10 +52,10 @@ public class CreateEventCommandHandler(IValidator<CreateEventCommand> validator,
 
         if (!request.IsOnline)
         {
-            if (request.Lat is null || request.Lon is null || request.Street is null || request.CityId is null)
-                throw new BadRequestException("Location information is required for offline events.");
+            if (request.Lat is null || request.Lon is null)
+                throw new BadRequestException("Location information(Lat, Long) is required for offline events.");
 
-            newEvent.SetLocation((double)request.Lat, (double)request.Lon, request.Street, (int)request.CityId);
+            newEvent.SetLocation((double)request.Lat, (double)request.Lon, request.Street, request.CityId);
         }
 
         newEvent.AddCategory(category);
