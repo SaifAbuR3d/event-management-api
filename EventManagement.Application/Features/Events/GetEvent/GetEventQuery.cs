@@ -9,7 +9,7 @@ namespace EventManagement.Application.Features.Events.GetEvent;
 
 public record GetEventQuery(int EventId) : IRequest<EventDto>;
 
-public class GetEventQueryHandler(IEventRepository eventRepository,
+public class GetEventQueryHandler(IEventRepository eventRepository, IUserRepository userRepository,
     IMapper mapper) : IRequestHandler<GetEventQuery, EventDto>
 {
 
@@ -18,6 +18,13 @@ public class GetEventQueryHandler(IEventRepository eventRepository,
         var @event = await eventRepository.GetEventByIdAsync(request.EventId, cancellationToken)
             ?? throw new NotFoundException(nameof(Event), request.EventId);
 
-        return mapper.Map<EventDto>(@event);
+        var organizerImageUrl = await userRepository.GetProfilePictureByUserId(@event.Organizer.UserId,
+            cancellationToken);
+
+        var eventDto = mapper.Map<EventDto>(@event);
+
+        eventDto.Organizer.ImageUrl = organizerImageUrl;
+
+        return eventDto;
     }
 }

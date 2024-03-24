@@ -21,6 +21,7 @@ public class EventRepository(ApplicationDbContext context) : IEventRepository
     {
         return await context.Events
             .Include(e => e.Organizer)
+                .ThenInclude(o => o.Profile)
             .Include(e => e.EventImages)
             .Include(e => e.Tickets)
             .Include(e => e.Categories)
