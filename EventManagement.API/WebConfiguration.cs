@@ -38,7 +38,10 @@ public static class WebConfiguration
         {
             c.AddPolicy("AllowOrigin",
                 options =>
-                options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+                options
+                   .AllowAnyOrigin()
+                   .AllowAnyMethod()
+                   .WithExposedHeaders("X-Pagination"));
         });
 
         services.AddHttpContextAccessor();
