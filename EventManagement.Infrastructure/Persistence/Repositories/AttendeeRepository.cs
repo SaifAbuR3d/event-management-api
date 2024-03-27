@@ -39,6 +39,13 @@ public class AttendeeRepository(ApplicationDbContext context)
         return (result, paginationMetadata);
     }
 
+    public async Task<bool> IsFollowingOrganizer(int attendeeId, int organizerId, CancellationToken cancellationToken)
+    {
+        return await context.Followings
+            .AnyAsync(f => f.AttendeeId == attendeeId
+                        && f.OrganizerId == organizerId, cancellationToken);
+    }
+
     public async Task<Attendee?> GetAttendeeByUserIdAsync(int userId, CancellationToken cancellationToken)
     {
         return await context.Attendees.FirstOrDefaultAsync(a => a.UserId == userId, cancellationToken);

@@ -9,6 +9,7 @@ public class UserImage : Image
     {
         ImageUrl = imageUrl;
         UserId = userId;
+        IsThumbnail = true;
         CreationDate = DateTime.Now;
         LastModified = DateTime.Now;
     }

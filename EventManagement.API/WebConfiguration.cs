@@ -41,6 +41,7 @@ public static class WebConfiguration
                 options
                    .AllowAnyOrigin()
                    .AllowAnyMethod()
+                   .AllowAnyHeader()
                    .WithExposedHeaders("X-Pagination"));
         });
 
