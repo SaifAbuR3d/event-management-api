@@ -8,9 +8,14 @@ public class UserRepository(ApplicationDbContext context) : IUserRepository
 {
     public async Task<UserImage?> AddUserImageAsync(UserImage userImage, CancellationToken cancellationToken)
     {
+        if (await GetProfilePictureByUserId(userImage.UserId, cancellationToken) != null)
+        {
+            await DeleteProfilePictureByUserId(userImage.UserId, cancellationToken);
+        }
         var entry = await context.UserImages.AddAsync(userImage, cancellationToken);
         return entry.Entity;
     }
+
     public async Task<string?> GetEmailByUserId(int userId, CancellationToken cancellationToken)
     {
         var user = await context.Users.FindAsync(userId, cancellationToken);
@@ -37,5 +42,14 @@ public class UserRepository(ApplicationDbContext context) : IUserRepository
     {
         var user = await context.UserImages.FirstOrDefaultAsync(ui => ui.UserId == userId, cancellationToken); 
         return user?.ImageUrl;
+    }
+
+    public async Task DeleteProfilePictureByUserId(int userId, CancellationToken cancellationToken)
+    {
+        var userImage = await context.UserImages.FirstOrDefaultAsync(ui => ui.UserId == userId, cancellationToken);
+        if (userImage != null)
+        {
+            context.UserImages.Remove(userImage);
+        }
     }
 }
