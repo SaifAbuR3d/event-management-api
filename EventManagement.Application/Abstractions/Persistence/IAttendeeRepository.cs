@@ -14,4 +14,5 @@ public interface IAttendeeRepository
     Task<Attendee> DeleteAttendeeAsync(Attendee attendee, CancellationToken cancellationToken);
     Task<(IEnumerable<Attendee>, PaginationMetadata)> GetAttendeesFollowingAnOrganizerAsync(int organizerId,
     GetAllQueryParameters parameters, CancellationToken cancellationToken);
+    Task<bool> IsFollowingOrganizer(int attendeeId, int organizerId, CancellationToken cancellationToken);
 }

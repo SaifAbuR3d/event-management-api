@@ -24,6 +24,13 @@ public class FollowAnOrganizerCommandHandler(ICurrentUser currentUser, IUnitOfWo
         var organizer = await organizerRepository.GetOrganizerByIdAsync(request.OrganizerId, cancellationToken)
             ?? throw new NotFoundException(nameof(Organizer), request.OrganizerId);
 
+        var validFollowingOperation = await attendeeRepository.IsFollowingOrganizer(attendee.Id, organizer.Id, cancellationToken);
+
+        if (validFollowingOperation)
+        {
+            throw new BadRequestException("Attendee is already following this organizer");
+        }
+
         attendee.Follow(organizer);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
