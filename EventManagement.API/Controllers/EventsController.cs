@@ -23,7 +23,8 @@ public class EventsController(IMediator mediator,
     /// <param name="cancellationToken">The cancellation token</param>
     /// <returns>The result of the creation</returns>
     [HttpPost]
-    public async Task<ActionResult<int>> CreateEvent([FromForm] CreateEventRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult<int>> CreateEvent([FromForm] CreateEventRequest request,
+        CancellationToken cancellationToken)
     {
         var command = request.ToCommand(environment.WebRootPath);
         var id = await mediator.Send(command, cancellationToken);
@@ -54,9 +55,9 @@ public class EventsController(IMediator mediator,
     public async Task<ActionResult<(IEnumerable<EventDto>, PaginationMetadata)>> GetAllEvents(
                [FromQuery] GetAllEventsQueryParameters parameters, CancellationToken cancellationToken)
     {
-        var (events, paginationMetadata) = await mediator.Send(new GetAllEventsQuery(parameters), cancellationToken);
+        var (events, paginationMetadata) = await mediator.Send(new GetAllEventsQuery(parameters),
+            cancellationToken);
         Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(paginationMetadata));
         return Ok(events);
     }
-
 }
