@@ -1,4 +1,6 @@
-﻿using EventManagement.Application.Features.Categories.CreateCategory;
+﻿using EventManagement.Application.Contracts.Responses;
+using EventManagement.Application.Features.Categories.CreateCategory;
+using EventManagement.Application.Features.Categories.GetCategories;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,9 +21,23 @@ public class CategoriesController(IMediator mediator) : ControllerBase
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [HttpPost]
-    public async Task<ActionResult<CreateCategoryResponse>> CreateCategory(CreateCategoryCommand command, CancellationToken cancellationToken)
+    public async Task<ActionResult<CreateCategoryResponse>> CreateCategory(CreateCategoryCommand command,
+        CancellationToken cancellationToken)
     {
         var result = await mediator.Send(command, cancellationToken);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Gets all categories 
+    /// </summary>
+    /// <param name="cancellationToken"></param>
+    /// <returns>A list of all categories</returns>
+
+    [HttpGet]
+    public async Task<ActionResult<List<CategoryDto>>> GetCategories(CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(new GetCategoriesQuery(), cancellationToken);
         return Ok(result);
     }
 }
