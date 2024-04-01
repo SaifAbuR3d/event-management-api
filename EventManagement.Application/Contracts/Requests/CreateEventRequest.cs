@@ -11,6 +11,29 @@ namespace EventManagement.Application.Contracts.Requests;
 /// </summary>
 public class CreateEventRequest
 {
+
+    /// <summary>
+    /// Converts the <see cref="CreateEventRequest"/> object to a <see cref="CreateEventCommand"/> object.
+    /// </summary>
+    /// <param name="baseUrl">The base URL.</param>
+    /// <returns>The created <see cref="CreateEventCommand"/> object.</returns>
+    public CreateEventCommand ToCommand(string baseUrl)
+    {
+        var tickets = JsonSerializer.Deserialize<List<TicketDto>>(Tickets, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        }) ?? [];
+
+        return new CreateEventCommand(Name, Description, CategoryId,
+            StartDate, EndDate, StartTime, EndTime,
+            Lat, Lon, Street, CityId, IsOnline,
+            Thumbnail, Images,
+            tickets,
+            IsManaged, MinAge, MaxAge, AllowedGender,
+            baseUrl);
+    }
+
+
     /// <summary>
     /// The name of the event.
     /// </summary>
@@ -108,26 +131,4 @@ public class CreateEventRequest
     /// e.x. [{"name":"VIP","quantity":100,"price":100,"startSale":"2024-05-05T00:00:00","endSale":"2024-06-06T00:00:00"}]
     /// </summary>
     public string Tickets { get; set; } = default!;
-
-
-    /// <summary>
-    /// Converts the <see cref="CreateEventRequest"/> object to a <see cref="CreateEventCommand"/> object.
-    /// </summary>
-    /// <param name="baseUrl">The base URL.</param>
-    /// <returns>The created <see cref="CreateEventCommand"/> object.</returns>
-    public CreateEventCommand ToCommand(string baseUrl)
-    {
-        var tickets = JsonSerializer.Deserialize<List<TicketDto>>(Tickets, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        }) ?? [];
-
-        return new CreateEventCommand(Name, Description, CategoryId,
-            StartDate, EndDate, StartTime, EndTime,
-            Lat, Lon, Street, CityId, IsOnline,
-            Thumbnail, Images,
-            tickets,
-            IsManaged, MinAge, MaxAge, AllowedGender,
-            baseUrl);
-    }
 }

@@ -1,5 +1,6 @@
 ﻿using EventManagement.Application.Abstractions.Persistence;
 using EventManagement.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace EventManagement.Infrastructure.Persistence.Repositories;
 
@@ -9,6 +10,11 @@ public class CategoryRepository(ApplicationDbContext context) : ICategoryReposit
     {
         var entry = await context.Categories.AddAsync(category, cancellationToken);
         return entry.Entity;
+    }
+
+    public async Task<IEnumerable<Category>> GetCategoriesAsync(CancellationToken cancellationToken)
+    {
+        return await context.Categories.ToListAsync(cancellationToken);
     }
 
     public async Task<Category?> GetCategoryByIdAsync(int categoryId, CancellationToken cancellationToken)
