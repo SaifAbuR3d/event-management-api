@@ -29,14 +29,16 @@ public class ApplicationDbContext
     public DbSet<Profile> Profiles { get; set; } = default!;
     public DbSet<Event> Events { get; set; } = default!;
     public DbSet<Category> Categories { get; set; } = default!;
+
+    public DbSet<Booking> Bookings { get; set; } = default!;
     public DbSet<Ticket> Tickets { get; set; } = default!;
+    public DbSet<BookingTicket> BookingTickets { get; set; } = default!;
 
     public DbSet<RegistrationRequest> RegistrationRequests { get; set; } = default!;
     public DbSet<IdentityVerificationRequest> IdentityVerificationRequests { get; set; } = default!;
 
     public DbSet<Following> Followings { get; set; } = default!;
 
-    public DbSet<Booking> Bookings { get; set; } = default!;
     public DbSet<Review> Reviews { get; set; } = default!;
     public DbSet<Report> Reports { get; set; } = default!;
 

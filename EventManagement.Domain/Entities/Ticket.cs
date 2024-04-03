@@ -29,5 +29,5 @@ public class Ticket : Entity
     public DateTime EndSale { get; set; }
     public int EventId { get; set; }
     public Event Event { get; set; } = default!;
-    public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
+    public ICollection<BookingTicket> BookingTickets { get; set; } = new List<BookingTicket>();
 }
