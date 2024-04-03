@@ -48,7 +48,6 @@ public class GlobalExceptionHandler : IExceptionHandler
             ValidationException validationException => (StatusCodes.Status400BadRequest, "Validation Error", 
                       validationException.Errors.First().ToString()),
 
-
             _ => (StatusCodes.Status500InternalServerError, "Something went wrong", "We made a mistake but we are working on it")
         };
     }

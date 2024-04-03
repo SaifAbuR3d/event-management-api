@@ -1,11 +1,10 @@
-﻿namespace EventManagement.Application.Contracts.Responses;
+﻿namespace EventManagement.Application.Contracts.Requests;
 
-public class TicketDto
+/// <summary>
+/// The ticket Dto, used to create a new ticket
+/// </summary>
+public class CreateTicketRequest
 {
-    /// <summary>
-    /// The id of the ticket.
-    /// </summary>
-    public int Id { get; set; }
     /// <summary>
     /// The name of the ticket.
     /// </summary>

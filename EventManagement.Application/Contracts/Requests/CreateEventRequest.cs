@@ -1,4 +1,4 @@
-﻿using EventManagement.Application.Contracts.Responses;
+﻿using EventManagement.Application.Exceptions;
 using EventManagement.Application.Features.Events.CreateEvent;
 using EventManagement.Domain.Entities;
 using Microsoft.AspNetCore.Http;
@@ -19,10 +19,19 @@ public class CreateEventRequest
     /// <returns>The created <see cref="CreateEventCommand"/> object.</returns>
     public CreateEventCommand ToCommand(string baseUrl)
     {
-        var tickets = JsonSerializer.Deserialize<List<TicketDto>>(Tickets, new JsonSerializerOptions
+        List<CreateTicketRequest> tickets = []; 
+
+        try
         {
-            PropertyNameCaseInsensitive = true
-        }) ?? [];
+            tickets = JsonSerializer.Deserialize<List<CreateTicketRequest>>(Tickets, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            }) ?? [];
+        } catch (JsonException e)
+        {
+            throw new BadRequestException($"Invalid tickets JSON format {e.Message}");
+        }
+
 
         return new CreateEventCommand(Name, Description, CategoryId,
             StartDate, EndDate, StartTime, EndTime,
