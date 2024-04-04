@@ -14,14 +14,15 @@ public class CreateBookingRequest
     /// Converts the <see cref="CreateBookingRequest"/> object to a <see cref="CreateBookingCommand"/> object.
     /// </summary>
     /// <returns>The created <see cref="CreateBookingCommand"/> object.</returns>
-    public CreateBookingCommand ToCommand(int eventId)
+    public CreateBookingCommand ToCommand(int eventId, string baseUrl)
     {
         return new CreateBookingCommand
         (
            eventId,
            Tickets,
            Notes,
-           PaymentMethodId
+           PaymentMethodId, 
+           baseUrl
         );
     }
 

@@ -5,25 +5,29 @@ public class BookingTicket : Entity
     internal BookingTicket()
     { }
 
-    public BookingTicket(Ticket ticket)
+    public BookingTicket(Ticket ticket, string qrCodeImageUrl, Guid checkInCode)
     {
         Ticket = ticket;
-        CheckInCode = Guid.NewGuid();
+        CheckInCode = checkInCode;
 
         CreationDate = DateTime.UtcNow;
         LastModified = DateTime.UtcNow;
+
+        QrCodeImageUrl = qrCodeImageUrl;
     }
 
-    public BookingTicket(Ticket ticket, string holderName)
-        : this(ticket)
+    public BookingTicket(Ticket ticket, string holderName, string qrCodeImageUrl, Guid checkInCode)
+        : this(ticket, qrCodeImageUrl, checkInCode)
     {
         HolderName = holderName;
     }
+
+    public string? HolderName { get; set; }
+    public string QrCodeImageUrl { get; set; } = default!;
 
     public int TicketId { get; set; }
     public Ticket Ticket { get; set; } = default!;
     public int BookingId { get; set; }
     public Booking Booking { get; set; } = default!;
     public Guid CheckInCode { get; set; }
-    public string? HolderName { get; set; }
 }

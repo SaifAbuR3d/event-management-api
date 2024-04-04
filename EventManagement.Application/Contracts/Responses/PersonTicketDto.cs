@@ -9,6 +9,8 @@ public class PersonTicketDto
     public Guid CheckInCode { get; set; }
     public string? HolderName { get; set; }
 
+    public string QrCodeImageUrl { get; set; } = default!;
+
     public string TicketTypeName { get; set; } = default!;
     public int TicketTypeId { get; set; } = default!;
 

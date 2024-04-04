@@ -10,7 +10,8 @@ namespace EventManagement.API.Controllers;
 /// </summary>
 [ApiController]
 [Route("api")]
-public class BookingsController(IMediator mediator): ControllerBase
+public class BookingsController(IMediator mediator,
+    IWebHostEnvironment environment) : ControllerBase
 {
 
     /// <summary>
@@ -25,7 +26,7 @@ public class BookingsController(IMediator mediator): ControllerBase
     public async Task<ActionResult<BookingDto>> CreateBooking(int eventId, CreateBookingRequest request,
         CancellationToken cancellationToken)
     {
-        var command = request.ToCommand(eventId);
+        var command = request.ToCommand(eventId, environment.WebRootPath);
         var booking = await mediator.Send(command, cancellationToken);
         return Ok(booking);
     }
