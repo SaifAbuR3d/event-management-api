@@ -1,7 +1,8 @@
 ﻿using EventManagement.Application.Common;
 using static EventManagement.Domain.Constants.Location;
+using static EventManagement.Domain.Constants.CreatedTicket;
 using FluentValidation;
-using EventManagement.Application.Contracts.Responses;
+using EventManagement.Application.Contracts.Requests;
 
 namespace EventManagement.Application.Features.Events.CreateEvent;
 
@@ -58,8 +59,10 @@ public class CreateEventCommandValidator : AbstractValidator<CreateEventCommand>
         When(x => x.Tickets != null, () =>
         {
             RuleFor(x => x.Tickets)
-                .Must(x => x.Count > 0).WithMessage("At least one ticket type is required")
-                .Must(x => x.Count <= 5).WithMessage("Maximum 5 tickets types are allowed");
+                .Must(x => x.Count > MinTicketTypes)
+                .WithMessage($"At least {MinTicketTypes} ticket type is required")
+                .Must(x => x.Count <= MaxTicketTypes)
+                .WithMessage($"Maximum {MaxTicketTypes} tickets types are allowed");
 
             RuleForEach(x => x.Tickets)
                 .SetValidator(new TicketDtoValidator());
@@ -96,7 +99,7 @@ public class CreateEventCommandValidator : AbstractValidator<CreateEventCommand>
     }
 }
 
-public class TicketDtoValidator : AbstractValidator<TicketDto>
+public class TicketDtoValidator : AbstractValidator<CreateTicketRequest>
 {
     public TicketDtoValidator()
     {
@@ -106,11 +109,15 @@ public class TicketDtoValidator : AbstractValidator<TicketDto>
 
         RuleFor(x => x.Price)
             .NotEmpty()
-            .GreaterThan(0).WithMessage("Price must be greater than 0");
+            .GreaterThanOrEqualTo(MinPrice).WithMessage($"Price must be greater than or equal to {MinPrice}")
+            .LessThanOrEqualTo(MaxPrice).WithMessage($"Price must be less than or equal to {MaxPrice}");
 
-        RuleFor(x => x.Quantity)
+        RuleFor(x => x.TotalQuantity)
             .NotEmpty()
-            .GreaterThan(0).WithMessage("Quantity must be greater than 0");
+            .GreaterThanOrEqualTo(MinQuantity).WithMessage($"Total quantity must be greater than or equal to {MinQuantity}")
+            .LessThanOrEqualTo(MaxQuantity)
+            .WithMessage($"Total quantity must be less than or equal to {MaxQuantity}");
+
 
         RuleFor(x => x.StartSale)
             .NotEmpty()
@@ -118,6 +125,7 @@ public class TicketDtoValidator : AbstractValidator<TicketDto>
 
         RuleFor(x => x.EndSale)
             .NotEmpty()
-            .GreaterThanOrEqualTo(x => x.StartSale).WithMessage("End sale date must be after than or equal to start sale date");
+            .GreaterThanOrEqualTo(x => x.StartSale)
+            .WithMessage("End sale date must be after than or equal to start sale date");
     }
 }

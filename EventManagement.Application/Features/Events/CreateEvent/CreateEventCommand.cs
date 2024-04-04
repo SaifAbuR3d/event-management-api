@@ -1,6 +1,6 @@
 ﻿using EventManagement.Application.Abstractions.Images;
 using EventManagement.Application.Abstractions.Persistence;
-using EventManagement.Application.Contracts.Responses;
+using EventManagement.Application.Contracts.Requests;
 using EventManagement.Application.Exceptions;
 using EventManagement.Application.Features.Identity;
 using EventManagement.Domain.Entities;
@@ -15,7 +15,7 @@ namespace EventManagement.Application.Features.Events.CreateEvent;
 public record CreateEventCommand(string Name, string Description, int CategoryId,
     DateTime StartDate, DateTime EndDate, TimeOnly StartTime, TimeOnly EndTime,
     double? Lat, double? Lon, string? Street, int? CityId, bool IsOnline,
-    IFormFile Thumbnail, List<IFormFile>? Images, List<TicketDto> Tickets,
+    IFormFile Thumbnail, List<IFormFile>? Images, List<CreateTicketRequest> Tickets,
     bool IsManaged, int? MinAge, int? MaxAge, Gender? AllowedGender,
     string BaseUrl
     )
@@ -106,7 +106,7 @@ public class CreateEventCommandHandler(IValidator<CreateEventCommand> validator,
     {
         foreach (var ticket in request.Tickets)
         {
-            addedEvent.AddTicket(ticket.Name, ticket.Price, ticket.Quantity, ticket.StartSale, ticket.EndSale);
+            addedEvent.AddTicket(ticket.Name, ticket.Price, ticket.TotalQuantity, ticket.StartSale, ticket.EndSale);
         }
     }
 

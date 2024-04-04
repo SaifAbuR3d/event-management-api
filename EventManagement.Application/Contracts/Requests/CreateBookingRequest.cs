@@ -2,6 +2,11 @@
 
 namespace EventManagement.Application.Contracts.Requests;
 
+public class RequestedTicket
+{
+    public int TicketId { get; set; }
+    public int Quantity { get; set; }
+}
 
 public class CreateBookingRequest
 {
@@ -11,16 +16,16 @@ public class CreateBookingRequest
     /// <returns>The created <see cref="CreateBookingCommand"/> object.</returns>
     public CreateBookingCommand ToCommand(int eventId)
     {
-        return new CreateBookingCommand();
-    }
-
-    public class RequestedTicket
-    {
-        public int TicketId { get; set; }
-        public int Quantity { get; set; }
+        return new CreateBookingCommand
+        (
+           eventId,
+           Tickets,
+           Notes,
+           PaymentMethodId
+        );
     }
 
     public List<RequestedTicket> Tickets { get; set; } = [];
     public string? Notes { get; set; }
-    public int? PaymentMethodId { get; set; }
+    public int PaymentMethodId { get; set; }
 }

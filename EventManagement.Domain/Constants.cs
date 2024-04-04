@@ -25,4 +25,20 @@ public class Constants
         public const double MinLongitude = -180;
         public const double MaxLongitude = 180;
     }
+
+    public class CreatedTicket
+    {
+        public const int MinQuantity = 1;
+        public const int MaxQuantity = 1000;
+        public const int MinTicketTypes = 1; 
+        public const int MaxTicketTypes = 5;
+        public const decimal MinPrice = 0.01m;
+        public const decimal MaxPrice = 9999.99m;
+    }
+
+    public class RequestedTicket
+    {
+        public const int MinQuantity = 1;
+        public const int MaxQuantity = 10;
+    }
 }
