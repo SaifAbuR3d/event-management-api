@@ -11,5 +11,6 @@ public class BookingTicketProfile : AutoMapper.Profile
             .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Ticket.Price))
             .ForMember(dest => dest.TicketTypeName, opt => opt.MapFrom(src => src.Ticket.Name))
             .ForMember(dest => dest.TicketTypeId, opt => opt.MapFrom(src => src.Ticket.Id));
+            //  .ForMember(dest => dest.QrCode, opt => opt.Ignore());
     }
 }
