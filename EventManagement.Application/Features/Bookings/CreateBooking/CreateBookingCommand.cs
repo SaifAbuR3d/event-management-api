@@ -48,10 +48,6 @@ public class CreateBookingCommandHandler(IValidator<CreateBookingCommand> valida
 
         await unitOfWork.CommitTransactionAsync(cancellationToken);
 
-
-
-
-
         return mapper.Map<BookingDto>(bookingEntity);
     }
 

@@ -109,12 +109,12 @@ public class TicketDtoValidator : AbstractValidator<CreateTicketRequest>
 
         RuleFor(x => x.Price)
             .NotEmpty()
-            .GreaterThan(MinPrice).WithMessage($"Price must be greater than {MinPrice}")
+            .GreaterThanOrEqualTo(MinPrice).WithMessage($"Price must be greater than or equal to {MinPrice}")
             .LessThanOrEqualTo(MaxPrice).WithMessage($"Price must be less than or equal to {MaxPrice}");
 
         RuleFor(x => x.TotalQuantity)
             .NotEmpty()
-            .GreaterThan(MinQuantity).WithMessage($"Total quantity must be greater than {MinQuantity}")
+            .GreaterThanOrEqualTo(MinQuantity).WithMessage($"Total quantity must be greater than or equal to {MinQuantity}")
             .LessThanOrEqualTo(MaxQuantity)
             .WithMessage($"Total quantity must be less than or equal to {MaxQuantity}");
 

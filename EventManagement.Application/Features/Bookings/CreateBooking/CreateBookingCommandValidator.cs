@@ -14,7 +14,7 @@ public class RequestedTicketValidator : AbstractValidator<RequestedTicket>
 
         RuleFor(x => x.Quantity)
             .NotEmpty()
-            .GreaterThan(MinQuantity).WithMessage($"Quantity must be greater than {MinQuantity}.")
+            .GreaterThanOrEqualTo(MinQuantity).WithMessage($"Quantity must be greater than or equal to {MinQuantity}.")
             .LessThanOrEqualTo(MaxQuantity).WithMessage($"Quantity must be less than or equal " +
             $"to {MaxQuantity}.");
     }
