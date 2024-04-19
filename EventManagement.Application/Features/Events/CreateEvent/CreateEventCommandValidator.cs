@@ -1,5 +1,4 @@
-﻿using EventManagement.Application.Common;
-using static EventManagement.Domain.Constants.Location;
+﻿using static EventManagement.Domain.Constants.Location;
 using static EventManagement.Domain.Constants.CreatedTicket;
 using FluentValidation;
 using EventManagement.Application.Contracts.Requests;
@@ -12,7 +11,8 @@ public class CreateEventCommandValidator : AbstractValidator<CreateEventCommand>
     {
         RuleFor(x => x.Name)
             .NotEmpty()
-            .ValidName();
+            .Length(3, 7000).WithMessage("Title must be between 3 and 7000 characters");
+
 
         RuleFor(x => x.Description)
             .NotEmpty()
@@ -33,8 +33,9 @@ public class CreateEventCommandValidator : AbstractValidator<CreateEventCommand>
             .NotEmpty();
 
         RuleFor(x => x.EndTime)
-            .NotEmpty()
-            .GreaterThan(x => x.StartTime).WithMessage("End time must be after start time");
+            .NotEmpty();
+
+        // TODO - validate date time together 
 
         When(x => !x.IsOnline, () =>
         {
@@ -59,7 +60,7 @@ public class CreateEventCommandValidator : AbstractValidator<CreateEventCommand>
         When(x => x.Tickets != null, () =>
         {
             RuleFor(x => x.Tickets)
-                .Must(x => x.Count > MinTicketTypes)
+                .Must(x => x.Count >= MinTicketTypes)
                 .WithMessage($"At least {MinTicketTypes} ticket type is required")
                 .Must(x => x.Count <= MaxTicketTypes)
                 .WithMessage($"Maximum {MaxTicketTypes} tickets types are allowed");
