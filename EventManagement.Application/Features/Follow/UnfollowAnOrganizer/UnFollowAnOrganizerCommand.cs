@@ -4,19 +4,19 @@ using EventManagement.Application.Features.Identity;
 using EventManagement.Domain.Entities;
 using MediatR;
 
-namespace EventManagement.Application.Features.Follow.FollowAnOrganizer;
+namespace EventManagement.Application.Features.Follow.UnfollowAnOrganizer;
 
-public record FollowAnOrganizerCommand(int OrganizerId) : IRequest<Unit>;
+public record class UnFollowAnOrganizerCommand(int OrganizerId) : IRequest<Unit>;
 
-public class FollowAnOrganizerCommandHandler(ICurrentUser currentUser, IUnitOfWork unitOfWork,
+public class UnFollowAnOrganizerCommandHandler(ICurrentUser currentUser, IUnitOfWork unitOfWork,
     IAttendeeRepository attendeeRepository, IOrganizerRepository organizerRepository)
-    : IRequestHandler<FollowAnOrganizerCommand, Unit>
+    : IRequestHandler<UnFollowAnOrganizerCommand, Unit>
 {
-    public async Task<Unit> Handle(FollowAnOrganizerCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(UnFollowAnOrganizerCommand request, CancellationToken cancellationToken)
     {
         if (!currentUser.IsAttendee)
         {
-            throw new UnauthorizedAccessException("Only attendees can follow organizers");
+            throw new UnauthorizedAccessException("Only attendees can unfollow organizers");
         }
         var attendee = await attendeeRepository.GetAttendeeByUserIdAsync(currentUser.UserId, cancellationToken)
             ?? throw new NotFoundException(nameof(Attendee), nameof(Attendee.UserId), currentUser.UserId);
@@ -26,15 +26,17 @@ public class FollowAnOrganizerCommandHandler(ICurrentUser currentUser, IUnitOfWo
 
         var isFollowing = await attendeeRepository.IsFollowingOrganizer(attendee.Id, organizer.Id, cancellationToken);
 
-        if (isFollowing)
+        if (!isFollowing)
         {
-            throw new BadRequestException("Attendee is already following this organizer");
+            throw new BadRequestException("Attendee is not following this organizer");
         }
 
-        attendee.Follow(organizer);
+        await attendeeRepository.UnfollowAnOrganizer(attendee.Id, organizer.Id,
+            cancellationToken);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;
+
     }
 }

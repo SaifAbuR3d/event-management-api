@@ -46,9 +46,24 @@ public class AttendeeRepository(ApplicationDbContext context)
                         && f.OrganizerId == organizerId, cancellationToken);
     }
 
+    public async Task UnfollowAnOrganizer(int attendeeId, int organizerId,
+        CancellationToken cancellationToken)
+    {
+        var followingEntity = await context.Followings
+            .FirstOrDefaultAsync(f => f.AttendeeId == attendeeId
+                                   && f.OrganizerId == organizerId, cancellationToken);
+
+        if (followingEntity != null)
+        {
+            context.Followings.Remove(followingEntity);
+        }
+    }
+
     public async Task<Attendee?> GetAttendeeByUserIdAsync(int userId, CancellationToken cancellationToken)
     {
-        return await context.Attendees.FirstOrDefaultAsync(a => a.UserId == userId, cancellationToken);
+        return await context.Attendees
+            .Include(a => a.Followings)
+            .FirstOrDefaultAsync(a => a.UserId == userId, cancellationToken);
     }
 
     public Task<Attendee> DeleteAttendeeAsync(Attendee attendee, CancellationToken cancellationToken)
