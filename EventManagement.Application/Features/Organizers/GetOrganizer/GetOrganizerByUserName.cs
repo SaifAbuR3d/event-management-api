@@ -20,7 +20,9 @@ public class GetOrganizerByUsernameHandler(IUserRepository userRepository,
 
         var organizerDto = mapper.Map<OrganizerDto>(organizer);
 
-        organizerDto.ImageUrl = await userRepository.GetProfilePictureByUserId(organizer.UserId, cancellationToken);
+        organizerDto.ImageUrl = await userRepository.GetProfilePictureByUserId(organizer.UserId,
+            cancellationToken);
+        organizerDto.UserName = request.UserName;
 
         return organizerDto;
     }

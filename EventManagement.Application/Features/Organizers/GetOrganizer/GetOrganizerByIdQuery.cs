@@ -20,7 +20,10 @@ public class GetOrganizerByIdQueryHandler(IUserRepository userRepository,
 
         var organizerDto = mapper.Map<OrganizerDto>(organizer);
 
-        organizerDto.ImageUrl = await userRepository.GetProfilePictureByUserId(organizer.UserId, cancellationToken);
+        organizerDto.ImageUrl = await userRepository.GetProfilePictureByUserId(organizer.UserId,
+            cancellationToken);
+        organizerDto.UserName = await userRepository.GetUserNameByUserId(organizer.UserId,
+            cancellationToken) ?? throw new CustomException("Invalid State: userName is null");
         
         return organizerDto;
 
