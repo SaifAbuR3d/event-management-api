@@ -86,4 +86,12 @@ public class AttendeeRepository(ApplicationDbContext context)
     {
         throw new NotImplementedException();
     }
+
+    public async Task<bool> HasAttendedEvent(int attendeeId, int eventId,
+        CancellationToken cancellationToken)
+    {
+        return await context.Bookings
+            .AnyAsync(b => b.AttendeeId == attendeeId
+                        && b.EventId == eventId, cancellationToken);
+    }
 }

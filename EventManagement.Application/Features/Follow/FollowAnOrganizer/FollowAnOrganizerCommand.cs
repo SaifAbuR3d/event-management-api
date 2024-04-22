@@ -16,7 +16,7 @@ public class FollowAnOrganizerCommandHandler(ICurrentUser currentUser, IUnitOfWo
     {
         if (!currentUser.IsAttendee)
         {
-            throw new UnauthorizedAccessException("Only attendees can follow organizers");
+            throw new UnauthorizedException("Only attendees can follow organizers");
         }
         var attendee = await attendeeRepository.GetAttendeeByUserIdAsync(currentUser.UserId, cancellationToken)
             ?? throw new NotFoundException(nameof(Attendee), nameof(Attendee.UserId), currentUser.UserId);

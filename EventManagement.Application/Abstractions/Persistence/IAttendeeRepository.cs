@@ -16,4 +16,5 @@ public interface IAttendeeRepository
     GetAllQueryParameters parameters, CancellationToken cancellationToken);
     Task<bool> IsFollowingOrganizer(int attendeeId, int organizerId, CancellationToken cancellationToken);
     Task UnfollowAnOrganizer(int attendeeId, int organizerId, CancellationToken cancellationToken);
+    Task<bool> HasAttendedEvent(int attendeeId, int eventId, CancellationToken cancellationToken);
 }
