@@ -41,5 +41,17 @@ public class SortingHelper
             _ => o => o.Id
         };
     }
+
+    public static Expression<Func<Review, object>> ReviewsSortingKeySelector(string? sortColumn)
+    {
+        return sortColumn?.ToLower() switch
+        {
+            "rating" => r => r.Rating,
+            "creationDate" => r => r.CreationDate,
+            "lastModified" => r => r.LastModified,
+            "comment" => r => r.Comment,
+            _ => r => r.Id
+        };
+    }
     
 }

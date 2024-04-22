@@ -2,6 +2,7 @@
 using EventManagement.Application.Contracts.Responses;
 using EventManagement.Application.Features.Follow.FollowAnOrganizer;
 using EventManagement.Application.Features.Follow.GetFollowings;
+using EventManagement.Application.Features.Follow.UnfollowAnOrganizer;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
@@ -25,6 +26,18 @@ public class AttendeesController(IMediator mediator) : ControllerBase
     {
         await mediator.Send(command);
         return Ok(new { message = "Operation Successful" });
+    }
+
+    /// <summary>
+    /// unfollow an organizer by its id, attendee must be logged in
+    /// </summary>
+    /// <param name="organizerId"></param>
+    /// <returns></returns>
+    [HttpDelete("my/follows/{organizerId}")]
+    public async Task<ActionResult> UnfollowOrganizer(int organizerId)
+    {
+        await mediator.Send(new UnFollowAnOrganizerCommand(organizerId));
+        return NoContent();
     }
 
     /// <summary>

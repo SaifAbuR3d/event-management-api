@@ -16,6 +16,7 @@ public static class WebConfiguration
     /// Register services
     /// </summary>
     /// <param name="services"></param>
+    /// <param name="configuration"></param>
     /// <returns></returns>
     public static IServiceCollection AddWeb(
            this IServiceCollection services, IConfiguration configuration)

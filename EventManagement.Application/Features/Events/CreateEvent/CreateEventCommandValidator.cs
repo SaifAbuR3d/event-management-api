@@ -54,7 +54,7 @@ public class CreateEventCommandValidator : AbstractValidator<CreateEventCommand>
         When(x => x.Images != null, () =>
         {
             RuleFor(x => x.Images)
-                .Must(x => x.Count <= 3).WithMessage("Maximum 3 images are allowed");
+                .Must(x => x?.Count <= 3).WithMessage("Maximum 3 images are allowed");
         });
 
         When(x => x.Tickets != null, () =>

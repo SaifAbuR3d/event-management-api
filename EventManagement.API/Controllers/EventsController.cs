@@ -27,8 +27,8 @@ public class EventsController(IMediator mediator,
         CancellationToken cancellationToken)
     {
         var command = request.ToCommand(environment.WebRootPath);
-        var id = await mediator.Send(command, cancellationToken);
-        return Ok(new { eventId = id });
+        var eventId = await mediator.Send(command, cancellationToken);
+        return Ok(new { eventId });
     }
 
     /// <summary>

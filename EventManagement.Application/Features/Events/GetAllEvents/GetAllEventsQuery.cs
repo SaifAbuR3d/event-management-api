@@ -2,7 +2,6 @@
 using EventManagement.Application.Abstractions.Persistence;
 using EventManagement.Application.Contracts.Requests;
 using EventManagement.Application.Contracts.Responses;
-using EventManagement.Application.Exceptions;
 using MediatR;
 
 namespace EventManagement.Application.Features.Events.GetAllEvents;
