@@ -19,22 +19,29 @@ public class GetReviewsQueryHandler(IReviewRepository reviewRepository,
         var (reviews, paginationMetadata) = await reviewRepository.GetReviewsByEventIdAsync(request.EventId,
             request.Parameters, cancellationToken);
 
-        var reviewDtos = reviews.Select(async r => new ReviewDto
-        {
-            Id = r.Id,
-            AttendeeId = r.AttendeeId,
-            EventId = r.EventId,
-            Rating = r.Rating,
-            Comment = r.Comment,
-            CreationDate = r.CreationDate, 
-            LastModified = r.LastModified,
-            AttendeeName = await userRepository.GetFullNameByUserId(r.Attendee.UserId, cancellationToken)
-                ?? throw new CustomException("Invalid State: Attendee has no Name"),
-            AttendeeUserName = await userRepository.GetUserNameByUserId(r.Attendee.UserId, cancellationToken)
-                ?? throw new CustomException("Invalid State: Attendee has no UserName"),
-            AttendeeImageUrl = await userRepository.GetProfilePictureByUserId(r.Attendee.UserId, cancellationToken)
-        });
+        List<ReviewDto> reviewDtos = [];
 
-        return (await Task.WhenAll(reviewDtos), paginationMetadata);
+        foreach (var review in reviews)
+        {
+            var reviewDto = new ReviewDto
+            {
+                Id = review.Id,
+                AttendeeId = review.AttendeeId,
+                EventId = review.EventId,
+                Rating = review.Rating,
+                Comment = review.Comment,
+                CreationDate = review.CreationDate,
+                LastModified = review.LastModified,
+                AttendeeName = await userRepository.GetFullNameByUserId(review.Attendee.UserId, cancellationToken)
+                    ?? throw new CustomException("Invalid State: Attendee has no Name"),
+                AttendeeUserName = await userRepository.GetUserNameByUserId(review.Attendee.UserId, cancellationToken)
+                    ?? throw new CustomException("Invalid State: Attendee has no UserName"),
+                AttendeeImageUrl = await userRepository.GetProfilePictureByUserId(review.Attendee.UserId, cancellationToken),
+            };
+
+            reviewDtos.Add(reviewDto);
+        }
+
+        return (reviewDtos, paginationMetadata);
     }
 }
