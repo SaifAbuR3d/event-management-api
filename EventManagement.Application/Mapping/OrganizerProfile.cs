@@ -8,6 +8,7 @@ public class OrganizerProfile : AutoMapper.Profile
     public OrganizerProfile()
     {
         CreateMap<Organizer, OrganizerDto>()
-            .ForMember(dest => dest.ImageUrl, opt => opt.Ignore());
+            .ForMember(dest => dest.ImageUrl, opt => opt.Ignore())
+            .ForMember(dest => dest.UserName, opt => opt.Ignore());
     }
 }

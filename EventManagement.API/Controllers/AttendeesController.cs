@@ -49,7 +49,8 @@ public class AttendeesController(IMediator mediator) : ControllerBase
     /// <returns></returns>
     [HttpGet("{id}/follows")]
     public async Task<ActionResult<IEnumerable<OrganizerDto>>> GetFollowings(int id, 
-        [FromQuery] GetAllQueryParameters parameters, CancellationToken cancellationToken)
+        [FromQuery] GetAttendeeFollowingsQueryParameters parameters,
+        CancellationToken cancellationToken)
     {
         var (followings, paginationMetadata) = await mediator.Send(new GetOrganizersFollowedByAnAttendee(id, parameters), 
             cancellationToken);
