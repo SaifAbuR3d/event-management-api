@@ -67,6 +67,10 @@ public class EventRepository(ApplicationDbContext context) : IEventRepository
             query = query.Where(e => e.Organizer.Id == queryParameters.OrganizerId);
         }
 
+        // TODO: for more precise result, you can compare 'current datetime'
+        // with 'new DateTime(event.startDate, event.startTime)'  ....
+
+
         if (queryParameters.PreviousEvents)
         {
             query = query.Where(e => e.EndDate < DateOnly.FromDateTime(DateTime.UtcNow));

@@ -28,6 +28,41 @@ public class Event : Entity
         LastModified = DateTime.UtcNow;
     }
 
+    public bool HasStarted()
+    {
+        var eventStart = new DateTime(StartDate.Year, StartDate.Month, StartDate.Day,
+                       StartTime.Hour, StartTime.Minute, StartTime.Second);
+
+        return eventStart < DateTime.UtcNow;
+    }
+    public bool HasEnded()
+    {
+        var eventEnd = new DateTime(EndDate.Year, EndDate.Month, EndDate.Day,
+                                  EndTime.Hour, EndTime.Minute, EndTime.Second);
+
+        return eventEnd < DateTime.UtcNow;
+    }
+
+    public bool IsRunning()
+    {
+        return HasStarted() && !HasEnded();
+    }
+
+    public bool TicketsSalesStarted()
+    {
+        return Tickets.Any(t => t.StartSale < DateTime.UtcNow);
+    }
+
+    public bool TicketsSalesEnded()
+    {
+        return Tickets.Any(t => t.EndSale < DateTime.UtcNow);
+    }
+
+    public bool TicketsSalesRunning()
+    {
+        return TicketsSalesStarted() && !TicketsSalesEnded();
+    }
+
     public void SetLocation(double latitude, double longitude, string? street, int? cityId)
     {
         if (IsOnline)
