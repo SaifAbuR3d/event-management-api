@@ -24,7 +24,13 @@ public class GetOrganizerByIdQueryHandler(IUserRepository userRepository,
             cancellationToken);
         organizerDto.UserName = await userRepository.GetUserNameByUserId(organizer.UserId,
             cancellationToken) ?? throw new CustomException("Invalid State: userName is null");
-        
+
+        // If the organizer does not have a profile, return an empty profile
+        if (organizer.Profile == null)
+        {
+            organizerDto.Profile = new ProfileDto();
+        }
+
         return organizerDto;
 
     }

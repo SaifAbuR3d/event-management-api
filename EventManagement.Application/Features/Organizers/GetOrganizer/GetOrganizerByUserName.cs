@@ -24,6 +24,12 @@ public class GetOrganizerByUsernameHandler(IUserRepository userRepository,
             cancellationToken);
         organizerDto.UserName = request.UserName;
 
+        // If the organizer does not have a profile, return an empty profile
+        if(organizer.Profile == null)
+        {
+            organizerDto.Profile = new ProfileDto();
+        }
+
         return organizerDto;
     }
 }

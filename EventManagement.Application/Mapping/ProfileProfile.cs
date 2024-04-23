@@ -7,6 +7,7 @@ public class ProfileProfile : AutoMapper.Profile
 {
     public ProfileProfile()
     {
-        CreateMap<Profile, ProfileDto>();
+        CreateMap<Profile, ProfileDto>()
+            .ForAllMembers(opt => opt.NullSubstitute(string.Empty));
     }
 }
