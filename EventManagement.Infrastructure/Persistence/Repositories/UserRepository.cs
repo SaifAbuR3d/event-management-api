@@ -44,6 +44,34 @@ public class UserRepository(ApplicationDbContext context) : IUserRepository
         return user?.ImageUrl;
     }
 
+    public async Task<string?> GetIdByUserId(int userId, CancellationToken cancellationToken)
+    {
+        bool attendeeExists = await context.Attendees
+            .AnyAsync(a => a.UserId == userId, cancellationToken);
+        if (attendeeExists)
+        {
+            return await context.Attendees
+                .Where(a => a.UserId == userId)
+                .Select(a => a.Id.ToString())
+                .FirstOrDefaultAsync(cancellationToken);
+        }
+
+        bool organizerExists = await context.Organizers
+            .AnyAsync(o => o.UserId == userId, cancellationToken);
+        if (organizerExists)
+        {
+            return await context.Organizers
+                .Where(o => o.UserId == userId)
+                .Select(o => o.Id.ToString())
+                .FirstOrDefaultAsync(cancellationToken);
+        }
+
+        return context.Admins
+            .Where(a => a.UserId == userId)
+            .Select(a => a.Id.ToString())
+            .FirstOrDefault();
+    }
+
     public async Task DeleteProfilePictureByUserId(int userId, CancellationToken cancellationToken)
     {
         var userImage = await context.UserImages.FirstOrDefaultAsync(ui => ui.UserId == userId, cancellationToken);

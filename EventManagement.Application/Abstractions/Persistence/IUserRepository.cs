@@ -10,4 +10,5 @@ public interface IUserRepository
     Task<string?> GetProfilePictureByUserId(int userId, CancellationToken cancellationToken);
     Task<UserImage?> AddUserImageAsync(UserImage userImage, CancellationToken cancellationToken);
     Task DeleteProfilePictureByUserId(int userId, CancellationToken cancellationToken);
+    Task<string?> GetIdByUserId(int userId, CancellationToken cancellationToken);
 }
