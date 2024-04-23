@@ -56,7 +56,7 @@ public class IdentityManager(UserManager<ApplicationUser> userManager,
 
         var roles = await GetUserRole(user);
 
-        var token = jwtTokenGenerator.GenerateToken(user, roles)
+        var token = await jwtTokenGenerator.GenerateToken(user, roles)
             ?? throw new TokenGenerationFailedException("null token");
 
         return token; 

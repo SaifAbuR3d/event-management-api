@@ -1,4 +1,5 @@
-﻿using EventManagement.Application.Exceptions;
+﻿using EventManagement.Application.Abstractions.Persistence;
+using EventManagement.Application.Exceptions;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -10,11 +11,13 @@ namespace EventManagement.Infrastructure.Identity;
 public class JwtTokenGenerator : IJwtTokenGenerator
 {
     private readonly JwtSettings _jwtSettings;
-    public JwtTokenGenerator(IOptions<JwtSettings> jwtSettings)
+    private readonly IUserRepository _userRepository;
+    public JwtTokenGenerator(IOptions<JwtSettings> jwtSettings, IUserRepository userRepository)
     {
         _jwtSettings = jwtSettings.Value;
+        _userRepository = userRepository;
     }
-    public string? GenerateToken(ApplicationUser user, IList<string> roles)
+    public async Task<string?> GenerateToken(ApplicationUser user, IList<string> roles)
     {
         if (_jwtSettings.Key == null
             || _jwtSettings.Issuer == null)
@@ -22,7 +25,7 @@ public class JwtTokenGenerator : IJwtTokenGenerator
             throw new TokenGenerationFailedException("JwtSettings section is missing");
         }
 
-        var claims = GetClaims(user, roles);
+        var claims = await GetClaims(user, roles);
 
         var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_jwtSettings.Key));
 
@@ -39,18 +42,22 @@ public class JwtTokenGenerator : IJwtTokenGenerator
         return encryptedToken;
     }
 
-    private static List<Claim> GetClaims(ApplicationUser user, IList<string> roles)
+    private async Task<List<Claim>> GetClaims(ApplicationUser user, IList<string> roles)
     {
         if (user.Email == null || user.UserName == null || roles.IsNullOrEmpty())
         {
             throw new UnauthenticatedException();
         }
 
+        var id = await _userRepository.GetIdByUserId(user.Id, CancellationToken.None)
+            ?? throw new CustomException("Invalid State: User Id Not Found");
+
         var claims = new List<Claim>
                 {
                     new(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new(ClaimTypes.Name, user.UserName),
-                    new(ClaimTypes.Email, user.Email)
+                    new(ClaimTypes.Email, user.Email),
+                    new("id", id )
                 };
 
         foreach (var role in roles)
