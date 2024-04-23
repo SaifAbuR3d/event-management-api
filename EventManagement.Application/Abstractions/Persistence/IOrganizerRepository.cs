@@ -13,5 +13,5 @@ public interface IOrganizerRepository
     Task<Organizer?> GetOrganizerByEmailAsync(string email, CancellationToken cancellationToken);
     Task<Organizer> DeleteOrganizerAsync(Organizer organizer, CancellationToken cancellationToken);
     Task<(IEnumerable<Organizer>, PaginationMetadata)> GetOrganizersFollowedByAttendee(int attendeeId,
-    GetAllQueryParameters parameters, CancellationToken cancellationToken);
+    GetAttendeeFollowingsQueryParameters parameters, CancellationToken cancellationToken);
 }

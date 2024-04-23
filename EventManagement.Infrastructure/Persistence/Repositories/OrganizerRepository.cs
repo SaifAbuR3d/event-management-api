@@ -51,12 +51,14 @@ public class OrganizerRepository(ApplicationDbContext context)
         return await GetOrganizerByUserIdAsync(user.Id, cancellationToken);
     }
 
-    public async Task<(IEnumerable<Organizer>, PaginationMetadata)> GetOrganizersFollowedByAttendee(int attendeeId,
-    GetAllQueryParameters parameters, CancellationToken cancellationToken)
+    public async Task<(IEnumerable<Organizer>, PaginationMetadata)> GetOrganizersFollowedByAttendee(
+        int attendeeId, GetAttendeeFollowingsQueryParameters parameters, CancellationToken cancellationToken)
     {
         var query = context.Followings
             .Where(f => f.AttendeeId == attendeeId)
             .Select(f => f.Organizer);
+
+        query = ApplyFilters(parameters, query);
 
         query = SortingHelper.ApplySorting(query,
             parameters.SortOrder, SortingHelper.OrganizersSortingKeySelector(parameters.SortColumn));
@@ -71,6 +73,27 @@ public class OrganizerRepository(ApplicationDbContext context)
             .ToListAsync(cancellationToken);
 
         return (result, paginationMetadata);
+    }
+
+    private IQueryable<Organizer> ApplyFilters(GetAttendeeFollowingsQueryParameters parameters, IQueryable<Organizer> query)
+    {
+        if (parameters.OrganizerId.HasValue)
+        {
+            query = query.Where(o => o.Id == parameters.OrganizerId.Value);
+        }
+
+        if(parameters.OrganizerUserName != null)
+        {
+            var userId = context.Users
+                .Where(u => u.UserName == parameters.OrganizerUserName)
+                .Select(u => u.Id)
+                .FirstOrDefault();
+
+            query = query.Where(o => o.UserId == userId);
+        }
+
+
+        return query;
     }
 
     public Task<Organizer> DeleteOrganizerAsync(Organizer organizer,
