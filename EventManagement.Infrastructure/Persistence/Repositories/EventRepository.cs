@@ -67,9 +67,13 @@ public class EventRepository(ApplicationDbContext context) : IEventRepository
             query = query.Where(e => e.Organizer.Id == queryParameters.OrganizerId);
         }
 
+        // TODO: for more precise result, you can compare 'current datetime'
+        // with 'new DateTime(event.startDate, event.startTime)'  ....
+
+
         if (queryParameters.PreviousEvents)
         {
-            query = query.Where(e => e.EndDate <= DateOnly.FromDateTime(DateTime.UtcNow));
+            query = query.Where(e => e.EndDate < DateOnly.FromDateTime(DateTime.UtcNow));
         }
 
         if (queryParameters.UpcomingEvents)
@@ -77,6 +81,42 @@ public class EventRepository(ApplicationDbContext context) : IEventRepository
             query = query.Where(e => e.StartDate > DateOnly.FromDateTime(DateTime.UtcNow));
         }
 
+        if (queryParameters.RunningEvents)
+        {
+            query = query.Where(e => e.StartDate <= DateOnly.FromDateTime(DateTime.UtcNow)
+                                  && e.EndDate >= DateOnly.FromDateTime(DateTime.UtcNow));
+        }
+
         return query;
     }
+
+    public async Task<IEnumerable<Event>> GetEventsMayLikeAsync(int eventId,
+        CancellationToken cancellationToken)
+    {
+        var eventCategories = await context.Events
+            .Where(e => e.Id == eventId)
+            .SelectMany(e => e.Categories.Select(c => c.Id))
+            .ToListAsync(cancellationToken);
+
+        var events = await context.Events
+            .Include(e => e.Categories)
+            .Include(e => e.Organizer)
+            .Include(e => e.EventImages)
+            .Include(e => e.Tickets)
+            .Where(e => e.Categories.Any(c => eventCategories.Contains(c.Id)))
+            .Where(e => e.Id != eventId)
+            .OrderBy(e => Guid.NewGuid())
+            .Take(10)
+            .ToListAsync(cancellationToken);
+
+        return events;
+    }
+
+    // TODO: Implement this method, (combine attendee interests and location with event categories and location)
+    public async Task<IEnumerable<Event>> GetEventsMayLikeForAttendeeAsync(int eventId,
+    int attendeeId, CancellationToken cancellationToken)
+    {
+        return await GetEventsMayLikeAsync(eventId, cancellationToken);
+    }
+
 }

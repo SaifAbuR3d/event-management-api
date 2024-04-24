@@ -38,6 +38,12 @@ public class CurrentUser(IHttpContextAccessor httpContextAccessor) : ICurrentUse
             ?? throw new UnauthenticatedException();
 
     /// <summary>
+    /// returns true is the current user is authenticated
+    /// </summary>
+    public bool IsAuthenticated => httpContextAccessor.HttpContext?.User.Identity?.IsAuthenticated
+        ?? false;
+
+    /// <summary>
     /// returns true is the current authenticated user is a guest
     /// </summary>
     public bool IsAttendee => Role == UserRole.Attendee.ToString();

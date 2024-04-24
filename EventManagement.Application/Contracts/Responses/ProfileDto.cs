@@ -2,10 +2,10 @@
 
 public class ProfileDto
 {
-    public string Bio { get; set; } = "";
-    public string Website { get; set; } = "";
-    public string Twitter { get; set; } = "";
-    public string Facebook { get; set; } = "";
-    public string LinkedIn { get; set; } = "";
-    public string Instagram { get; set; } = "";
+    public string Bio { get; set; } = string.Empty;
+    public string Website { get; set; } = string.Empty;
+    public string Twitter { get; set; } = string.Empty;
+    public string Facebook { get; set; } = string.Empty;  
+    public string LinkedIn { get; set; } = string.Empty;
+    public string Instagram { get; set; } = string.Empty;
 }

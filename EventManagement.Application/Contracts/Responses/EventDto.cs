@@ -15,6 +15,14 @@ public class EventDto
     public TimeOnly StartTime { get; set; }
     public TimeOnly EndTime { get; set; }
 
+    public bool HasStarted { get; set; }
+    public bool HasEnded { get; set; }
+    public bool IsRunning { get; set; }
+    public bool TicketsSalesStarted { get; set; }
+    public bool TicketsSalesEnded { get; set; }
+    public bool TicketsSalesRunning { get; set; }
+
+
     public bool IsOnline { get; set; }
     public double? Lat { get; set; }
     public double? Lon { get; set; }

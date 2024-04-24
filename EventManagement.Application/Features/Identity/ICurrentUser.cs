@@ -9,4 +9,5 @@ public interface ICurrentUser
     bool IsAttendee { get; }
     bool IsOrganizer { get; }
     bool IsAdmin { get; }
+    bool IsAuthenticated { get; }
 }
