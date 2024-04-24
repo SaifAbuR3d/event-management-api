@@ -2,6 +2,7 @@
 using EventManagement.Application.Contracts.Responses;
 using EventManagement.Application.Features.Events.GetAllEvents;
 using EventManagement.Application.Features.Events.GetEvent;
+using EventManagement.Application.Features.Events.GetOtherEventsMayLike;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
@@ -58,6 +59,20 @@ public class EventsController(IMediator mediator,
         var (events, paginationMetadata) = await mediator.Send(new GetAllEventsQuery(parameters),
             cancellationToken);
         Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(paginationMetadata));
+        return Ok(events);
+    }
+
+    /// <summary>
+    /// returns other events that the user may like
+    /// </summary>
+    /// <param name="eventId"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    [HttpGet("{eventId}/may-like")]
+    public async Task<ActionResult<IEnumerable<EventDto>>> GetOtherEventsMayLike(int eventId,
+               CancellationToken cancellationToken)
+    {
+        var events = await mediator.Send(new GetOtherEventsMayLikeQuery(eventId), cancellationToken);
         return Ok(events);
     }
 }
