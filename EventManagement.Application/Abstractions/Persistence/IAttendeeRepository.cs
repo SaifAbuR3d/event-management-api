@@ -17,4 +17,6 @@ public interface IAttendeeRepository
     Task<bool> IsFollowingOrganizer(int attendeeId, int organizerId, CancellationToken cancellationToken);
     Task UnfollowAnOrganizer(int attendeeId, int organizerId, CancellationToken cancellationToken);
     Task<bool> HasAttendedEvent(int attendeeId, int eventId, CancellationToken cancellationToken);
+    Task<bool> DoesLikeEvent(int attendeeId, int eventId, CancellationToken cancellationToken);
+    Task RemoveLikeFromEvent(int attendeeId, int eventId, CancellationToken cancellationToken);
 }

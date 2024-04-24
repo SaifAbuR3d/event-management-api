@@ -4,6 +4,7 @@ using EventManagement.Application.Contracts.Responses;
 using EventManagement.Domain.Entities;
 using EventManagement.Infrastructure.Persistence.Helpers;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 
 namespace EventManagement.Infrastructure.Persistence.Repositories;
 
@@ -66,6 +67,36 @@ public class AttendeeRepository(ApplicationDbContext context)
             .FirstOrDefaultAsync(a => a.UserId == userId, cancellationToken);
     }
 
+    public async Task<bool> HasAttendedEvent(int attendeeId, int eventId,
+        CancellationToken cancellationToken)
+    {
+        return await context.Bookings
+            .AnyAsync(b => b.AttendeeId == attendeeId
+                        && b.EventId == eventId, cancellationToken);
+    }
+
+    public async Task<bool> DoesLikeEvent(int attendeeId, int eventId,
+        CancellationToken cancellationToken)
+    {
+        return await context.Likes
+            .AnyAsync(l => l.AttendeeId == attendeeId
+                        && l.EventId == eventId, cancellationToken);
+    }
+
+    public async Task RemoveLikeFromEvent(int attendeeId, int eventId,
+        CancellationToken cancellationToken)
+    {
+        var likeEntity = await context.Likes
+            .FirstOrDefaultAsync(l => l.AttendeeId == attendeeId
+                                   && l.EventId == eventId, cancellationToken);
+
+        if (likeEntity != null)
+        {
+            context.Likes.Remove(likeEntity);
+        }
+    }
+
+
     public Task<Attendee> DeleteAttendeeAsync(Attendee attendee, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
@@ -85,13 +116,5 @@ public class AttendeeRepository(ApplicationDbContext context)
     public Task<Attendee> UpdateAttendeeAsync(Attendee attendee, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
-    }
-
-    public async Task<bool> HasAttendedEvent(int attendeeId, int eventId,
-        CancellationToken cancellationToken)
-    {
-        return await context.Bookings
-            .AnyAsync(b => b.AttendeeId == attendeeId
-                        && b.EventId == eventId, cancellationToken);
     }
 }

@@ -38,6 +38,7 @@ public class ApplicationDbContext
     public DbSet<IdentityVerificationRequest> IdentityVerificationRequests { get; set; } = default!;
 
     public DbSet<Following> Followings { get; set; } = default!;
+    public DbSet<Like> Likes { get; set; } = default!;
 
     public DbSet<Review> Reviews { get; set; } = default!;
     public DbSet<Report> Reports { get; set; } = default!;
