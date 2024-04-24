@@ -15,6 +15,11 @@ public class Attendee : Entity
         Followings.Add(new Following(this, organizer));
     }
 
+    public void Like(Event @event)
+    {
+        Likes.Add(new Like(this, @event));
+    }
+
     public DateOnly DateOfBirth { get; set; }
     public Gender Gender { get; set; } = default!;
     public bool IsVerified { get; set; }
@@ -26,4 +31,5 @@ public class Attendee : Entity
     public ICollection<Review> Reviews { get; set; } = new List<Review>();
     public ICollection<RegistrationRequest> RegistrationRequests { get; set; } = new List<RegistrationRequest>();
     public ICollection<Category> Categories { get; set; } = new List<Category>();
+    public ICollection<Like> Likes { get; set; } = new List<Like>();
 }

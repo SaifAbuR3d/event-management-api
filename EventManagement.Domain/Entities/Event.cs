@@ -161,4 +161,5 @@ public class Event : Entity
     public ICollection<RegistrationRequest>? RegistrationRequests { get; set; } = new List<RegistrationRequest>();
     public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
     public ICollection<Review> Reviews { get; set; } = new List<Review>();
+    public ICollection<Like> Likes { get; set; } = new List<Like>();
 }
