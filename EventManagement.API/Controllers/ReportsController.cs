@@ -3,7 +3,6 @@ using EventManagement.Application.Features.Reports.AddReport;
 using EventManagement.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using static EventManagement.Domain.Constants;
 using System.Text.Json;
 using EventManagement.Application.Features.Reports.GetReports;
 

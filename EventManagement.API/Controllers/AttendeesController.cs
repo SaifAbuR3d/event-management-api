@@ -3,6 +3,8 @@ using EventManagement.Application.Contracts.Responses;
 using EventManagement.Application.Features.Follow.FollowAnOrganizer;
 using EventManagement.Application.Features.Follow.GetFollowings;
 using EventManagement.Application.Features.Follow.UnfollowAnOrganizer;
+using EventManagement.Application.Features.Like.LikeAnEvent;
+using EventManagement.Application.Features.Like.RemoveLike;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
@@ -56,5 +58,29 @@ public class AttendeesController(IMediator mediator) : ControllerBase
             cancellationToken);
         Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(paginationMetadata));
         return Ok(followings);
+    }
+
+    /// <summary>
+    /// like an event by its id, attendee must be logged in
+    /// </summary>
+    /// <param name="command"></param>
+    /// <returns></returns>
+    [HttpPost("my/likes")]
+    public async Task<ActionResult> LikeAnEvent(LikeAnEventCommand command)
+    {
+        await mediator.Send(command);
+        return Ok(new { message = "Operation Successful" });
+    }
+
+    /// <summary>
+    /// remove like from an event by its id, attendee must be logged in
+    /// </summary>
+    /// <param name="eventId"></param>
+    /// <returns></returns>
+    [HttpDelete("my/likes/{eventId}")]
+    public async Task<ActionResult> UnlikeAnEvent(int eventId)
+    {
+        await mediator.Send(new RemoveLikeFromEventCommand(eventId));
+        return NoContent();
     }
 }
