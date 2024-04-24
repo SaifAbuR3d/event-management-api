@@ -9,8 +9,6 @@ namespace EventManagement.Infrastructure.Persistence.Repositories;
 
 public class EventRepository(ApplicationDbContext context) : IEventRepository
 {
-
-
     public async Task<Event> AddEventAsync(Event @event, CancellationToken cancellationToken)
     {
         var entry = await context.Events.AddAsync(@event, cancellationToken);
@@ -38,7 +36,7 @@ public class EventRepository(ApplicationDbContext context) : IEventRepository
             .Include(e => e.Categories)
             .AsQueryable();
 
-        query = ApplyFilters(query, queryParameters);
+        query = await ApplyFilters(query, queryParameters);
 
         query = SortingHelper.ApplySorting(query, queryParameters.SortOrder,
             SortingHelper.EventsSortingKeySelector(queryParameters.SortColumn));
@@ -55,7 +53,8 @@ public class EventRepository(ApplicationDbContext context) : IEventRepository
         return (result, paginationMetadata);
     }
 
-    private static IQueryable<Event> ApplyFilters(IQueryable<Event> query, GetAllEventsQueryParameters queryParameters)
+    private async Task<IQueryable<Event>> ApplyFilters(IQueryable<Event> query,
+        GetAllEventsQueryParameters queryParameters)
     {
         if (queryParameters.CategoryId.HasValue)
         {
@@ -85,6 +84,16 @@ public class EventRepository(ApplicationDbContext context) : IEventRepository
         {
             query = query.Where(e => e.StartDate <= DateOnly.FromDateTime(DateTime.UtcNow)
                                   && e.EndDate >= DateOnly.FromDateTime(DateTime.UtcNow));
+        }
+
+        if(queryParameters.LikedBy.HasValue)
+        {
+            var eventLikedByAttendee = await context.Likes
+                .Where(l => l.AttendeeId == queryParameters.LikedBy)
+                .Select(l => l.EventId)
+                .ToListAsync();
+
+            query = query.Where(e => eventLikedByAttendee.Contains(e.Id));
         }
 
         return query;
