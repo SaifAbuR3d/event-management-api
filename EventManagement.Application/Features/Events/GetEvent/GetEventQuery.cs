@@ -26,6 +26,13 @@ public class GetEventQueryHandler(IEventRepository eventRepository, IUserReposit
         eventDto.Organizer.ImageUrl = organizerImageUrl;
         eventDto.Organizer.UserName = await userRepository.GetUserNameByUserId(@event.Organizer.UserId,
             cancellationToken) ?? throw new CustomException("Invalid State: Organizer has no UserName");
+
+        // If the organizer does not have a profile, return an empty profile
+        if (eventDto.Organizer.Profile == null)
+        {
+            eventDto.Organizer.Profile = new ProfileDto();
+        }
+
         return eventDto;
     }
 }
