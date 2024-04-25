@@ -2,6 +2,7 @@
 using EventManagement.Application.Abstractions.Persistence;
 using EventManagement.Application.Contracts.Responses;
 using EventManagement.Application.Exceptions;
+using EventManagement.Application.Features.Identity;
 using EventManagement.Domain.Entities;
 using MediatR;
 
@@ -10,6 +11,7 @@ namespace EventManagement.Application.Features.Events.GetEvent;
 public record GetEventQuery(int EventId) : IRequest<EventDto>;
 
 public class GetEventQueryHandler(IEventRepository eventRepository, IUserRepository userRepository,
+    ICurrentUser currentUser,IAttendeeRepository attendeeRepository,
     IMapper mapper) : IRequestHandler<GetEventQuery, EventDto>
 {
 
@@ -31,6 +33,15 @@ public class GetEventQueryHandler(IEventRepository eventRepository, IUserReposit
         if (eventDto.Organizer.Profile == null)
         {
             eventDto.Organizer.Profile = new ProfileDto();
+        }
+
+        if (currentUser.IsAuthenticated && currentUser.IsAttendee)
+        {
+            var attendeeId = await userRepository.GetIdByUserId(currentUser.UserId, cancellationToken)
+                ?? throw new NotFoundException(nameof(Attendee), nameof(Attendee.UserId), currentUser.UserId);
+
+            eventDto.IsLikedByCurrentUser = await attendeeRepository.DoesLikeEvent(int.Parse(attendeeId),
+                @event.Id, cancellationToken);
         }
 
         return eventDto;
