@@ -22,6 +22,8 @@ public class EventDto
     public bool TicketsSalesEnded { get; set; }
     public bool TicketsSalesRunning { get; set; }
 
+    public bool IsLikedByCurrentUser { get; set; }
+
 
     public bool IsOnline { get; set; }
     public double? Lat { get; set; }

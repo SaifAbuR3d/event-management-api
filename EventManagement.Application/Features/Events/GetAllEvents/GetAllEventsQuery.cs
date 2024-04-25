@@ -3,6 +3,8 @@ using EventManagement.Application.Abstractions.Persistence;
 using EventManagement.Application.Contracts.Requests;
 using EventManagement.Application.Contracts.Responses;
 using EventManagement.Application.Exceptions;
+using EventManagement.Application.Features.Identity;
+using EventManagement.Domain.Entities;
 using MediatR;
 
 namespace EventManagement.Application.Features.Events.GetAllEvents;
@@ -10,8 +12,10 @@ namespace EventManagement.Application.Features.Events.GetAllEvents;
 public record GetAllEventsQuery(GetAllEventsQueryParameters Parameters)
     : IRequest<(IEnumerable<EventDto>, PaginationMetadata)>;
 
-public class GetAllEventsQueryHandler(IEventRepository eventRepository, IMapper mapper)
-    : IRequestHandler<GetAllEventsQuery, (IEnumerable<EventDto>, PaginationMetadata)>
+public class GetAllEventsQueryHandler(IEventRepository eventRepository, IMapper mapper,
+    ICurrentUser currentUser, IAttendeeRepository attendeeRepository, 
+    IUserRepository userRepository) :
+    IRequestHandler<GetAllEventsQuery, (IEnumerable<EventDto>, PaginationMetadata)>
 {
     public async Task<(IEnumerable<EventDto>, PaginationMetadata)> Handle(GetAllEventsQuery request,
         CancellationToken cancellationToken)
@@ -20,6 +24,34 @@ public class GetAllEventsQueryHandler(IEventRepository eventRepository, IMapper 
 
         var (events, paginationMetadata) = await eventRepository.GetEventsAsync(request.Parameters, cancellationToken);
         var eventsDto = mapper.Map<IEnumerable<EventDto>>(events);
+
+        if (currentUser.IsAuthenticated && currentUser.IsAttendee)
+        {
+            var attendeeId = await userRepository.GetIdByUserId(currentUser.UserId, cancellationToken)
+                ?? throw new NotFoundException(nameof(Attendee), nameof(Attendee.UserId), currentUser.UserId);
+
+            foreach (var eventDto in eventsDto)
+            {
+                eventDto.IsLikedByCurrentUser = await attendeeRepository.DoesLikeEvent(int.Parse(attendeeId),
+                                       eventDto.Id, cancellationToken);
+            }
+        }
+
+        foreach(var eventDto in eventsDto)
+        {
+            eventDto.Organizer.ImageUrl = await userRepository.GetProfilePictureByUserId(
+                eventDto.Organizer.UserId, cancellationToken);
+
+            eventDto.Organizer.UserName = await userRepository.GetUserNameByUserId(
+                               eventDto.Organizer.UserId, cancellationToken)
+                ?? throw new CustomException("Invalid State: Organizer has no UserName");
+
+            if (eventDto.Organizer.Profile == null)
+            {
+                eventDto.Organizer.Profile = new ProfileDto();
+            }
+        }
+
         return (eventsDto, paginationMetadata);
     }
 
