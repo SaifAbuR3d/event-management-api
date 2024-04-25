@@ -56,6 +56,11 @@ public class EventRepository(ApplicationDbContext context) : IEventRepository
     private async Task<IQueryable<Event>> ApplyFilters(IQueryable<Event> query,
         GetAllEventsQueryParameters queryParameters)
     {
+        if (queryParameters.EventId.HasValue)
+        {
+            query = query.Where(e => e.Id == queryParameters.EventId);
+        }
+
         if (queryParameters.CategoryId.HasValue)
         {
             query = query.Where(e => e.Categories.Any(c => c.Id == queryParameters.CategoryId));
