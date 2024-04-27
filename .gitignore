@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 
 /EventManagement.Api/wwwroot/images
+/EventManagement.Api/wwwroot/ivr-documents

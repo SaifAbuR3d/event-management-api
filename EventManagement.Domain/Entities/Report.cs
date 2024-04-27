@@ -34,7 +34,7 @@ public class Report : Entity
     }
 
     public string Content { get; set; } = default!;
-    public ReportStatus Status { get; set; }
+    public ReportStatus Status { get; private set; }
     public int EventId { get; set; }
     public Event Event { get; set; } = default!;
     public int AttendeeId { get; set; }

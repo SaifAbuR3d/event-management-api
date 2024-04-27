@@ -11,6 +11,16 @@ public enum DocumentType
 }
 public class Document : Entity
 {
-    public DocumentType DocumentType { get; set; } = default!;
-    public string DocumentFileUrl { get; set; } = default!;
+    internal Document()
+    { }
+    public Document(DocumentType documentType, string documentFileUrl)
+    {
+        DocumentType = documentType;
+        DocumentFileUrl = documentFileUrl;
+
+        CreationDate = DateTime.UtcNow;
+        LastModified = DateTime.UtcNow;
+    }
+    public DocumentType DocumentType { get; private set; } = default!;
+    public string DocumentFileUrl { get; private set; } = default!;
 }
