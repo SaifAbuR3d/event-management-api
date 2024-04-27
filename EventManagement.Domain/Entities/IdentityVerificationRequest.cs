@@ -55,6 +55,8 @@ public class IdentityVerificationRequest : Entity
         LastModified = DateTime.UtcNow;
     }
 
+
+    public bool IsForOrganizer { get; set;}
     public IdentityVerificationRequestStatus Status { get; private set; } = default!;
     public string? AdminMessage { get; private set; }
     public int UserId { get; private set; }
