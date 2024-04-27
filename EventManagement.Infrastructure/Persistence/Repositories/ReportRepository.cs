@@ -21,6 +21,7 @@ public class ReportRepository(ApplicationDbContext context) : IReportRepository
     {
         var query = context.Reports
             .Include(r => r.Attendee)
+            .Include(r => r.Event)
             .AsQueryable();
 
         query = SortingHelper.ApplySorting(query, parameters.SortOrder,
