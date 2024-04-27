@@ -1,4 +1,5 @@
-﻿using EventManagement.Application.Features.Identity.Login;
+﻿using EventManagement.Application.Contracts.Requests;
+using EventManagement.Application.Features.Identity.Login;
 using EventManagement.Application.Features.Identity.Register;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

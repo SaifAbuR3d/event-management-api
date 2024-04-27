@@ -65,5 +65,17 @@ public class SortingHelper
             _ => r => r.Id
         };
     }
+
+    public static Expression<Func<IdentityVerificationRequest, object>> IvrSortingKeySelector(string? sortColumn)
+    {
+        return sortColumn?.ToLower() switch
+        {
+            "status" => ivr => ivr.Status,
+            "creationDate" => ivr => ivr.CreationDate,
+            "lastModified" => ivr => ivr.LastModified,
+            "userId" => ivr => ivr.UserId,
+            _ => ivr => ivr.Id
+        };
+    }
     
 }

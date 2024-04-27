@@ -1,5 +1,6 @@
 using EventManagement.API;
 using EventManagement.Application;
+using EventManagement.Infrastructure.Documents;
 using EventManagement.Infrastructure.Identity;
 using EventManagement.Infrastructure.Images;
 using EventManagement.Infrastructure.Persistence;
@@ -16,6 +17,7 @@ builder.Services.AddPersistenceInfrastructure(builder.Configuration, isDevelopme
 builder.Services.AddIdentityInfrastructure(builder.Configuration);
 builder.Services.AddImageHandlingInfrastructure(builder.Configuration);
 builder.Services.AddQrCodeInfrastructure();
+builder.Services.AddDocumentsHandlingInfrastructure(builder.Configuration);
 
 builder.Services.AddApplication(builder.Configuration);
 

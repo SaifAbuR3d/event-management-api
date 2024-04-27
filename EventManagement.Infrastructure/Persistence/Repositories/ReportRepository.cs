@@ -21,6 +21,7 @@ public class ReportRepository(ApplicationDbContext context) : IReportRepository
     {
         var query = context.Reports
             .Include(r => r.Attendee)
+            .Include(r => r.Event)
             .AsQueryable();
 
         query = SortingHelper.ApplySorting(query, parameters.SortOrder,
@@ -41,9 +42,12 @@ public class ReportRepository(ApplicationDbContext context) : IReportRepository
 
 
 
-    public Task<Report?> GetReportByIdAsync(int reportId, CancellationToken cancellationToken)
+    public async Task<Report?> GetReportByIdAsync(int reportId, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return await context.Reports
+            .Include(r => r.Attendee)
+            .Include(r => r.Event)
+            .FirstOrDefaultAsync(r => r.Id == reportId, cancellationToken);
     }
 
     public Task<(IEnumerable<Report>, PaginationMetadata)> GetReportsByEventIdAsync(int eventId, GetAllQueryParameters queryParameters, CancellationToken cancellationToken)
