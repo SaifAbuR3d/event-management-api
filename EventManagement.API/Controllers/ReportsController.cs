@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using EventManagement.Application.Features.Reports.GetReports;
+using EventManagement.Application.Features.Reports.SetStatusToSeen;
 
 namespace EventManagement.API.Controllers;
 
@@ -41,5 +42,16 @@ public class ReportsController(IMediator mediator) : ControllerBase
         Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(paginationMetadata));
         return Ok(reports);
 
+    }
+    /// <summary>
+    /// change the status of a report to seen
+    /// </summary>
+    /// <param name="reportId"></param>
+    /// <returns></returns>
+    [HttpPatch("{reportId}/seen")]
+    public async Task<ActionResult> SetStatusSeen(int reportId)
+    {
+        await mediator.Send(new SetReportStatusCommand(reportId, ReportStatus.Seen));
+        return NoContent();
     }
 }

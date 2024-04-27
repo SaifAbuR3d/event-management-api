@@ -22,6 +22,17 @@ public class Report : Entity
 
     }
 
+    public void Seen()
+    {
+        if(Status == ReportStatus.Seen)
+        {
+            throw new InvalidOperationException("Report is already seen");
+        }
+
+        Status = ReportStatus.Seen;
+        LastModified = DateTime.UtcNow;
+    }
+
     public string Content { get; set; } = default!;
     public ReportStatus Status { get; set; }
     public int EventId { get; set; }
