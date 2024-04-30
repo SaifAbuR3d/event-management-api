@@ -44,7 +44,7 @@ public class GetAllReportsQueryHandler(ICurrentUser currentUser, IReportReposito
                 AttendeeImageUrl = await userRepository.GetProfilePictureByUserId(report.Attendee.UserId, cancellationToken),
                 EventName = report.Event.Name,
                 OrganizerId = report.Event.OrganizerId,
-                OrganizerUserName = await userRepository.GetUserNameByUserId(report.Event.OrganizerId, cancellationToken)
+                OrganizerUserName = await userRepository.GetUserNameByUserId(report.Event.Organizer.UserId, cancellationToken)
                     ?? throw new CustomException("Invalid State: Organizer has no UserName")
             };
 
