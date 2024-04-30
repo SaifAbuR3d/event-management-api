@@ -4,7 +4,6 @@ using EventManagement.Application.Contracts.Responses;
 using EventManagement.Domain.Entities;
 using EventManagement.Infrastructure.Persistence.Helpers;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace EventManagement.Infrastructure.Persistence.Repositories;
 
@@ -22,6 +21,7 @@ public class ReportRepository(ApplicationDbContext context) : IReportRepository
         var query = context.Reports
             .Include(r => r.Attendee)
             .Include(r => r.Event)
+                .ThenInclude(e => e.Organizer)
             .AsQueryable();
 
         query = SortingHelper.ApplySorting(query, parameters.SortOrder,
