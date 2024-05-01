@@ -57,12 +57,12 @@ internal class IvrRepository(ApplicationDbContext context) : IIvrRepository
             query = query.Where(ivr => ivr.UserId == queryParameters.UserId);
         }
 
-        if (queryParameters.OnlyAttendees.HasValue)
+        if (queryParameters.OnlyAttendees)
         {
             query = query.Where(ivr => !ivr.IsForOrganizer);
         }
 
-        if (queryParameters.OnlyOrganizers.HasValue)
+        if (queryParameters.OnlyOrganizers)
         {
             query = query.Where(ivr => ivr.IsForOrganizer);
         }

@@ -81,4 +81,11 @@ public class UserRepository(ApplicationDbContext context) : IUserRepository
         }
     }
 
+    public async Task<bool> IsVerified(int userId, CancellationToken cancellationToken)
+    {
+        return await context.IdentityVerificationRequests
+            .AnyAsync(ivr => ivr.UserId == userId
+                          && ivr.Status == IdentityVerificationRequestStatus.Approved
+                          , cancellationToken); 
+    }
 }

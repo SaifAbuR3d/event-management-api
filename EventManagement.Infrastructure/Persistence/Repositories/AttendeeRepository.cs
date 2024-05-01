@@ -117,4 +117,11 @@ public class AttendeeRepository(ApplicationDbContext context)
     {
         throw new NotImplementedException();
     }
+
+    public async Task<bool> HasMadeRegRequest(int attendeeId, int eventId, CancellationToken cancellationToken)
+    {
+        return await context.RegistrationRequests
+            .AnyAsync(r => r.AttendeeId == attendeeId
+                        && r.EventId == eventId, cancellationToken);
+    }
 }
