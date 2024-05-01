@@ -41,6 +41,7 @@ public class GlobalExceptionHandler : IExceptionHandler
             UnauthenticatedException => (StatusCodes.Status401Unauthorized, "Unauthenticated", exception.Message),
             NoRolesException => (StatusCodes.Status403Forbidden, "Unauthorized", exception.Message),
             UnauthorizedException => (StatusCodes.Status403Forbidden, "Unauthorized", exception.Message),
+            ConflictException => (StatusCodes.Status409Conflict, "Conflict", exception.Message),
 
 
             // FluentValidation exception, thrown explicitly with validator.ValidateAndThrowAsync when needed
