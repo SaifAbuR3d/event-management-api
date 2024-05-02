@@ -39,7 +39,7 @@ public class GetIvrsQueryHandler(IIvrRepository ivrRepository, ICurrentUser curr
                 Id = ivr.Id,
                 UserId = int.Parse(await userRepository.GetIdByUserId(ivr.UserId, cancellationToken)
                     ?? throw new CustomException("Invalid State: User has no Id")), 
-                UserName = await userRepository.GetUserNameByUserId(ivr.Id, cancellationToken)
+                UserName = await userRepository.GetUserNameByUserId(ivr.UserId, cancellationToken)
                     ?? throw new CustomException("Invalid State: User has no UserName"),
                 ProfilePictureUrl = await userRepository.GetProfilePictureByUserId(ivr.UserId, cancellationToken),
                 AdminMessage = ivr.AdminMessage,
