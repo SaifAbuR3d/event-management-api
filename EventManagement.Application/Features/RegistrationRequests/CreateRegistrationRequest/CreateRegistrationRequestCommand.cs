@@ -28,6 +28,8 @@ public class CreateRegistrationRequestCommandHandler(ICurrentUser currentUser,
 
         bool isVerified = await userRepository.IsVerified(attendee.Id, cancellationToken);
 
+        // commented out for testing
+
         //if (!isVerified)
         //{
         //    throw new UnauthorizedException("You must verify your identity before you can make" +
@@ -44,6 +46,8 @@ public class CreateRegistrationRequestCommandHandler(ICurrentUser currentUser,
 
         var @event = await eventRepository.GetEventByIdAsync(request.EventId, cancellationToken)
             ?? throw new NotFoundException(nameof(Event), request.EventId);
+
+        // commented out for testing
 
         //if(!@event.TicketsSalesRunning())
         //{
