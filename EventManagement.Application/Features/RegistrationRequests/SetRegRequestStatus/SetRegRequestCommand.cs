@@ -6,7 +6,7 @@ using MediatR;
 
 namespace EventManagement.Application.Features.RegistrationRequests.SetRegRequestStatus;
 
-public record SetRegRequestCommand(int RegRequestId, RegistrationStatus NewStatus) 
+public record SetRegRequestCommand(int EventId, int RegRequestId, RegistrationStatus NewStatus) 
     : IRequest<Unit>;
 
 public class SetRegRequestCommandHandler(ICurrentUser currentUser,
@@ -25,6 +25,11 @@ public class SetRegRequestCommandHandler(ICurrentUser currentUser,
         var regRequest = await regRequestRepository.GetByIdAsync(request.RegRequestId,
             cancellationToken)
             ?? throw new NotFoundException(nameof(RegistrationRequest), request.RegRequestId);
+
+        if(regRequest.EventId != request.EventId)
+        {
+            throw new UnauthorizedException("Registration request does not belong to the event");
+        }
 
         var @event = await eventRepository.GetEventByIdAsync(regRequest.EventId,
             cancellationToken)

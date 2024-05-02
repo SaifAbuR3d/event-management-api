@@ -77,5 +77,18 @@ public class SortingHelper
             _ => ivr => ivr.Id
         };
     }
+
+    public static Expression<Func<RegistrationRequest, object>> RegRequestsSortingKeySelector(string? sortColumn)
+    {
+        return sortColumn?.ToLower() switch
+        {
+            "status" => rr => rr.Status,
+            "creationDate" => rr => rr.CreationDate,
+            "lastModified" => rr => rr.LastModified,
+            "attendeeId" => rr => rr.AttendeeId,
+            "eventId" => rr => rr.EventId,
+            _ => rr => rr.Id
+        };
+    }
     
 }
