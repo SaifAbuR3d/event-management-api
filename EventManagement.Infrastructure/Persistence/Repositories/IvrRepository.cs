@@ -72,6 +72,11 @@ internal class IvrRepository(ApplicationDbContext context) : IIvrRepository
             query = query.Where(ivr => ivr.Status == queryParameters.Status);
         }
 
+        if(queryParameters.DocumentType.HasValue)
+        {
+            query = query.Where(ivr => ivr.Document.DocumentType == queryParameters.DocumentType);
+        }
+
         return query;
     }
 
