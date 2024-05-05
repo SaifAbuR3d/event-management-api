@@ -15,7 +15,7 @@ internal class IvrRepository(ApplicationDbContext context) : IIvrRepository
         return entry.Entity;
     }
 
-    public async Task<bool> HasPendingRequests(int userId, CancellationToken cancellationToken)
+    public async Task<bool> HasPendingRequest(int userId, CancellationToken cancellationToken)
     {
         return await context.IdentityVerificationRequests
                     .AnyAsync(ivr => ivr.UserId == userId
@@ -93,4 +93,29 @@ internal class IvrRepository(ApplicationDbContext context) : IIvrRepository
             .Include(ivr => ivr.Document)
             .FirstOrDefaultAsync(ivr => ivr.UserId == userId, cancellationToken);
     }
+
+    public async Task<bool> HasRejectedRequest(int userId, CancellationToken cancellationToken)
+    {
+        return await context.IdentityVerificationRequests
+            .AnyAsync(ivr => ivr.UserId == userId
+                          && ivr.Status == IdentityVerificationRequestStatus.Rejected, 
+                          cancellationToken);
+    }
+
+    public async Task<bool> DeleteByUserId(int userId, CancellationToken cancellationToken)
+    {
+        var ivr = await context.IdentityVerificationRequests
+            .FirstOrDefaultAsync(ivr => ivr.UserId == userId, cancellationToken);
+
+        if (ivr is null)
+        {
+            return false;
+        }
+
+        context.IdentityVerificationRequests.Remove(ivr);
+        //await context.SaveChangesAsync(cancellationToken);
+
+        return true;
+    }
 }
+
