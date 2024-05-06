@@ -40,6 +40,37 @@ public class AttendeeRepository(ApplicationDbContext context)
         return (result, paginationMetadata);
     }
 
+    public async Task<(IEnumerable<Attendee>, PaginationMetadata)> GetAttendeesAsync(
+        GetAllAttendeesQueryParameters parameters, CancellationToken cancellationToken)
+    {
+        var query = context.Attendees
+            .Include(a => a.Bookings).ThenInclude(b => b.Event)
+            .AsQueryable();
+
+        query = SortingHelper.ApplySorting(query, parameters.SortOrder,
+                       SortingHelper.AttendeesSortingKeySelector(parameters.SortColumn));
+
+        if(parameters.EventId.HasValue)
+        {
+            query = query.Where(a => a.Bookings.Any(b => b.EventId == parameters.EventId));
+        }
+        if(parameters.OnlyVerified)
+        {
+            query = query.Where(a => a.IsVerified);
+        }
+
+        var paginationMetadata = await PaginationHelper.GetPaginationMetadataAsync(query,
+                       parameters.PageIndex, parameters.PageSize, cancellationToken);
+
+        query = PaginationHelper.ApplyPagination(query, parameters.PageIndex, parameters.PageSize);
+
+        var result = await query
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
+
+        return (result, paginationMetadata);
+    }
+
     public async Task<bool> IsFollowingOrganizer(int attendeeId, int organizerId, CancellationToken cancellationToken)
     {
         return await context.Followings

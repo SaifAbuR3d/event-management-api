@@ -7,7 +7,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EventManagement.Infrastructure.Persistence.Repositories;
 
-internal class IvrRepository(ApplicationDbContext context) : IIvrRepository
+internal class IvrRepository(ApplicationDbContext context,
+    IAttendeeRepository attendeeRepository, IOrganizerRepository organizerRepository)
+    : IIvrRepository
 {
     public async Task<IdentityVerificationRequest> AddAsync(IdentityVerificationRequest ivr, CancellationToken cancellationToken)
     {
@@ -15,7 +17,7 @@ internal class IvrRepository(ApplicationDbContext context) : IIvrRepository
         return entry.Entity;
     }
 
-    public async Task<bool> HasPendingRequests(int userId, CancellationToken cancellationToken)
+    public async Task<bool> HasPendingRequest(int userId, CancellationToken cancellationToken)
     {
         return await context.IdentityVerificationRequests
                     .AnyAsync(ivr => ivr.UserId == userId
@@ -93,4 +95,50 @@ internal class IvrRepository(ApplicationDbContext context) : IIvrRepository
             .Include(ivr => ivr.Document)
             .FirstOrDefaultAsync(ivr => ivr.UserId == userId, cancellationToken);
     }
+
+    public async Task<bool> HasRejectedRequest(int userId, CancellationToken cancellationToken)
+    {
+        return await context.IdentityVerificationRequests
+            .AnyAsync(ivr => ivr.UserId == userId
+                          && ivr.Status == IdentityVerificationRequestStatus.Rejected, 
+                          cancellationToken);
+    }
+
+    public async Task<bool> DeleteByUserId(int userId, CancellationToken cancellationToken)
+    {
+        var ivr = await context.IdentityVerificationRequests
+            .FirstOrDefaultAsync(ivr => ivr.UserId == userId, cancellationToken);
+
+        if (ivr is null)
+        {
+            return false;
+        }
+
+        context.IdentityVerificationRequests.Remove(ivr);
+        //await context.SaveChangesAsync(cancellationToken);
+
+        return true;
+    }
+
+    public async Task VerifyUserAsync(int userId, CancellationToken cancellationToken)
+    {
+        var attendee = await attendeeRepository.GetAttendeeByUserIdAsync(userId, cancellationToken);
+        if (attendee != null)
+        {
+            attendee.IsVerified = true;
+            return;
+        }
+
+        var organizer = await organizerRepository.GetOrganizerByUserIdAsync(userId, cancellationToken);
+        if (organizer != null)
+        {
+            organizer.IsVerified = true;
+            return;
+        }
+
+        throw new InvalidOperationException("User is neither an attendee nor an organizer.");
+
+    }
+
 }
+

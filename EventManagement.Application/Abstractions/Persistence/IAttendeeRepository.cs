@@ -20,4 +20,5 @@ public interface IAttendeeRepository
     Task<bool> DoesLikeEvent(int attendeeId, int eventId, CancellationToken cancellationToken);
     Task RemoveLikeFromEvent(int attendeeId, int eventId, CancellationToken cancellationToken);
     Task<bool> HasMadeRegRequest(int attendeeId, int eventId, CancellationToken cancellationToken);
+    Task<(IEnumerable<Attendee>, PaginationMetadata)> GetAttendeesAsync(GetAllAttendeesQueryParameters parameters, CancellationToken cancellationToken);
 }

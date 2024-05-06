@@ -1,5 +1,6 @@
 ﻿using EventManagement.Application.Contracts.Requests;
 using EventManagement.Application.Contracts.Responses;
+using EventManagement.Application.Features.Attendees.GetAttendees;
 using EventManagement.Application.Features.Follow.FollowAnOrganizer;
 using EventManagement.Application.Features.Follow.GetFollowings;
 using EventManagement.Application.Features.Follow.UnfollowAnOrganizer;
@@ -16,6 +17,23 @@ namespace EventManagement.API.Controllers;
 [Route("api/[controller]")]
 public class AttendeesController(IMediator mediator) : ControllerBase
 {
+    /// <summary>
+    /// get all attendees, paginated, sorted, and optionally filtered by event id and verified status
+    /// </summary>
+    /// <param name="parameters"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<AttendeeDto>>> GetAttendees(
+         [FromQuery] GetAllAttendeesQueryParameters parameters, CancellationToken cancellationToken)
+    {
+        var query = new GetAttendeesQuery(parameters);
+        var (attendees, paginationMetadata) = await mediator.Send(query, cancellationToken);
+        Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(paginationMetadata));
+        return Ok(attendees);
+    }
+
     /// <summary>
     /// follow an organizer by its id, attendee must be logged in
     /// </summary>

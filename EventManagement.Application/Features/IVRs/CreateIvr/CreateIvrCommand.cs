@@ -22,15 +22,27 @@ public class CreateIvrCommandHandler(ICurrentUser currentUser, IUnitOfWork unitO
             throw new UnauthorizedException("Only other users than admins can create IVRs.");
         }
 
-        if (await ivrRepository.HasPendingRequests(currentUser.UserId, cancellationToken))
+        var userId = currentUser.UserId;
+
+        var vr = await ivrRepository.GetByUserIdAsync(userId, cancellationToken);
+
+        if(vr?.Status == IdentityVerificationRequestStatus.Pending)
         {
-            throw new BadRequestException("You already have a pending IVR request.");
+            throw new ConflictException("You already have a pending IVR request.");
+        }
+        if(vr?.Status == IdentityVerificationRequestStatus.Approved)
+        {
+            throw new ConflictException("You are already verified.");
+        }
+        if(vr?.Status == IdentityVerificationRequestStatus.Rejected)
+        {
+            await ivrRepository.DeleteByUserId(userId, cancellationToken);
         }
 
         var directory = Path.Combine(request.BaseUrl, "ivr-documents");
         var documentPath = await documentHandler.UploadDocument(request.Document, directory);
 
-        var ivr = new IdentityVerificationRequest(currentUser.UserId, documentPath, request.DocumentType)
+        var ivr = new IdentityVerificationRequest(userId, documentPath, request.DocumentType)
         {
             IsForOrganizer = currentUser.IsOrganizer
         };

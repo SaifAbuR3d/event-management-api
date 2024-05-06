@@ -13,5 +13,8 @@ public interface IIvrRepository
     Task<(IEnumerable<IdentityVerificationRequest>, PaginationMetadata)> GetAllAsync(
         GetAllIvrsQueryParameters queryParameters,
         CancellationToken cancellationToken);
-    Task<bool> HasPendingRequests(int userId, CancellationToken cancellationToken);
+    Task<bool> HasPendingRequest(int userId, CancellationToken cancellationToken);
+    Task<bool> HasRejectedRequest(int userId, CancellationToken cancellationToken);
+    Task<bool> DeleteByUserId(int userId, CancellationToken cancellationToken);
+    Task VerifyUserAsync(int userId, CancellationToken cancellationToken);
 }

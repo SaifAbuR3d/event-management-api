@@ -28,6 +28,9 @@ public class ApproveIvrCommandHandler(ICurrentUser currentUser,
         }
 
         ivr.Approve(request.AdminMessage);
+
+        await ivrRepository.VerifyUserAsync(ivr.UserId, cancellationToken);
+
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;

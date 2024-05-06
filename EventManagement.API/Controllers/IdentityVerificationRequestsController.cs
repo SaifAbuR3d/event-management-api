@@ -27,7 +27,7 @@ public class IdentityVerificationRequestsController(IMediator mediator,
     {
         var command = request.ToCommand(environment.WebRootPath);
         var ivrId = await mediator.Send(command, cancellationToken);
-        return Ok(ivrId);
+        return Ok(new { id = ivrId });
     }
 
     /// <summary>
@@ -39,9 +39,9 @@ public class IdentityVerificationRequestsController(IMediator mediator,
     /// <returns></returns>
     [HttpPatch("{id}/approve")]
     public async Task<ActionResult> ApproveIvr(int id, 
-        SetIvrStatusRequest request, CancellationToken cancellationToken)
+        SetIvrStatusRequest? request, CancellationToken cancellationToken)
     {
-        var command = new ApproveIvrCommand(id, request.AdminMessage);
+        var command = new ApproveIvrCommand(id, request?.AdminMessage);
         await mediator.Send(command, cancellationToken);
         return NoContent();
     }
@@ -55,9 +55,9 @@ public class IdentityVerificationRequestsController(IMediator mediator,
     /// <returns></returns>
     [HttpPatch("{id}/reject")]
     public async Task<ActionResult> RejectIvr(int id,
-        SetIvrStatusRequest request, CancellationToken cancellationToken)
+        SetIvrStatusRequest? request, CancellationToken cancellationToken)
     {
-        var command = new RejectIvrCommand(id, request.AdminMessage);
+        var command = new RejectIvrCommand(id, request?.AdminMessage);
         await mediator.Send(command, cancellationToken);
         return NoContent();
     }
