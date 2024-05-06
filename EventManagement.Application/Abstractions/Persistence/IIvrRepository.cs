@@ -15,5 +15,6 @@ public interface IIvrRepository
         CancellationToken cancellationToken);
     Task<bool> HasPendingRequest(int userId, CancellationToken cancellationToken);
     Task<bool> HasRejectedRequest(int userId, CancellationToken cancellationToken);
-    Task<bool> DeleteByUserId(int userId, CancellationToken cancellationToken); 
+    Task<bool> DeleteByUserId(int userId, CancellationToken cancellationToken);
+    Task VerifyUserAsync(int userId, CancellationToken cancellationToken);
 }
