@@ -29,6 +29,10 @@ public class SortingHelper
     {
         return sortColumn?.ToLower() switch
         {
+            "userId" => a => a.UserId,
+            "creationDate" => a => a.CreationDate,
+            "lastModified" => a => a.LastModified,
+            "dateOfBirth" => a => a.DateOfBirth,
             _ => a => a.Id
         };
     }
