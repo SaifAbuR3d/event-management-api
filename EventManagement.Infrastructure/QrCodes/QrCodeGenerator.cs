@@ -1,6 +1,8 @@
 ﻿using EventManagement.Application.Abstractions.Images;
 using EventManagement.Application.Abstractions.QrCode;
 using QRCoder;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace EventManagement.Infrastructure.QrCodes;
 
@@ -10,9 +12,12 @@ public class QrCodeGenerator(IImageHandler imageHandler) : IQrCodeGenerator
     public async Task<string> GenerateQrCodeAsync(string ticketTypeName, decimal price, string checkInCode,
         string baseUrl, CancellationToken cancellationToken)
     {
-        var payload = $"Ticket Type: {ticketTypeName}\n" +
-              $"Price: {price}\n" +
-              $"CheckInCode: {checkInCode}";
+        var payload = JsonSerializer.Serialize(new
+        {
+            TicketType = ticketTypeName,
+            Price = price,
+            CheckInCode = checkInCode
+        });
 
         QRCodeGenerator qrGenerator = new();
         QRCodeData qrCodeData = qrGenerator.CreateQrCode(payload, QRCodeGenerator.ECCLevel.Q);
