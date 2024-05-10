@@ -26,6 +26,7 @@ public class GetOrganizersFollowedByAnAttendeeHandler(IOrganizerRepository organ
         {
             organizer.UserName = await userRepository.GetUserNameByUserId(organizer.UserId, cancellationToken)
                 ?? throw new CustomException("Invalid State: Organizer has no UserName"); 
+            organizer.ImageUrl = await userRepository.GetProfilePictureByUserId(organizer.UserId, cancellationToken);
         }
 
         return (organizerDtos, paginationMetadata);

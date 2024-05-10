@@ -31,5 +31,20 @@ public class BookingsController(IMediator mediator,
         return Ok(booking);
     }
 
+    /// <summary>
+    /// Validate a Ticket
+    /// </summary>
+    /// <param name="eventId"></param>
+    /// <param name="checkInCode"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    [HttpPatch("events/{eventId}/tickets/{checkInCode}")]
+    public async Task<ActionResult> CheckIn(int eventId, Guid checkInCode,
+               CancellationToken cancellationToken)
+    {
+        await Task.Delay(1);
+        return Ok();
+    }
+
 
 }

@@ -45,6 +45,7 @@ public class GetAllEventsQueryHandler(IEventRepository eventRepository, IMapper 
             eventDto.Organizer.UserName = await userRepository.GetUserNameByUserId(
                                eventDto.Organizer.UserId, cancellationToken)
                 ?? throw new CustomException("Invalid State: Organizer has no UserName");
+            
 
             if (eventDto.Organizer.Profile == null)
             {
