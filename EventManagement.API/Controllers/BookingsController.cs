@@ -1,5 +1,6 @@
 ﻿using EventManagement.Application.Contracts.Requests;
 using EventManagement.Application.Contracts.Responses;
+using EventManagement.Application.Features.Bookings.CheckIn;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -42,9 +43,9 @@ public class BookingsController(IMediator mediator,
     public async Task<ActionResult> CheckIn(int eventId, Guid checkInCode,
                CancellationToken cancellationToken)
     {
-        await Task.Delay(1);
-        return Ok();
+        var command = new CheckInCommand(eventId, checkInCode);
+        await mediator.Send(command, cancellationToken);
+        return Ok(new { message = "Operation Successful" });
     }
-
 
 }

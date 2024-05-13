@@ -22,6 +22,16 @@ public class BookingTicket : Entity
         HolderName = holderName;
     }
 
+    public void CheckIn()
+    {
+        if(IsCheckedIn)
+        {
+            throw new InvalidOperationException("Ticket is already checked in");
+        }
+
+        IsCheckedIn = true;
+    }
+
     public string? HolderName { get; set; }
     public string QrCodeImageUrl { get; set; } = default!;
 
@@ -30,4 +40,5 @@ public class BookingTicket : Entity
     public int BookingId { get; set; }
     public Booking Booking { get; set; } = default!;
     public Guid CheckInCode { get; set; }
+    public bool IsCheckedIn { get; set; }
 }

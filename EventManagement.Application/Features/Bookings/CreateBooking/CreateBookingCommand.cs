@@ -101,7 +101,7 @@ public class CreateBookingCommandHandler(IValidator<CreateBookingCommand> valida
 
     private async Task<Ticket?> ValidateTicket(RequestedTicket ticketRequest, CancellationToken cancellationToken)
     {
-        var ticket = await ticketRepository.GetTicketAsync(ticketRequest.TicketId, cancellationToken)
+        var ticket = await ticketRepository.GetTicketTypeAsync(ticketRequest.TicketId, cancellationToken)
                 ?? throw new NotFoundException(nameof(Ticket), ticketRequest.TicketId);
 
         bool isSaleActive = ticket.StartSale <= DateTime.UtcNow && ticket.EndSale >= DateTime.UtcNow;
