@@ -20,7 +20,7 @@ public class GetAllRegRequestsQueryHandler(ICurrentUser currentUser,
     public async Task<(IEnumerable<RegRequestDto>, PaginationMetadata)> Handle(
                GetAllRegRequestsQuery request, CancellationToken cancellationToken)
     {
-        await AuthorizeCurrentUserAccess(request, cancellationToken);
+       // await AuthorizeCurrentUserAccess(request, cancellationToken);
 
         var (regRequests, paginationMetadata) = await repository.GetAllAsync(request.EventId,
             request.Parameters, cancellationToken);
