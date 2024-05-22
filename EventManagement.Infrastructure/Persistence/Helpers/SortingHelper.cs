@@ -94,5 +94,17 @@ public class SortingHelper
             _ => rr => rr.Id
         };
     }
+
+    public static Expression<Func<Booking, object>> BookingsSortingKeySelector(string? sortColumn)
+    {
+        return sortColumn?.ToLower() switch
+        {
+            "creationDate" => b => b.CreationDate,
+            "lastModified" => b => b.LastModified,
+            "attendeeId" => b => b.AttendeeId,
+            "eventId" => b => b.EventId,
+            _ => b => b.Id
+        };
+    }
     
 }

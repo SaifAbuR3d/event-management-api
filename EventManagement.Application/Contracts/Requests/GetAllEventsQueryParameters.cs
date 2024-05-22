@@ -6,6 +6,7 @@ public class GetAllEventsQueryParameters : GetAllQueryParameters
     public int? OrganizerId { get; set; }
     public int? LikedBy { get; set; }
     public int? EventId { get; set; }
+    public int? AttendeeId { get; set; }
     public bool PreviousEvents { get; set; }
     public bool UpcomingEvents { get; set; }
     public bool RunningEvents { get; set; }
