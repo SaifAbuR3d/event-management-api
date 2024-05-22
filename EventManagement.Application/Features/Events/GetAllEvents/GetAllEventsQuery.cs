@@ -21,9 +21,11 @@ public class GetAllEventsQueryHandler(IEventRepository eventRepository, IMapper 
         CancellationToken cancellationToken)
     {
         ValidateParameters(request);
+        await Authenticate(request, cancellationToken);
 
         var (events, paginationMetadata) = await eventRepository.GetEventsAsync(request.Parameters, cancellationToken);
         var eventsDto = mapper.Map<IEnumerable<EventDto>>(events);
+
 
         if (currentUser.IsAuthenticated && currentUser.IsAttendee)
         {
@@ -37,7 +39,8 @@ public class GetAllEventsQueryHandler(IEventRepository eventRepository, IMapper 
             }
         }
 
-        foreach(var eventDto in eventsDto)
+
+        foreach (var eventDto in eventsDto)
         {
             eventDto.Organizer.ImageUrl = await userRepository.GetProfilePictureByUserId(
                 eventDto.Organizer.UserId, cancellationToken);
@@ -45,7 +48,7 @@ public class GetAllEventsQueryHandler(IEventRepository eventRepository, IMapper 
             eventDto.Organizer.UserName = await userRepository.GetUserNameByUserId(
                                eventDto.Organizer.UserId, cancellationToken)
                 ?? throw new CustomException("Invalid State: Organizer has no UserName");
-            
+
 
             if (eventDto.Organizer.Profile == null)
             {
@@ -54,6 +57,26 @@ public class GetAllEventsQueryHandler(IEventRepository eventRepository, IMapper 
         }
 
         return (eventsDto, paginationMetadata);
+    }
+
+    private async Task Authenticate(GetAllEventsQuery request, CancellationToken cancellationToken)
+    {
+        if (request.Parameters.AttendeeId.HasValue)
+        {
+            if (!currentUser.IsAuthenticated || !currentUser.IsAttendee)
+            {
+                throw new UnauthorizedException("Only authenticated attendees can access their booked events.");
+            }
+
+            int currentAttendeeId = int.Parse(await userRepository.GetIdByUserId(currentUser.UserId, cancellationToken)
+                ?? throw new NotFoundException(nameof(Attendee), nameof(Attendee.UserId), currentUser.UserId));
+
+            if(currentAttendeeId != request.Parameters.AttendeeId)
+            {
+                throw new UnauthorizedException("Authenticated attendee can only access their own booked events.");
+            }
+
+        }
     }
 
     private static void ValidateParameters(GetAllEventsQuery request)

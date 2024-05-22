@@ -101,6 +101,16 @@ public class EventRepository(ApplicationDbContext context) : IEventRepository
             query = query.Where(e => eventLikedByAttendee.Contains(e.Id));
         }
 
+        if(queryParameters.AttendeeId.HasValue)
+        {
+            var eventBookedByAttendee = await context.Bookings
+                .Where(b => b.AttendeeId == queryParameters.AttendeeId)
+                .Select(b => b.EventId)
+                .ToListAsync();
+
+            query = query.Where(e => eventBookedByAttendee.Contains(e.Id));
+        }
+
         return query;
     }
 
