@@ -94,4 +94,18 @@ public class AttendeesController(IMediator mediator,
             cancellationToken);
         return Ok(attendee);
     }
+
+    /// <summary>
+    /// Sets the profile picture of the logged in attendee
+    /// </summary>
+    /// <param name="image"></param>
+    /// <returns></returns>
+    [HttpPost("my/profile-picture")]
+    public async Task<ActionResult> SetProfilePicture(IFormFile image)
+    {
+        var command = new SetProfilePictureCommand(image, environment.WebRootPath);
+        var imageUrl = await mediator.Send(command);
+
+        return Ok(new { imageUrl });
+    }
 }
