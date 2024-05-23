@@ -8,6 +8,7 @@ public class PersonTicketDto
     public decimal Price { get; set; }
     public Guid CheckInCode { get; set; }
     public string? HolderName { get; set; }
+    public DateTime CreationDate { get; set; }
 
     public string QrCodeImageUrl { get; set; } = default!;
 
