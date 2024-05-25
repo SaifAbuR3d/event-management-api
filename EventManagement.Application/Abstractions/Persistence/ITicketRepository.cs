@@ -1,4 +1,5 @@
-﻿using EventManagement.Domain.Entities;
+﻿using EventManagement.Application.Contracts.Responses;
+using EventManagement.Domain.Entities;
 
 namespace EventManagement.Application.Abstractions.Persistence;
 
@@ -7,16 +8,9 @@ namespace EventManagement.Application.Abstractions.Persistence;
 /// </summary>
 public interface ITicketRepository
 {
-    Task<IEnumerable<Ticket>> GetTicketsTypesAsync(int eventId, CancellationToken cancellationToken);
     Task<Ticket?> GetTicketTypeAsync(int ticketId, CancellationToken cancellationToken);
     Task<BookingTicket?> GetBookingTicketAsync(int eventId, Guid checkInCode,
         CancellationToken cancellationToken);
-
-    /// <summary>
-    /// Get available tickets count
-    /// </summary>
-    /// <param name="ticketId"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    //Task<int> GetAvailableTicketsCountAsync(int ticketId, CancellationToken cancellationToken);
+    Task<IEnumerable<Ticket>> GetEventTickets(int eventId, CancellationToken cancellationToken);
+    Task<IEnumerable<SellingRecord>> GetSellingTrack(int eventId, CancellationToken cancellationToken);
 }

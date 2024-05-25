@@ -16,13 +16,15 @@ public class ReportRepository(ApplicationDbContext context) : IReportRepository
     }
 
     public async Task<(IEnumerable<Report>, PaginationMetadata)> GetAllReportsAsync(
-        GetAllQueryParameters parameters, CancellationToken cancellationToken)
+        GetAllReportsQueryParameters parameters, CancellationToken cancellationToken)
     {
         var query = context.Reports
             .Include(r => r.Attendee)
             .Include(r => r.Event)
                 .ThenInclude(e => e.Organizer)
             .AsQueryable();
+
+        query = ApplyFilters(parameters, query);
 
         query = SortingHelper.ApplySorting(query, parameters.SortOrder,
             SortingHelper.ReportsSortingKeySelector(parameters.SortColumn));
@@ -39,8 +41,27 @@ public class ReportRepository(ApplicationDbContext context) : IReportRepository
         return (result, paginationMetadata);
     }
 
+    private static IQueryable<Report> ApplyFilters(GetAllReportsQueryParameters parameters, IQueryable<Report> query)
+    {
+        if (parameters.EventId.HasValue)
+        {
+            query = query.Where(r => r.EventId == parameters.EventId);
+        }
+        if (parameters.AttendeeId.HasValue)
+        {
+            query = query.Where(r => r.AttendeeId == parameters.AttendeeId);
+        }
+        if (parameters.Status.HasValue)
+        {
+            query = query.Where(r => r.Status == parameters.Status);
+        }
+        if (parameters.OrganizerId.HasValue)
+        {
+            query = query.Where(r => r.Event.OrganizerId == parameters.OrganizerId);
+        }
 
-
+        return query;
+    }
 
     public async Task<Report?> GetReportByIdAsync(int reportId, CancellationToken cancellationToken)
     {

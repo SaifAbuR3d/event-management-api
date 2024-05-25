@@ -7,14 +7,7 @@ namespace EventManagement.Application.Abstractions.Persistence;
 public interface IBookingRepository
 {
     Task<Booking> AddBookingAsync(Booking booking, CancellationToken cancellationToken);
-    Task<Booking?> GetBookingByIdAsync(int bookingId, CancellationToken cancellationToken);
     Task<(IEnumerable<Booking>, PaginationMetadata)> GetBookingsAsync(int eventId,
                GetAllBookingsQueryParameters queryParameters, CancellationToken cancellationToken);
-
-    Task<IEnumerable<Booking>> GetBookingsByAttendeeIdAsync(int attendeeId,
-        CancellationToken cancellationToken);
-    Task<IEnumerable<Booking>> GetBookingsByEventIdAsync(int eventId,
-        CancellationToken cancellationToken);
-    Task<IEnumerable<Booking>> GetBookingsByOrganizerIdAsync(int organizerId,
-        CancellationToken cancellationToken);
+    Task<IEnumerable<Booking>> GetLastBookings(int eventId, int count, CancellationToken cancellationToken);
 }

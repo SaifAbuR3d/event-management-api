@@ -1,5 +1,6 @@
 ﻿using EventManagement.Application.Contracts.Requests;
 using EventManagement.Application.Contracts.Responses;
+using EventManagement.Application.Features.Events.EventStatistics;
 using EventManagement.Application.Features.Events.GetAllEvents;
 using EventManagement.Application.Features.Events.GetEvent;
 using EventManagement.Application.Features.Events.GetOtherEventsMayLike;
@@ -74,5 +75,14 @@ public class EventsController(IMediator mediator,
     {
         var events = await mediator.Send(new GetOtherEventsMayLikeQuery(eventId), cancellationToken);
         return Ok(events);
+    }
+
+    [HttpGet("{eventId}/stats")]
+    public async Task<ActionResult<EventStatisticsDto>> EGetventStatistics(int eventId,
+        CancellationToken cancellationToken)
+    {
+        var query = new GetEventStatisticsQuery(eventId);
+        var stats = await mediator.Send(query, cancellationToken);
+        return Ok(stats);
     }
 }

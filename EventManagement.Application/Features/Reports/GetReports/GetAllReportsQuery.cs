@@ -7,7 +7,7 @@ using MediatR;
 
 namespace EventManagement.Application.Features.Reports.GetReports;
 
-public record GetAllReportsQuery(GetAllQueryParameters Parameters)
+public record GetAllReportsQuery(GetAllReportsQueryParameters Parameters)
     : IRequest<(IEnumerable<ReportDto> Reports, PaginationMetadata PaginationMetadata)>;
 
 public class GetAllReportsQueryHandler(ICurrentUser currentUser, IReportRepository reportRepository
@@ -22,7 +22,8 @@ public class GetAllReportsQueryHandler(ICurrentUser currentUser, IReportReposito
             throw new UnauthorizedException("Only admins can view reports");
         }
 
-        var (reports, paginationMetadata) = await reportRepository.GetAllReportsAsync(request.Parameters, cancellationToken);
+        var (reports, paginationMetadata) = await reportRepository.GetAllReportsAsync(
+            request.Parameters, cancellationToken);
 
         List<ReportDto> reportDtos = [];
 

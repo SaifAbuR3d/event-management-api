@@ -9,7 +9,7 @@ public interface IReportRepository
     Task<int> AddReportAsync(Report report, CancellationToken cancellationToken);
     Task<Report?> GetReportByIdAsync(int reportId, CancellationToken cancellationToken);
     Task<(IEnumerable<Report>, PaginationMetadata)> GetAllReportsAsync(
-        GetAllQueryParameters queryParameters, CancellationToken cancellationToken);
+        GetAllReportsQueryParameters queryParameters, CancellationToken cancellationToken);
     Task<(IEnumerable<Report>, PaginationMetadata)> GetReportsByEventIdAsync(int eventId,
         GetAllQueryParameters queryParameters, CancellationToken cancellationToken);
     Task<(IEnumerable<Report>, PaginationMetadata)> GetReportsByAttendeeIdAsync(int attendeeId,

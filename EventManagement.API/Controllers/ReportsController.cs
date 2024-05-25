@@ -36,7 +36,7 @@ public class ReportsController(IMediator mediator) : ControllerBase
     /// <returns></returns>
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Report>>> GetAllReports(
-        [FromQuery] GetAllQueryParameters queryParameters)
+        [FromQuery] GetAllReportsQueryParameters queryParameters)
     {
         var (reports, paginationMetadata) = await mediator.Send(new GetAllReportsQuery(queryParameters));
         Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(paginationMetadata));

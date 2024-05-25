@@ -1,4 +1,5 @@
 ﻿using EventManagement.Application.Abstractions.Persistence;
+using EventManagement.Application.Contracts.Responses;
 using EventManagement.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,16 +12,6 @@ public class TicketRepository(ApplicationDbContext context) : ITicketRepository
         return await context.Tickets.FindAsync(ticketId, cancellationToken);
     }
 
-    public Task<int> GetAvailableTicketsCountAsync(int ticketId, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<IEnumerable<Ticket>> GetTicketsTypesAsync(int eventId, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
-
     public async Task<BookingTicket?> GetBookingTicketAsync(int eventId, Guid checkInCode, CancellationToken cancellationToken)
     {
         var ticket = await context.BookingTickets
@@ -28,5 +19,23 @@ public class TicketRepository(ApplicationDbContext context) : ITicketRepository
             .SingleOrDefaultAsync(cancellationToken);
 
         return ticket;
+    }
+
+    public async Task<IEnumerable<Ticket>> GetEventTickets(int eventId,
+        CancellationToken cancellationToken)
+    {
+        return await context.Tickets
+            .Where(t => t.EventId == eventId)
+            .ToListAsync(cancellationToken);
+    }
+
+    // get the selling track of an event, (date, number of tickets sold) for each day since the event was created
+    public async Task<IEnumerable<SellingRecord>> GetSellingTrack(int eventId, CancellationToken cancellationToken)
+    {
+        return await context.BookingTickets
+            .Where(bt => bt.Booking.EventId == eventId)
+            .GroupBy(bt => bt.CreationDate.Date)
+            .Select(g => new SellingRecord(g.Key, g.Count()))
+            .ToListAsync(cancellationToken);
     }
 }
