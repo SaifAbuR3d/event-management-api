@@ -7,11 +7,9 @@ namespace EventManagement.Application.Abstractions.Persistence;
 public interface IAttendeeRepository
 {
     Task<Attendee> AddAttendeeAsync(Attendee attendee, CancellationToken cancellationToken);
-    Task<Attendee?> GetAttendeeByUserIdAsync(int userId, CancellationToken cancellationToken);
+    Task<Attendee?> GetAttendeeByUserIdAsync(int userId, CancellationToken cancellationToken,
+        bool includeFollowings = false);
     Task<Attendee?> GetAttendeeByUserNameAsync(string userName, CancellationToken cancellationToken);
-    Task<Attendee?> GetAttendeeByEmailAsync(string email, CancellationToken cancellationToken);
-    Task<Attendee> UpdateAttendeeAsync(Attendee attendee, CancellationToken cancellationToken);
-    Task<Attendee> DeleteAttendeeAsync(Attendee attendee, CancellationToken cancellationToken);
     Task<(IEnumerable<Attendee>, PaginationMetadata)> GetAttendeesFollowingAnOrganizerAsync(int organizerId,
     GetAllQueryParameters parameters, CancellationToken cancellationToken);
     Task<bool> IsFollowingOrganizer(int attendeeId, int organizerId, CancellationToken cancellationToken);
@@ -21,4 +19,7 @@ public interface IAttendeeRepository
     Task RemoveLikeFromEvent(int attendeeId, int eventId, CancellationToken cancellationToken);
     Task<bool> HasMadeRegRequest(int attendeeId, int eventId, CancellationToken cancellationToken);
     Task<(IEnumerable<Attendee>, PaginationMetadata)> GetAttendeesAsync(GetAllAttendeesQueryParameters parameters, CancellationToken cancellationToken);
+
+    Task<Attendee> UpdateAttendeeAsync(Attendee attendee, CancellationToken cancellationToken);
+    Task<Attendee> DeleteAttendeeAsync(Attendee attendee, CancellationToken cancellationToken);
 }

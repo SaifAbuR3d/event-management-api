@@ -91,15 +91,39 @@ public class AttendeeRepository(ApplicationDbContext context)
         }
     }
 
-    public async Task<Attendee?> GetAttendeeByUserIdAsync(int userId, CancellationToken cancellationToken)
+    public async Task<Attendee?> GetAttendeeByUserIdAsync(int userId,
+        CancellationToken cancellationToken, bool includeFollowings = false)
     {
-        return await context.Attendees
-            .Include(a => a.Followings)
+        var query = context.Attendees.AsQueryable();
+        if(includeFollowings)
+        {
+            query.Include(a => a.Followings);
+        }
+
+        return await query
             .FirstOrDefaultAsync(a => a.UserId == userId, cancellationToken);
     }
 
+    public async Task<Attendee?> GetAttendeeByUserNameAsync(string userName,
+    CancellationToken cancellationToken)
+    {
+        var user = await context.Users.FirstOrDefaultAsync(u => u.UserName == userName, cancellationToken);
+        if (user == null)
+            return null;
+
+        return await GetAttendeeByUserIdAsync(user.Id, cancellationToken);
+    }
+
+
+    public async Task<bool> HasMadeRegRequest(int attendeeId, int eventId, CancellationToken cancellationToken)
+    {
+        return await context.RegistrationRequests
+            .AnyAsync(r => r.AttendeeId == attendeeId
+                        && r.EventId == eventId, cancellationToken);
+    }
+
     public async Task<bool> HasAttendedEvent(int attendeeId, int eventId,
-        CancellationToken cancellationToken)
+    CancellationToken cancellationToken)
     {
         return await context.Bookings
             .AnyAsync(b => b.AttendeeId == attendeeId
@@ -128,31 +152,15 @@ public class AttendeeRepository(ApplicationDbContext context)
     }
 
 
+
     public Task<Attendee> DeleteAttendeeAsync(Attendee attendee, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Attendee?> GetAttendeeByEmailAsync(string email, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<Attendee?> GetAttendeeByUserNameAsync(string userName,
-        CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
 
     public Task<Attendee> UpdateAttendeeAsync(Attendee attendee, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
-    }
-
-    public async Task<bool> HasMadeRegRequest(int attendeeId, int eventId, CancellationToken cancellationToken)
-    {
-        return await context.RegistrationRequests
-            .AnyAsync(r => r.AttendeeId == attendeeId
-                        && r.EventId == eventId, cancellationToken);
     }
 }

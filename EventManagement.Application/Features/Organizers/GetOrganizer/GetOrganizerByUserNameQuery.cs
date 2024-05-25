@@ -7,13 +7,13 @@ using MediatR;
 
 namespace EventManagement.Application.Features.Organizers.GetOrganizer;
 
-public record GetOrganizerByUserName(string UserName) : IRequest<OrganizerDto>;
+public record GetOrganizerByUserNameQuery(string UserName) : IRequest<OrganizerDto>;
 
 public class GetOrganizerByUsernameHandler(IUserRepository userRepository, 
     IOrganizerRepository organizerRepository, IMapper mapper)
-    : IRequestHandler<GetOrganizerByUserName, OrganizerDto>
+    : IRequestHandler<GetOrganizerByUserNameQuery, OrganizerDto>
 {
-    public async Task<OrganizerDto> Handle(GetOrganizerByUserName request, CancellationToken cancellationToken)
+    public async Task<OrganizerDto> Handle(GetOrganizerByUserNameQuery request, CancellationToken cancellationToken)
     {
         var organizer = await organizerRepository.GetOrganizerByUserNameAsync(request.UserName, cancellationToken)
             ?? throw new NotFoundException(nameof(Organizer), nameof(request.UserName), request.UserName);

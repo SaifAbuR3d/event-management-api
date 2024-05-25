@@ -43,7 +43,7 @@ public class OrganizersController(IMediator mediator,
     [HttpGet("{username}")]
     public async Task<ActionResult<OrganizerDto>> GetOrganizerByUserName(string username, CancellationToken cancellationToken)
     {
-        var organizer = await mediator.Send(new GetOrganizerByUserName(username),
+        var organizer = await mediator.Send(new GetOrganizerByUserNameQuery(username),
             cancellationToken);
         return Ok(organizer);
     }

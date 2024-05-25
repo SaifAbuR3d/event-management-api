@@ -52,24 +52,23 @@ public class BookingRepository(ApplicationDbContext context) : IBookingRepositor
         return query;
     }
 
-
-    public Task<Booking?> GetBookingByIdAsync(int bookingId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<Booking>> GetLastBookings(int eventId,
+        int count, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var bookings = await context.Bookings
+           .Include(b => b.Attendee)
+           .Include(b => b.BookingTickets)
+           .Where(b => b.EventId == eventId)
+           .OrderByDescending(b => b.CreationDate)
+           .ToListAsync(cancellationToken);
+
+        var lastDistinctBookings = bookings
+           .DistinctBy(b => b.Attendee)
+           .Take(count);
+
+        return lastDistinctBookings;
     }
 
-    public Task<IEnumerable<Booking>> GetBookingsByAttendeeIdAsync(int attendeeId, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
 
-    public Task<IEnumerable<Booking>> GetBookingsByEventIdAsync(int eventId, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
 
-    public Task<IEnumerable<Booking>> GetBookingsByOrganizerIdAsync(int organizerId, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
 }

@@ -23,6 +23,10 @@ public class TicketDto
     /// </summary>
     public int AvailableQuantity { get; set; }
     /// <summary>
+    /// The quantity of sold tickets.
+    /// </summary>
+    public int SoldTickets => TotalQuantity - AvailableQuantity;
+    /// <summary>
     /// The start date of the ticket sale.
     /// </summary>
     public DateTime StartSale { get; set; }
@@ -30,4 +34,8 @@ public class TicketDto
     /// The end date of the ticket sale.
     /// </summary>
     public DateTime EndSale { get; set; }
+    /// <summary>
+    /// The revenue of the ticket.
+    /// </summary>
+    public decimal Revenue => Price * (TotalQuantity - AvailableQuantity);
 }

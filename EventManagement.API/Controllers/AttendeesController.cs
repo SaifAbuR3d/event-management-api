@@ -1,11 +1,15 @@
 ﻿using EventManagement.Application.Contracts.Requests;
 using EventManagement.Application.Contracts.Responses;
+using EventManagement.Application.Features.Attendees.GetAttendee;
 using EventManagement.Application.Features.Attendees.GetAttendees;
 using EventManagement.Application.Features.Follow.FollowAnOrganizer;
 using EventManagement.Application.Features.Follow.GetFollowings;
 using EventManagement.Application.Features.Follow.UnfollowAnOrganizer;
+using EventManagement.Application.Features.Organizers.GetOrganizer;
+using EventManagement.Application.Features.SetUserProfilePicture;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Text.Json;
 
 namespace EventManagement.API.Controllers;
@@ -15,7 +19,8 @@ namespace EventManagement.API.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
-public class AttendeesController(IMediator mediator) : ControllerBase
+public class AttendeesController(IMediator mediator,
+    IWebHostEnvironment environment) : ControllerBase
 {
     /// <summary>
     /// get all attendees, paginated, sorted, and optionally filtered by event id and verified status
@@ -74,5 +79,33 @@ public class AttendeesController(IMediator mediator) : ControllerBase
             cancellationToken);
         Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(paginationMetadata));
         return Ok(followings);
+    }
+
+    /// <summary>
+    /// Gets an attendee by its username
+    /// </summary>
+    /// <param name="username"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    [HttpGet("{username}")]
+    public async Task<ActionResult<AttendeeDto>> GetAttendeeByUserName(string username, CancellationToken cancellationToken)
+    {
+        var attendee = await mediator.Send(new GetAttendeeByUserNameQuery(username),
+            cancellationToken);
+        return Ok(attendee);
+    }
+
+    /// <summary>
+    /// Sets the profile picture of the logged in attendee
+    /// </summary>
+    /// <param name="image"></param>
+    /// <returns></returns>
+    [HttpPost("my/profile-picture")]
+    public async Task<ActionResult> SetProfilePicture(IFormFile image)
+    {
+        var command = new SetProfilePictureCommand(image, environment.WebRootPath);
+        var imageUrl = await mediator.Send(command);
+
+        return Ok(new { imageUrl });
     }
 }

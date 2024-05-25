@@ -11,4 +11,5 @@ public class AttendeeDto
     public DateOnly DateOfBirth { get; set; }
     public Gender Gender { get; set; } = default!;
     public bool IsVerified { get; set; }
+    public string? ImageUrl { get; set; }
 }
