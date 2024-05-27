@@ -32,6 +32,7 @@ public class GetAttendeesQueryHandler(IAttendeeRepository attendeeRepository,
                     ?? throw new CustomException("Invalid State: Attendee Has No UserName"),
                 FullName = await userRepository.GetFullNameByUserId(attendee.UserId, cancellationToken)
                     ?? throw new CustomException("Invalid State: Attendee Has No FullName"),
+                ImageUrl = await userRepository.GetProfilePictureByUserId(attendee.UserId, cancellationToken),
                 DateOfBirth = attendee.DateOfBirth,
             }; 
             attendeeDtos.Add(attendeeDto);
