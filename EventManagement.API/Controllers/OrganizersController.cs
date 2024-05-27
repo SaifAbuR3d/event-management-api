@@ -2,6 +2,7 @@
 using EventManagement.Application.Contracts.Responses;
 using EventManagement.Application.Features.Follow.GetOrganizerFollowers;
 using EventManagement.Application.Features.Organizers.GetOrganizer;
+using EventManagement.Application.Features.Organizers.GetOrganizers;
 using EventManagement.Application.Features.Organizers.UpdateProfile;
 using EventManagement.Application.Features.SetUserProfilePicture;
 using MediatR;
@@ -89,6 +90,23 @@ public class OrganizersController(IMediator mediator,
         var imageUrl = await mediator.Send(command);
 
         return Ok(new { imageUrl });
+    }
+    /// <summary>
+    /// Gets a list of organizers, paginated, sorted, and filtered as requested
+    /// </summary>
+    /// <param name="parameters"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<OrganizerDto>>> GetOrganizers(
+        [FromQuery] GetAllOrganizersQueryParameters parameters,
+        CancellationToken cancellationToken)
+    {
+        var (organizers, paginationMetadata) = await mediator.Send(new GetOrganizersQuery(parameters), cancellationToken);
+
+        Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(paginationMetadata));
+
+        return Ok(organizers);
     }
 
 
