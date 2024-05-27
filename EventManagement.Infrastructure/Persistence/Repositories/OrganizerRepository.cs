@@ -101,4 +101,27 @@ public class OrganizerRepository(ApplicationDbContext context)
     {
         throw new NotImplementedException();
     }
+
+    public async  Task<(IEnumerable<Organizer>, PaginationMetadata)> GetOrganizersAsync(GetAllOrganizersQueryParameters parameters, CancellationToken cancellationToken)
+    {
+        var query = context.Organizers.AsQueryable();
+
+        if (parameters.OnlyVerified.HasValue)
+        {
+            query = query.Where(o => o.IsVerified == parameters.OnlyVerified);
+        }
+
+        query = SortingHelper.ApplySorting(query, parameters.SortOrder, SortingHelper.OrganizersSortingKeySelector(parameters.SortColumn));
+
+        var paginationMetadata = await PaginationHelper.GetPaginationMetadataAsync(query,
+                       parameters.PageIndex, parameters.PageSize, cancellationToken);
+
+        query = PaginationHelper.ApplyPagination(query, parameters.PageIndex, parameters.PageSize);
+
+        var result = await query
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
+
+        return (result, paginationMetadata);
+    }
 }

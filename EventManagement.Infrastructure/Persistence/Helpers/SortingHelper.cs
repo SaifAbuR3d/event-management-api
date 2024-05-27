@@ -42,6 +42,10 @@ public class SortingHelper
         return sortColumn?.ToLower() switch
         {
             "displayName" => o => o.DisplayName,
+            "userId" => o => o.UserId,
+            "creationDate" => o => o.CreationDate,
+            "lastModified" => o => o.LastModified,
+            "isVerified" => o => o.IsVerified,
             _ => o => o.Id
         };
     }
