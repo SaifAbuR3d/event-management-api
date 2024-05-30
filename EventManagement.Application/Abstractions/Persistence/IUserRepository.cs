@@ -12,5 +12,5 @@ public interface IUserRepository
     Task DeleteProfilePictureByUserId(int userId, CancellationToken cancellationToken);
     Task<string?> GetIdByUserId(int userId, CancellationToken cancellationToken);
     Task<bool> IsVerified(int userId, CancellationToken cancellationToken);
-
+    Task<string?> GetEmailByUserName(string userName, CancellationToken cancellationToken);
 }

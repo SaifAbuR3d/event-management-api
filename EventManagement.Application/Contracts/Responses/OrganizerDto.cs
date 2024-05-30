@@ -9,4 +9,5 @@ public class OrganizerDto
     public bool IsVerified { get; set; } = default!;
     public ProfileDto Profile { get; set; } = default!;
     public string? ImageUrl { get; set; }
+    public string? Email { get; set; } // returned only in Admin Dashboard
 }

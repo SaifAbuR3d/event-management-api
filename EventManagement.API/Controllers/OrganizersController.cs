@@ -1,5 +1,6 @@
 ﻿using EventManagement.Application.Contracts.Requests;
 using EventManagement.Application.Contracts.Responses;
+using EventManagement.Application.Features.Attendees.GetAttendee;
 using EventManagement.Application.Features.Follow.GetOrganizerFollowers;
 using EventManagement.Application.Features.Organizers.GetOrganizer;
 using EventManagement.Application.Features.Organizers.GetOrganizers;
@@ -45,6 +46,22 @@ public class OrganizersController(IMediator mediator,
     public async Task<ActionResult<OrganizerDto>> GetOrganizerByUserName(string username, CancellationToken cancellationToken)
     {
         var organizer = await mediator.Send(new GetOrganizerByUserNameQuery(username),
+            cancellationToken);
+        return Ok(organizer);
+    }
+
+    /// <summary>
+    /// Gets an organizer by its username, (contains additional information like email address)
+    /// For the admin dashboard
+    /// </summary>
+    /// <param name="username"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    [HttpGet("ad/{username}")]
+    public async Task<ActionResult<OrganizerDto>> GetOrganizerForAdminDashboard(string username,
+        CancellationToken cancellationToken)
+    {
+        var organizer = await mediator.Send(new GetOrganizerByUserNameForAdminDashboardQuery(username),
             cancellationToken);
         return Ok(organizer);
     }

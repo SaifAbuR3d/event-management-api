@@ -88,4 +88,12 @@ public class UserRepository(ApplicationDbContext context) : IUserRepository
                           && ivr.Status == IdentityVerificationRequestStatus.Approved
                           , cancellationToken); 
     }
+
+    public async Task<string?> GetEmailByUserName(string userName, CancellationToken cancellationToken)
+    {
+        return await context.Users
+            .Where(u => u.UserName == userName)
+            .Select(u => u.Email)
+            .FirstOrDefaultAsync(cancellationToken); 
+    }
 }
