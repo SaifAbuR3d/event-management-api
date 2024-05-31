@@ -69,5 +69,19 @@ public class AuthController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(command, cancellationToken);
         return Ok(result);
     }
+
+    /// <summary>
+    /// Sets a new password for any user. (for admins only)
+    /// </summary>
+    /// <param name="username"></param>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    [HttpPatch("ad/set-password/{username}")]
+    public async Task<ActionResult> SetNewPassword(string username, UpdateUserPasswordRequest request)
+    {
+        var command = request.ToCommand(username);
+        await mediator.Send(command);
+        return Ok(new { message = "Operation Successful" });
+    }
 }
 

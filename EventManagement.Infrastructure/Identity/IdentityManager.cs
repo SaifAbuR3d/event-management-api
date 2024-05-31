@@ -84,5 +84,26 @@ public class IdentityManager(UserManager<ApplicationUser> userManager,
         return roles;
     }
 
+    // used only by admin
+    public async Task UpdatePassword(string username, string newPassword)
+    {
+        var user = await userManager.FindByNameAsync(username) 
+            ?? throw new NotFoundException(name: "User", keyName: "UserName", key: username);
+
+        // Checking if newPassword complies with the password policy 
+        // the check is a MUST, because if the password does not comply with the policy, the password will be set to NULL
+        var passwordValidator = userManager.PasswordValidators.First(); 
+        var result = await passwordValidator.ValidateAsync(userManager, user, newPassword);
+
+        if (!result.Succeeded)
+        {
+            var error = result.Errors.First().Description;
+            throw new BadRequestException(error);
+        }
+
+        await userManager.RemovePasswordAsync(user);
+
+        await userManager.AddPasswordAsync(user, newPassword);
+    }
 
 }

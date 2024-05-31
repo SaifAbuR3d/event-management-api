@@ -5,7 +5,7 @@ using MediatR;
 
 namespace EventManagement.Application.Features.Bookings.CheckIn;
 
-public record CheckInCommand(int eventId, Guid CheckInCode) : IRequest<Unit>;
+public record CheckInCommand(int EventId, Guid CheckInCode) : IRequest<Unit>;
 
 public class CheckInCommandHandler(ITicketRepository ticketRepository, 
     IUnitOfWork unitOfWork)
@@ -13,7 +13,7 @@ public class CheckInCommandHandler(ITicketRepository ticketRepository,
 {
     public async Task<Unit> Handle(CheckInCommand request, CancellationToken cancellationToken)
     {
-        var bookingTicket = await ticketRepository.GetBookingTicketAsync(request.eventId,
+        var bookingTicket = await ticketRepository.GetBookingTicketAsync(request.EventId,
             request.CheckInCode, cancellationToken) ?? throw new NotFoundException(
                 nameof(BookingTicket), nameof(request.CheckInCode), request.CheckInCode); 
 

@@ -12,4 +12,5 @@ public class AttendeeDto
     public Gender Gender { get; set; } = default!;
     public bool IsVerified { get; set; }
     public string? ImageUrl { get; set; }
+    public string? Email { get; set; } // returned only in Admin Dashboard
 }

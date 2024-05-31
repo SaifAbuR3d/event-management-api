@@ -88,4 +88,40 @@ public class UserRepository(ApplicationDbContext context) : IUserRepository
                           && ivr.Status == IdentityVerificationRequestStatus.Approved
                           , cancellationToken); 
     }
+
+    public async Task<string?> GetEmailByUserName(string userName, CancellationToken cancellationToken)
+    {
+        return await context.Users
+            .Where(u => u.UserName == userName)
+            .Select(u => u.Email)
+            .FirstOrDefaultAsync(cancellationToken); 
+    }
+
+    public async Task UpdateFirstNameByUserName(string userName, string newFirstName,
+        CancellationToken cancellationToken)
+    {
+        var user = await context.Users
+            .FirstOrDefaultAsync(u => u.UserName == userName,cancellationToken);
+
+        if (user == null)
+        {
+            return;
+        }
+
+        user.FirstName = newFirstName;
+    }
+
+    public async Task UpdateLastNameByUserName(string userName, string newLastName,
+        CancellationToken cancellationToken)
+    {
+        var user = await context.Users
+            .FirstOrDefaultAsync(u => u.UserName == userName, cancellationToken);
+        
+        if (user == null)
+        {
+            return;
+        }
+
+        user.LastName = newLastName;
+    }
 }

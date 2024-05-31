@@ -5,11 +5,9 @@ using EventManagement.Application.Features.Attendees.GetAttendees;
 using EventManagement.Application.Features.Follow.FollowAnOrganizer;
 using EventManagement.Application.Features.Follow.GetFollowings;
 using EventManagement.Application.Features.Follow.UnfollowAnOrganizer;
-using EventManagement.Application.Features.Organizers.GetOrganizer;
 using EventManagement.Application.Features.SetUserProfilePicture;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Text.Json;
 
 namespace EventManagement.API.Controllers;
@@ -88,9 +86,26 @@ public class AttendeesController(IMediator mediator,
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [HttpGet("{username}")]
-    public async Task<ActionResult<AttendeeDto>> GetAttendeeByUserName(string username, CancellationToken cancellationToken)
+    public async Task<ActionResult<AttendeeDto>> GetAttendeeByUserName(string username, 
+        CancellationToken cancellationToken)
     {
         var attendee = await mediator.Send(new GetAttendeeByUserNameQuery(username),
+            cancellationToken);
+        return Ok(attendee);
+    }
+
+    /// <summary>
+    /// Gets an attendee by its username, (contains additional information like email address)
+    /// For the admin dashboard
+    /// </summary>
+    /// <param name="username"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    [HttpGet("ad/{username}")]
+    public async Task<ActionResult<AttendeeDto>> GetAttendeeForAdminDashboard(string username,
+        CancellationToken cancellationToken)
+    {
+        var attendee = await mediator.Send(new GetAttendeeByUserNameForAdminDashboardQuery(username),
             cancellationToken);
         return Ok(attendee);
     }
@@ -107,5 +122,22 @@ public class AttendeesController(IMediator mediator,
         var imageUrl = await mediator.Send(command);
 
         return Ok(new { imageUrl });
+    }
+
+    /// <summary>
+    /// Updates the personal information of an attendee
+    /// </summary>
+    /// <param name="username"></param>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    [HttpPut("{username}")]
+    public async Task<ActionResult> UpdateAttendeePersonalInfo(string username,
+               UpdateAttendeePersonalInfoRequest request,
+               CancellationToken cancellationToken)
+    {
+        var command = request.ToCommand(username);
+        await mediator.Send(command, cancellationToken);
+        return Ok(new { message = "Operation Successful" });
     }
 }
