@@ -4,6 +4,7 @@ using EventManagement.Application.Features.Attendees.GetAttendee;
 using EventManagement.Application.Features.Follow.GetOrganizerFollowers;
 using EventManagement.Application.Features.Organizers.GetOrganizer;
 using EventManagement.Application.Features.Organizers.GetOrganizers;
+using EventManagement.Application.Features.Organizers.UpdatePersonalInfo;
 using EventManagement.Application.Features.Organizers.UpdateProfile;
 using EventManagement.Application.Features.SetUserProfilePicture;
 using MediatR;
@@ -125,6 +126,24 @@ public class OrganizersController(IMediator mediator,
 
         return Ok(organizers);
     }
+
+    /// <summary>
+    /// Updates the personal information of an organizer
+    /// </summary>
+    /// <param name="username"></param>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    [HttpPut("{username}")]
+    public async Task<ActionResult> UpdateOrganizerPersonalInfo(string username,
+               UpdateOrganizerPersonalInfoRequest request,
+               CancellationToken cancellationToken)
+    {
+        var command = request.ToCommand(username); 
+        await mediator.Send(command, cancellationToken);
+        return Ok(new { message = "Operation Successful" });
+    }
+
 
 
 }

@@ -123,4 +123,21 @@ public class AttendeesController(IMediator mediator,
 
         return Ok(new { imageUrl });
     }
+
+    /// <summary>
+    /// Updates the personal information of an attendee
+    /// </summary>
+    /// <param name="username"></param>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    [HttpPut("{username}")]
+    public async Task<ActionResult> UpdateAttendeePersonalInfo(string username,
+               UpdateAttendeePersonalInfoRequest request,
+               CancellationToken cancellationToken)
+    {
+        var command = request.ToCommand(username);
+        await mediator.Send(command, cancellationToken);
+        return Ok(new { message = "Operation Successful" });
+    }
 }
