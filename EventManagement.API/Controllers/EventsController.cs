@@ -65,7 +65,7 @@ public class EventsController(IMediator mediator,
     }
 
     /// <summary>
-    /// returns other events that the user may like
+    /// returns other events that the user may like, based on the event categories
     /// </summary>
     /// <param name="eventId"></param>
     /// <param name="cancellationToken"></param>
@@ -75,6 +75,18 @@ public class EventsController(IMediator mediator,
                CancellationToken cancellationToken)
     {
         var events = await mediator.Send(new GetOtherEventsMayLikeQuery(eventId), cancellationToken);
+        return Ok(events);
+    }
+    /// <summary>
+    /// returns other events that the user may like, based on the user interests
+    /// </summary>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    [HttpGet("i-may-like")]
+    public async Task<ActionResult<IEnumerable<EventDto>>> GetOtherEventsMayLikeByAttendee(
+                      CancellationToken cancellationToken)
+    {
+        var events = await mediator.Send(new GetOtherEventsMayLikeByAttendeeQuery(), cancellationToken);
         return Ok(events);
     }
 

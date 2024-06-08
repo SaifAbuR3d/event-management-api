@@ -116,7 +116,7 @@ public class EventRepository(ApplicationDbContext context) : IEventRepository
         return query;
     }
 
-    public async Task<IEnumerable<Event>> GetEventsMayLikeAsync(int eventId,
+    public async Task<IEnumerable<Event>> GetEventsMayLikeByEventAsync(int eventId,
         CancellationToken cancellationToken)
     {
         var eventCategories = await context.Events
@@ -138,17 +138,42 @@ public class EventRepository(ApplicationDbContext context) : IEventRepository
         return events;
     }
 
+    public async Task<IEnumerable<Event>> GetEventsMayLikeByAttendee(int attendeeId,
+        CancellationToken cancellationToken)
+    {
+        var attendeeCategories = await context.Attendees
+            .Where(a => a.Id == attendeeId)
+            .SelectMany(a => a.Categories.Select(i => i.Id))
+            .ToListAsync(cancellationToken);
+
+        var events = await context.Events
+            .Include(e => e.Categories)
+            .Include(e => e.Organizer)
+            .Include(e => e.EventImages)
+            .Include(e => e.Tickets)
+            .Where(e => e.Categories.Any(c => attendeeCategories.Contains(c.Id)))
+            .OrderBy(e => Guid.NewGuid())
+            .Take(10)
+            .ToListAsync(cancellationToken);
+
+        return events;
+    }
+
+
+
 
 
     // TODO: Implement this method, (combine attendee interests and location with event categories and location)
-    public async Task<IEnumerable<Event>> GetEventsMayLikeForAttendeeAndEventAsync(int eventId,
+    public async Task<IEnumerable<Event>> GetEventsMayLikeByAttendeeAndEventAsync(int eventId,
     int attendeeId, CancellationToken cancellationToken)
     {
-        return await GetEventsMayLikeAsync(eventId, cancellationToken);
+        return await GetEventsMayLikeByEventAsync(eventId, cancellationToken);
     }
 
+
+
     public async Task<IEnumerable<Event>> GetNearEventsAsync(double latitude,
-        double longitude, int maximumDistanceInKM, int numberOfEvents)
+    double longitude, int maximumDistanceInKM, int numberOfEvents)
     {
 
         //The distance between two points is calculated using the Haversine formula,

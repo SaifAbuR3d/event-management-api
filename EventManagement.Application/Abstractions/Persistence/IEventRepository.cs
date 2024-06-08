@@ -10,9 +10,12 @@ public interface IEventRepository
     Task<Event?> GetEventByIdAsync(int eventId, CancellationToken cancellationToken);
     Task<(IEnumerable<Event>, PaginationMetadata)> GetEventsAsync(GetAllEventsQueryParameters queryParameters,
         CancellationToken cancellationToken);
-    Task<IEnumerable<Event>> GetEventsMayLikeAsync(int eventId, CancellationToken cancellationToken);
-    Task<IEnumerable<Event>> GetEventsMayLikeForAttendeeAndEventAsync(int eventId, int attendeeId,
+
+    Task<IEnumerable<Event>> GetEventsMayLikeByEventAsync(int eventId, CancellationToken cancellationToken);
+    Task<IEnumerable<Event>> GetEventsMayLikeByAttendee(int attendeeId, CancellationToken cancellationToken);
+    Task<IEnumerable<Event>> GetEventsMayLikeByAttendeeAndEventAsync(int eventId, int attendeeId,
         CancellationToken cancellationToken);
+
     Task<IEnumerable<Event>> GetNearEventsAsync(double latitude, double longitude, 
         int MaximumDistanceInKM, int NumberOfEvents);
 }
