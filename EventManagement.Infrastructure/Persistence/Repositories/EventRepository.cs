@@ -160,16 +160,12 @@ public class EventRepository(ApplicationDbContext context) : IEventRepository
     }
 
 
-
-
-
     // TODO: Implement this method, (combine attendee interests and location with event categories and location)
     public async Task<IEnumerable<Event>> GetEventsMayLikeByAttendeeAndEventAsync(int eventId,
     int attendeeId, CancellationToken cancellationToken)
     {
         return await GetEventsMayLikeByEventAsync(eventId, cancellationToken);
     }
-
 
 
     public async Task<IEnumerable<Event>> GetNearEventsAsync(double latitude,
@@ -218,6 +214,31 @@ public class EventRepository(ApplicationDbContext context) : IEventRepository
             .ToListAsync();
     }
 
+
+    public async Task<IEnumerable<Event>> GetMostRatedEventsInLastNDays(int days, 
+        int numberOfEvents, CancellationToken cancellationToken)
+    {
+        var nDaysAgo = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-days));
+        var today = DateOnly.FromDateTime(DateTime.UtcNow); 
+
+        var events = await context.Events
+            .Include(e => e.Organizer)
+            .Include(e => e.EventImages)
+            .Include(e => e.Tickets)
+            .Include(e => e.Categories)
+            .Include(e => e.Reviews)
+            .AsSplitQuery()
+
+            .Where(e => e.EndDate >= nDaysAgo && e.EndDate <= today)
+            .Where(e => e.Reviews.Count != 0)
+
+            .OrderByDescending(e => e.Reviews.Average(r => r.Rating))
+
+            .Take(numberOfEvents)
+            .ToListAsync(cancellationToken);
+
+        return events;
+    }
 
 
 }

@@ -3,6 +3,7 @@ using EventManagement.Application.Contracts.Responses;
 using EventManagement.Application.Features.Events.EventStatistics;
 using EventManagement.Application.Features.Events.GetAllEvents;
 using EventManagement.Application.Features.Events.GetEvent;
+using EventManagement.Application.Features.Events.GetMostRatedEventsInTheLastNDays;
 using EventManagement.Application.Features.Events.GetNearEvents;
 using EventManagement.Application.Features.Events.GetOtherEventsMayLike;
 using MediatR;
@@ -65,6 +66,21 @@ public class EventsController(IMediator mediator,
     }
 
     /// <summary>
+    /// gets the statistics of the event with the specified id
+    /// </summary>
+    /// <param name="eventId"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    [HttpGet("{eventId}/stats")]
+    public async Task<ActionResult<EventStatisticsDto>> GetEventStatistics(int eventId,
+        CancellationToken cancellationToken)
+    {
+        var query = new GetEventStatisticsQuery(eventId);
+        var stats = await mediator.Send(query, cancellationToken);
+        return Ok(stats);
+    }
+
+    /// <summary>
     /// returns other events that the user may like, based on the event categories
     /// </summary>
     /// <param name="eventId"></param>
@@ -91,20 +107,6 @@ public class EventsController(IMediator mediator,
     }
 
     /// <summary>
-    /// gets the statistics of the event with the specified id
-    /// </summary>
-    /// <param name="eventId"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    [HttpGet("{eventId}/stats")]
-    public async Task<ActionResult<EventStatisticsDto>> GetEventStatistics(int eventId,
-        CancellationToken cancellationToken)
-    {
-        var query = new GetEventStatisticsQuery(eventId);
-        var stats = await mediator.Send(query, cancellationToken);
-        return Ok(stats);
-    }
-    /// <summary>
     /// Gets the events near the specified location
     /// </summary>
     /// <param name="parameters"></param>
@@ -118,6 +120,21 @@ public class EventsController(IMediator mediator,
         var query = new GetNearEventsQuery(parameters.Latitude, parameters.Longitude,
                        parameters.MaximumDistanceInKM, parameters.NumberOfEvents);
         var events = await mediator.Send(query, cancellationToken);
+        return Ok(events);
+    }
+
+    /// <summary>
+    /// Gets the most rated events in the last N days, with the specified number of events
+    /// </summary>
+    /// <param name="days"></param>
+    /// <param name="numberOfEvents"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    [HttpGet("most-rated")]
+    public async Task<ActionResult<IEnumerable<EventDto>>> GetMostRatedEvents(CancellationToken cancellationToken, [FromQuery] int days = 7, [FromQuery] int numberOfEvents = 20)
+    {
+        var events = await mediator.Send(new GetMostRatedEventsInLastNDaysQuery(days, numberOfEvents),
+            cancellationToken);
         return Ok(events);
     }
 }
