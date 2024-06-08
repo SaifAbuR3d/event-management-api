@@ -137,4 +137,19 @@ public class EventsController(IMediator mediator,
             cancellationToken);
         return Ok(events);
     }
+
+    /// <summary>
+    /// Get the average rating of an event
+    /// </summary>
+    /// <param name="eventId"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    [HttpGet("{eventId}/avg")]
+    public async Task<ActionResult<double>> GetEventAverageRating(int eventId,
+        CancellationToken cancellationToken)
+    {
+        var query = new GetEventAverageRatingQuery(eventId);
+        var average = await mediator.Send(query, cancellationToken);
+        return Ok(new { average });
+    }
 }

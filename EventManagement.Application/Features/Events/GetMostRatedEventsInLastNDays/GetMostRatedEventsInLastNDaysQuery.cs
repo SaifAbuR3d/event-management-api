@@ -12,14 +12,17 @@ public record GetMostRatedEventsInLastNDaysQuery(int Days, int NumberOfEvents)
     : IRequest<IEnumerable<EventDto>>;
 
 public class GetMostRatedEventsInLastNDaysQueryHandler(IEventRepository eventRepository,
-    IUserRepository userRepository, ICurrentUser currentUser, IReviewRepository reviewRepository,
+    IUserRepository userRepository, ICurrentUser currentUser,
     IAttendeeRepository attendeeRepository, IMapper mapper)
     : IRequestHandler<GetMostRatedEventsInLastNDaysQuery, IEnumerable<EventDto>>
 {
-    public async Task<IEnumerable<EventDto>> Handle(GetMostRatedEventsInLastNDaysQuery request, CancellationToken cancellationToken)
+    public async Task<IEnumerable<EventDto>> Handle(GetMostRatedEventsInLastNDaysQuery request,
+        CancellationToken cancellationToken)
     {
+        Validate(request);
+
         var events = await eventRepository.GetMostRatedEventsInLastNDays(request.Days, request.NumberOfEvents,
-            cancellationToken); 
+            cancellationToken);
 
         var eventsDto = mapper.Map<IEnumerable<EventDto>>(events);
 
@@ -51,5 +54,17 @@ public class GetMostRatedEventsInLastNDaysQueryHandler(IEventRepository eventRep
         }
 
         return eventsDto;
+    }
+
+    private static void Validate(GetMostRatedEventsInLastNDaysQuery request)
+    {
+        if (request.Days <= 0 || request.Days > 10000)
+        {
+            throw new BadRequestException("Invalid Number of days");
+        }
+        if (request.NumberOfEvents <= 0 || request.NumberOfEvents > 100)
+        {
+            throw new BadRequestException("Invalid Number of events");
+        }
     }
 }

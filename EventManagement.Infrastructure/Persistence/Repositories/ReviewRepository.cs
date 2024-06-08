@@ -48,4 +48,17 @@ public class ReviewRepository(ApplicationDbContext context) : IReviewRepository
 
         return (result, paginationMetadata);
     }
+
+    public async Task<double?> GetEventAvgRating(int EventId, CancellationToken cancellationToken)
+    {
+        bool isThereAny = await context.Reviews.AnyAsync(r => r.EventId == EventId, cancellationToken);
+        if (!isThereAny)
+        {
+            return null; 
+        }
+
+        return await context.Reviews
+            .Where(r => r.EventId == EventId)
+            .AverageAsync(r => r.Rating, cancellationToken);
+    }
 }
