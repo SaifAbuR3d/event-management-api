@@ -3,6 +3,8 @@ using EventManagement.Application.Contracts.Requests;
 using EventManagement.Application.Contracts.Responses;
 using EventManagement.Domain.Entities;
 using EventManagement.Infrastructure.Persistence.Helpers;
+using Microsoft.AspNetCore.Rewrite;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace EventManagement.Infrastructure.Persistence.Repositories;
@@ -114,7 +116,7 @@ public class EventRepository(ApplicationDbContext context) : IEventRepository
         return query;
     }
 
-    public async Task<IEnumerable<Event>> GetEventsMayLikeAsync(int eventId,
+    public async Task<IEnumerable<Event>> GetEventsMayLikeByEventAsync(int eventId,
         CancellationToken cancellationToken)
     {
         var eventCategories = await context.Events
@@ -136,11 +138,107 @@ public class EventRepository(ApplicationDbContext context) : IEventRepository
         return events;
     }
 
+    public async Task<IEnumerable<Event>> GetEventsMayLikeByAttendee(int attendeeId,
+        CancellationToken cancellationToken)
+    {
+        var attendeeCategories = await context.Attendees
+            .Where(a => a.Id == attendeeId)
+            .SelectMany(a => a.Categories.Select(i => i.Id))
+            .ToListAsync(cancellationToken);
+
+        var events = await context.Events
+            .Include(e => e.Categories)
+            .Include(e => e.Organizer)
+            .Include(e => e.EventImages)
+            .Include(e => e.Tickets)
+            .Where(e => e.Categories.Any(c => attendeeCategories.Contains(c.Id)))
+            .OrderBy(e => Guid.NewGuid())
+            .Take(10)
+            .ToListAsync(cancellationToken);
+
+        return events;
+    }
+
+
     // TODO: Implement this method, (combine attendee interests and location with event categories and location)
-    public async Task<IEnumerable<Event>> GetEventsMayLikeForAttendeeAsync(int eventId,
+    public async Task<IEnumerable<Event>> GetEventsMayLikeByAttendeeAndEventAsync(int eventId,
     int attendeeId, CancellationToken cancellationToken)
     {
-        return await GetEventsMayLikeAsync(eventId, cancellationToken);
+        return await GetEventsMayLikeByEventAsync(eventId, cancellationToken);
     }
+
+
+    public async Task<IEnumerable<Event>> GetNearEventsAsync(double latitude,
+    double longitude, int maximumDistanceInKM, int numberOfEvents)
+    {
+
+        //The distance between two points is calculated using the Haversine formula,
+        //which determines the great-circle distance between two points on the Earth's surface.
+
+        // the formula is: 
+        // d = R * acos(sin(lat1) * sin(lat2) + cos(lat1) * cos(lat2) * cos(lon2 - lon1))
+        // where:
+        // d is the distance between the two points
+        // R is the radius of the Earth (mean radius = 6,371 km)
+        // lat1, lon1 are the coordinates of the first point
+        // lat2, lon2 are the coordinates of the second point
+
+        int radiusOfEarthInKM = 6371;
+
+        var query = $@"
+        SELECT TOP {numberOfEvents} Id,
+               {radiusOfEarthInKM} *
+               ACOS(COS(RADIANS({latitude})) * COS(RADIANS(Latitude)) * COS(RADIANS(Longitude) - RADIANS({longitude})) +
+                    SIN(RADIANS({latitude})) * SIN(RADIANS(Latitude))
+               ) AS Distance
+        FROM Events
+        WHERE {radiusOfEarthInKM} *
+              ACOS(COS(RADIANS({latitude})) * COS(RADIANS(Latitude)) * COS(RADIANS(Longitude) - RADIANS({longitude})) +
+                   SIN(RADIANS({latitude})) * SIN(RADIANS(Latitude))
+              ) < {maximumDistanceInKM}
+        ORDER BY Distance";
+
+        // get the event IDs
+        var eventIds = await context.Events
+            .FromSqlRaw(query)
+            .Select(e => e.Id)
+            .ToListAsync();
+
+        // Fetch the full event details
+        return await context.Events
+            .Include(e => e.Organizer)
+            .Include(e => e.EventImages)
+            .Include(e => e.Tickets)
+            .Include(e => e.Categories)
+            .Where(e => eventIds.Contains(e.Id))
+            .ToListAsync();
+    }
+
+
+    public async Task<IEnumerable<Event>> GetMostRatedEventsInLastNDays(int days, 
+        int numberOfEvents, CancellationToken cancellationToken)
+    {
+        var nDaysAgo = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-days));
+        var today = DateOnly.FromDateTime(DateTime.UtcNow); 
+
+        var events = await context.Events
+            .Include(e => e.Organizer)
+            .Include(e => e.EventImages)
+            .Include(e => e.Tickets)
+            .Include(e => e.Categories)
+            .Include(e => e.Reviews)
+            .AsSplitQuery()
+
+            .Where(e => e.EndDate >= nDaysAgo && e.EndDate <= today)
+            .Where(e => e.Reviews.Count != 0)
+
+            .OrderByDescending(e => e.Reviews.Average(r => r.Rating))
+
+            .Take(numberOfEvents)
+            .ToListAsync(cancellationToken);
+
+        return events;
+    }
+
 
 }
