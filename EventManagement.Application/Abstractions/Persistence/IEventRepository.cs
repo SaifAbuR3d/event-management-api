@@ -11,6 +11,8 @@ public interface IEventRepository
     Task<(IEnumerable<Event>, PaginationMetadata)> GetEventsAsync(GetAllEventsQueryParameters queryParameters,
         CancellationToken cancellationToken);
     Task<IEnumerable<Event>> GetEventsMayLikeAsync(int eventId, CancellationToken cancellationToken);
-    Task<IEnumerable<Event>> GetEventsMayLikeForAttendeeAsync(int eventId, int attendeeId,
+    Task<IEnumerable<Event>> GetEventsMayLikeForAttendeeAndEventAsync(int eventId, int attendeeId,
         CancellationToken cancellationToken);
+    Task<IEnumerable<Event>> GetNearEventsAsync(double latitude, double longitude, 
+        int MaximumDistanceInKM, int NumberOfEvents);
 }

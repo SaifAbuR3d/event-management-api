@@ -3,6 +3,7 @@ using EventManagement.Application.Contracts.Responses;
 using EventManagement.Application.Features.Events.EventStatistics;
 using EventManagement.Application.Features.Events.GetAllEvents;
 using EventManagement.Application.Features.Events.GetEvent;
+using EventManagement.Application.Features.Events.GetNearEvents;
 using EventManagement.Application.Features.Events.GetOtherEventsMayLike;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -77,12 +78,34 @@ public class EventsController(IMediator mediator,
         return Ok(events);
     }
 
+    /// <summary>
+    /// gets the statistics of the event with the specified id
+    /// </summary>
+    /// <param name="eventId"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     [HttpGet("{eventId}/stats")]
-    public async Task<ActionResult<EventStatisticsDto>> EGetventStatistics(int eventId,
+    public async Task<ActionResult<EventStatisticsDto>> GetEventStatistics(int eventId,
         CancellationToken cancellationToken)
     {
         var query = new GetEventStatisticsQuery(eventId);
         var stats = await mediator.Send(query, cancellationToken);
         return Ok(stats);
+    }
+    /// <summary>
+    /// Gets the events near the specified location
+    /// </summary>
+    /// <param name="parameters"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    [HttpGet("near")]
+    public async Task<ActionResult<IEnumerable<EventDto>>> GetNearEvents(
+               [FromQuery] GetNearEventsQueryParameters parameters,
+               CancellationToken cancellationToken)
+    {
+        var query = new GetNearEventsQuery(parameters.Latitude, parameters.Longitude,
+                       parameters.MaximumDistanceInKM, parameters.NumberOfEvents);
+        var events = await mediator.Send(query, cancellationToken);
+        return Ok(events);
     }
 }

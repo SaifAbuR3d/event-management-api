@@ -26,7 +26,7 @@ public class GetOtherEventsMayLikeQueryHandler(ICurrentUser currentUser,
             var userId = currentUser.UserId;
             var attendeeId = await userRepository.GetIdByUserId(userId, cancellationToken)
                 ?? throw new CustomException("Invalid State: this userId must be attached to an attendee");
-            events = await eventRepository.GetEventsMayLikeForAttendeeAsync(request.EventId,
+            events = await eventRepository.GetEventsMayLikeForAttendeeAndEventAsync(request.EventId,
                 int.Parse(attendeeId), cancellationToken);
 
             eventsDto = mapper.Map<IEnumerable<EventDto>>(events);
