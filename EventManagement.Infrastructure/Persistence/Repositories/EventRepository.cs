@@ -3,8 +3,6 @@ using EventManagement.Application.Contracts.Requests;
 using EventManagement.Application.Contracts.Responses;
 using EventManagement.Domain.Entities;
 using EventManagement.Infrastructure.Persistence.Helpers;
-using Microsoft.AspNetCore.Rewrite;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace EventManagement.Infrastructure.Persistence.Repositories;
@@ -240,5 +238,38 @@ public class EventRepository(ApplicationDbContext context) : IEventRepository
         return events;
     }
 
+    public async Task<(IEnumerable<Event>, PaginationMetadata)> GetEventsFromFollowingOrganizersAsync(
+        GetAllEventsFromFollowingOrganizersQueryParameters parameters, int attendeeId,
+        CancellationToken cancellationToken)
+    {
+        var query = context.Events
+            .Include(e => e.Organizer)
+            .Include(e => e.EventImages)
+            .Include(e => e.Tickets)
+            .Include(e => e.Categories)
+            .AsSplitQuery()
+            .AsQueryable();
 
+        if (parameters.OnlyFutureEvents)
+        {
+            query = query.Where(e => e.StartDate > DateOnly.FromDateTime(DateTime.UtcNow));
+        }
+
+        query = query.Where(e => e.Organizer.Followings
+            .Any(f => f.AttendeeId == attendeeId));
+
+        query = SortingHelper.ApplySorting(query, parameters.SortOrder,
+                       SortingHelper.EventsSortingKeySelector(parameters.SortColumn));
+
+        var paginationMetadata = await PaginationHelper.GetPaginationMetadataAsync(query,
+                       parameters.PageIndex, parameters.PageSize, cancellationToken);
+
+        query = PaginationHelper.ApplyPagination(query, parameters.PageIndex, parameters.PageSize);
+
+        var result = await query
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
+
+        return (result, paginationMetadata);
+    }
 }

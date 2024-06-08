@@ -19,4 +19,6 @@ public interface IEventRepository
     Task<IEnumerable<Event>> GetNearEventsAsync(double latitude, double longitude, 
         int MaximumDistanceInKM, int NumberOfEvents);
     Task<IEnumerable<Event>> GetMostRatedEventsInLastNDays(int days, int numberOfEvents, CancellationToken cancellationToken);
+    Task<(IEnumerable<Event>, PaginationMetadata)> GetEventsFromFollowingOrganizersAsync(GetAllEventsFromFollowingOrganizersQueryParameters parameters, int attendeeId,
+        CancellationToken cancellationToken);
 }

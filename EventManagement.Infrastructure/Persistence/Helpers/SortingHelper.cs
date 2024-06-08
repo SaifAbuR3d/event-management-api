@@ -18,7 +18,7 @@ public class SortingHelper
         return sortColumn?.ToLower() switch
         {
             "name" => e => e.Name,
-            "startDate" => e => e.StartDate,
+            "startdate" => e => e.StartDate,
             "endDate" => e => e.EndDate,
             "ticketsCount" => e => e.Tickets.Count,
             _ => e => e.Id
