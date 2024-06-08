@@ -10,4 +10,8 @@ public class GetAllEventsQueryParameters : GetAllQueryParameters
     public bool PreviousEvents { get; set; }
     public bool UpcomingEvents { get; set; }
     public bool RunningEvents { get; set; }
+    public bool OnlyManagedEvents { get; set; }
+    public int? MinPrice { get; set; }
+    public int? MaxPrice { get; set; }
+ 
 }
