@@ -19,8 +19,8 @@ public class SortingHelper
         {
             "name" => e => e.Name,
             "startdate" => e => e.StartDate,
-            "endDate" => e => e.EndDate,
-            "ticketsCount" => e => e.Tickets.Count,
+            "enddate" => e => e.EndDate,
+            "ticketscount" => e => e.Tickets.Count,
             _ => e => e.Id
         }; 
     }
@@ -29,10 +29,10 @@ public class SortingHelper
     {
         return sortColumn?.ToLower() switch
         {
-            "userId" => a => a.UserId,
-            "creationDate" => a => a.CreationDate,
-            "lastModified" => a => a.LastModified,
-            "dateOfBirth" => a => a.DateOfBirth,
+            "userid" => a => a.UserId,
+            "creationdate" => a => a.CreationDate,
+            "lastmodified" => a => a.LastModified,
+            "dateofbirth" => a => a.DateOfBirth,
             _ => a => a.Id
         };
     }
@@ -41,11 +41,11 @@ public class SortingHelper
     {
         return sortColumn?.ToLower() switch
         {
-            "displayName" => o => o.DisplayName,
-            "userId" => o => o.UserId,
-            "creationDate" => o => o.CreationDate,
-            "lastModified" => o => o.LastModified,
-            "isVerified" => o => o.IsVerified,
+            "displayname" => o => o.DisplayName,
+            "userid" => o => o.UserId,
+            "creationdate" => o => o.CreationDate,
+            "lastmodified" => o => o.LastModified,
+            "isverified" => o => o.IsVerified,
             _ => o => o.Id
         };
     }
@@ -55,8 +55,8 @@ public class SortingHelper
         return sortColumn?.ToLower() switch
         {
             "rating" => r => r.Rating,
-            "creationDate" => r => r.CreationDate,
-            "lastModified" => r => r.LastModified,
+            "creationdate" => r => r.CreationDate,
+            "lastmodified" => r => r.LastModified,
             "comment" => r => r.Comment,
             _ => r => r.Id
         };
@@ -67,8 +67,8 @@ public class SortingHelper
         return sortColumn?.ToLower() switch
         {
             "status" => r => r.Status,
-            "creationDate" => r => r.CreationDate,
-            "lastModified" => r => r.LastModified,
+            "creationdate" => r => r.CreationDate,
+            "lastmodified" => r => r.LastModified,
             "content" => r => r.Content,
             _ => r => r.Id
         };
@@ -79,9 +79,9 @@ public class SortingHelper
         return sortColumn?.ToLower() switch
         {
             "status" => ivr => ivr.Status,
-            "creationDate" => ivr => ivr.CreationDate,
-            "lastModified" => ivr => ivr.LastModified,
-            "userId" => ivr => ivr.UserId,
+            "creationdate" => ivr => ivr.CreationDate,
+            "lastmodified" => ivr => ivr.LastModified,
+            "userid" => ivr => ivr.UserId,
             _ => ivr => ivr.Id
         };
     }
@@ -91,10 +91,10 @@ public class SortingHelper
         return sortColumn?.ToLower() switch
         {
             "status" => rr => rr.Status,
-            "creationDate" => rr => rr.CreationDate,
-            "lastModified" => rr => rr.LastModified,
-            "attendeeId" => rr => rr.AttendeeId,
-            "eventId" => rr => rr.EventId,
+            "creationdate" => rr => rr.CreationDate,
+            "lastmodified" => rr => rr.LastModified,
+            "attendeeid" => rr => rr.AttendeeId,
+            "eventid" => rr => rr.EventId,
             _ => rr => rr.Id
         };
     }
@@ -103,10 +103,10 @@ public class SortingHelper
     {
         return sortColumn?.ToLower() switch
         {
-            "creationDate" => b => b.CreationDate,
-            "lastModified" => b => b.LastModified,
-            "attendeeId" => b => b.AttendeeId,
-            "eventId" => b => b.EventId,
+            "creationdate" => b => b.CreationDate,
+            "lastmodified" => b => b.LastModified,
+            "attendeeid" => b => b.AttendeeId,
+            "eventid" => b => b.EventId,
             _ => b => b.Id
         };
     }
