@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using EventManagement.Domain.Entities;
 
-
 namespace EventManagement.Infrastructure.Persistence;
 
 public class ApplicationDbContext
@@ -59,7 +58,44 @@ public class ApplicationDbContext
 
         ConfigureDeleteBehavior(modelBuilder);
 
-       //ConfigureEnumToString(modelBuilder); if needed
+        //ConfigureEnumToString(modelBuilder); if needed
+
+        AddIndexed(modelBuilder); 
+    }
+
+    private void AddIndexed(ModelBuilder modelBuilder)
+    {
+
+        modelBuilder.Entity<Event>()
+            .HasIndex(e => new { e.StartDate, e.EndDate })
+            .HasDatabaseName("IX_Event_StartDate_EndDate");
+        modelBuilder.Entity<Event>()
+            .HasIndex(e => e.IsManaged)
+            .HasDatabaseName("IX_Event_IsManaged");
+        modelBuilder.Entity<Event>()
+            .HasIndex(e => e.IsOnline)
+            .HasDatabaseName("IX_Event_IsOnline");
+
+        modelBuilder.Entity<Ticket>()
+            .HasIndex(t => t.Price)
+            .HasDatabaseName("IX_Ticket_Price");
+
+
+        // Text columns (used in get events queries)
+        // Assuming that the search is for exact matches or 'starts with (prefix)' searches,
+        // B-tree indexes is properly suited
+        // If the search is for 'contains', or more complex searches,
+        // a full text index may be a better choice
+        modelBuilder.Entity<Event>()
+            .HasIndex(e => e.Name)
+            .HasDatabaseName("IX_Event_Name");
+
+        modelBuilder.Entity<Organizer>()
+            .HasIndex(o => o.DisplayName)
+            .HasDatabaseName("IX_Organizer_DisplayName");
+
+
+
     }
 
     private static void ConfigureEnumToString(ModelBuilder modelBuilder)
