@@ -52,6 +52,7 @@ public class JwtTokenGenerator : IJwtTokenGenerator
         var id = await _userRepository.GetIdByUserId(user.Id, CancellationToken.None)
             ?? throw new CustomException("Invalid State: User Id Not Found");
         bool isVerified = await _userRepository.IsVerified(user.Id, CancellationToken.None); 
+        var userImage = await _userRepository.GetProfilePictureByUserId(user.Id, CancellationToken.None);
 
         var claims = new List<Claim>
                 {
@@ -59,7 +60,8 @@ public class JwtTokenGenerator : IJwtTokenGenerator
                     new(ClaimTypes.Name, user.UserName),
                     new(ClaimTypes.Email, user.Email),
                     new("id", id ), 
-                    new("isVerified", isVerified.ToString())
+                    new("isVerified", isVerified.ToString()),
+                    new("userImage", userImage ?? "")
                 };
 
         foreach (var role in roles)

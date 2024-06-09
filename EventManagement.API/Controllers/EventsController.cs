@@ -3,6 +3,7 @@ using EventManagement.Application.Contracts.Responses;
 using EventManagement.Application.Features.Events.EventStatistics;
 using EventManagement.Application.Features.Events.GetAllEvents;
 using EventManagement.Application.Features.Events.GetEvent;
+using EventManagement.Application.Features.Events.GetEventsFromFollowingOrganizers;
 using EventManagement.Application.Features.Events.GetMostRatedEventsInTheLastNDays;
 using EventManagement.Application.Features.Events.GetNearEvents;
 using EventManagement.Application.Features.Events.GetOtherEventsMayLike;
@@ -151,5 +152,23 @@ public class EventsController(IMediator mediator,
         var query = new GetEventAverageRatingQuery(eventId);
         var average = await mediator.Send(query, cancellationToken);
         return Ok(new { average });
+    }
+    /// <summary>
+    /// Gets the events from the following organizers,
+    /// filtered, sorted, and paginated according to the specified parameters.
+    /// To be used in the home page 
+    /// </summary>
+    /// <param name="parameters"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    [HttpGet("home-feedback")]
+    public async Task<ActionResult<(IEnumerable<EventDto>, PaginationMetadata)>> GetHomeFeedback(
+        [FromQuery] GetAllEventsFromFollowingOrganizersQueryParameters parameters,
+        CancellationToken cancellationToken)
+    {
+        var (events, paginationMetadata) = await mediator.Send(
+            new GetEventsFromFollowingOrganizersQuery(parameters), cancellationToken);
+        Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(paginationMetadata));
+        return Ok(events);
     }
 }

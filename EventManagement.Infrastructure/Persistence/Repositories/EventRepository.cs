@@ -3,8 +3,6 @@ using EventManagement.Application.Contracts.Requests;
 using EventManagement.Application.Contracts.Responses;
 using EventManagement.Domain.Entities;
 using EventManagement.Infrastructure.Persistence.Helpers;
-using Microsoft.AspNetCore.Rewrite;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace EventManagement.Infrastructure.Persistence.Repositories;
@@ -37,8 +35,9 @@ public class EventRepository(ApplicationDbContext context) : IEventRepository
             .Include(e => e.Tickets)
             .Include(e => e.Categories)
             .AsQueryable();
-
+        
         query = await ApplyFilters(query, queryParameters);
+        query = ApplySearch(query, queryParameters.SearchTerm); 
 
         query = SortingHelper.ApplySorting(query, queryParameters.SortOrder,
             SortingHelper.EventsSortingKeySelector(queryParameters.SortColumn));
@@ -53,6 +52,18 @@ public class EventRepository(ApplicationDbContext context) : IEventRepository
             .ToListAsync(cancellationToken);
 
         return (result, paginationMetadata);
+    }
+
+    private static IQueryable<Event> ApplySearch(IQueryable<Event> query,
+         string? searchTerm)
+    {
+        if(!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            query = query.Where(e => e.Name.StartsWith(searchTerm)
+                             || e.Organizer.DisplayName.StartsWith(searchTerm));
+        }
+
+        return query; 
     }
 
     private async Task<IQueryable<Event>> ApplyFilters(IQueryable<Event> query,
@@ -73,9 +84,24 @@ public class EventRepository(ApplicationDbContext context) : IEventRepository
             query = query.Where(e => e.Organizer.Id == queryParameters.OrganizerId);
         }
 
+        if(queryParameters.OnlyManagedEvents)
+        {
+            query = query.Where(e => e.IsManaged);
+        }
+
+        if(queryParameters.MinPrice.HasValue)
+        {
+            query = query.Where(e => e.Tickets.Any(t => t.Price >= queryParameters.MinPrice));
+        }
+
+        if (queryParameters.MaxPrice.HasValue)
+        {
+            query = query.Where(e => e.Tickets.Any(t => t.Price <= queryParameters.MaxPrice));
+        }
+
+
         // TODO: for more precise result, you can compare 'current datetime'
         // with 'new DateTime(event.startDate, event.startTime)'  ....
-
 
         if (queryParameters.PreviousEvents)
         {
@@ -92,6 +118,7 @@ public class EventRepository(ApplicationDbContext context) : IEventRepository
             query = query.Where(e => e.StartDate <= DateOnly.FromDateTime(DateTime.UtcNow)
                                   && e.EndDate >= DateOnly.FromDateTime(DateTime.UtcNow));
         }
+
 
         if(queryParameters.LikedBy.HasValue)
         {
@@ -115,6 +142,7 @@ public class EventRepository(ApplicationDbContext context) : IEventRepository
 
         return query;
     }
+
 
     public async Task<IEnumerable<Event>> GetEventsMayLikeByEventAsync(int eventId,
         CancellationToken cancellationToken)
@@ -240,5 +268,38 @@ public class EventRepository(ApplicationDbContext context) : IEventRepository
         return events;
     }
 
+    public async Task<(IEnumerable<Event>, PaginationMetadata)> GetEventsFromFollowingOrganizersAsync(
+        GetAllEventsFromFollowingOrganizersQueryParameters parameters, int attendeeId,
+        CancellationToken cancellationToken)
+    {
+        var query = context.Events
+            .Include(e => e.Organizer)
+            .Include(e => e.EventImages)
+            .Include(e => e.Tickets)
+            .Include(e => e.Categories)
+            .AsSplitQuery()
+            .AsQueryable();
 
+        if (parameters.OnlyFutureEvents)
+        {
+            query = query.Where(e => e.StartDate > DateOnly.FromDateTime(DateTime.UtcNow));
+        }
+
+        query = query.Where(e => e.Organizer.Followings
+            .Any(f => f.AttendeeId == attendeeId));
+
+        query = SortingHelper.ApplySorting(query, parameters.SortOrder,
+                       SortingHelper.EventsSortingKeySelector(parameters.SortColumn));
+
+        var paginationMetadata = await PaginationHelper.GetPaginationMetadataAsync(query,
+                       parameters.PageIndex, parameters.PageSize, cancellationToken);
+
+        query = PaginationHelper.ApplyPagination(query, parameters.PageIndex, parameters.PageSize);
+
+        var result = await query
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
+
+        return (result, paginationMetadata);
+    }
 }
