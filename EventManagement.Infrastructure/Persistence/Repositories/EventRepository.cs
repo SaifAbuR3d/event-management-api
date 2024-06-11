@@ -89,7 +89,18 @@ public class EventRepository(ApplicationDbContext context) : IEventRepository
             query = query.Where(e => e.IsManaged);
         }
 
-        if(queryParameters.MinPrice.HasValue)
+        if (queryParameters.OnlyOnlineEvents)
+        {
+            query = query.Where(e => e.IsOnline);
+        }
+
+        if (queryParameters.OnlyOfflineEvents)
+        {
+            query = query.Where(e => !e.IsOnline);
+        }
+
+
+        if (queryParameters.MinPrice.HasValue)
         {
             query = query.Where(e => e.Tickets.Any(t => t.Price >= queryParameters.MinPrice));
         }
