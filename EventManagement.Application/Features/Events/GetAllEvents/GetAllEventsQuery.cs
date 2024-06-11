@@ -91,5 +91,15 @@ public class GetAllEventsQueryHandler(IEventRepository eventRepository, IMapper 
             throw new BadRequestException("Only one of the PreviousEvents, UpcomingEvents," +
                 " and RunningEvents parameters can be true.");
         }
+
+        count = 0;
+        if (request.Parameters.OnlyOnlineEvents) count++;
+        if (request.Parameters.OnlyOfflineEvents) count++;
+
+        if (count > 1)
+        {
+            throw new BadRequestException("Only one of the OnlyOnlineEvents" +
+                " and OnlyOfflineEvents parameters can be true.");
+        }
     }
 }
