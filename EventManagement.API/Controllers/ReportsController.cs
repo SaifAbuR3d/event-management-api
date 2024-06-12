@@ -13,42 +13,71 @@ namespace EventManagement.API.Controllers;
 /// endpoint for reports
 /// </summary>
 /// <param name="mediator"></param>
-[Route("api/[controller]")]
+[Route("api")]
 [ApiController]
 public class ReportsController(IMediator mediator) : ControllerBase
 {
     /// <summary>
-    /// add a report
+    /// add a report to an event
     /// </summary>
     /// <param name="command"></param>
     /// <returns></returns>
-    [HttpPost]
-    public async Task<ActionResult<int>> AddReport(AddReportCommand command)
+    [HttpPost("event-reports")]
+    public async Task<ActionResult<int>> AddReport(AddEventReportCommand command)
     {
         var reportId = await mediator.Send(command);
         return Ok(new {reportId});
     }
 
     /// <summary>
-    /// get all reports
+    /// add a report to a review
+    /// </summary>
+    /// <param name="command"></param>
+    /// <returns></returns>
+    [HttpPost("review-reports")]
+    public async Task<ActionResult<int>> AddReport(AddReviewReportCommand command)
+    {
+        var reportId = await mediator.Send(command);
+        return Ok(new { reportId });
+    }
+
+    /// <summary>
+    /// get all event reports
     /// </summary>
     /// <param name="queryParameters"></param>
     /// <returns></returns>
-    [HttpGet]
+    [HttpGet("event-reports")]
     public async Task<ActionResult<IEnumerable<Report>>> GetAllReports(
-        [FromQuery] GetAllReportsQueryParameters queryParameters)
+        [FromQuery] GetAllEventReportsQueryParameters queryParameters)
     {
-        var (reports, paginationMetadata) = await mediator.Send(new GetAllReportsQuery(queryParameters));
+        var (reports, paginationMetadata) = await mediator.Send(new GetAllEventReportsQuery(queryParameters));
         Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(paginationMetadata));
         return Ok(reports);
 
     }
+
+    /// <summary>
+    /// get all review reports
+    /// </summary>
+    /// <param name="queryParameters"></param>
+    /// <returns></returns>
+    [HttpGet("review-reports")]
+    public async Task<ActionResult<IEnumerable<Report>>> GetAllReports(
+        [FromQuery] GetAllReviewReportsQueryParameters queryParameters)
+    {
+        var (reports, paginationMetadata) = await mediator.Send(new GetAllReviewReportsQuery(queryParameters));
+        Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(paginationMetadata));
+        return Ok(reports);
+
+    }
+
+
     /// <summary>
     /// change the status of a report to seen
     /// </summary>
     /// <param name="reportId"></param>
     /// <returns></returns>
-    [HttpPatch("{reportId}/seen")]
+    [HttpPatch("reports/{reportId}/seen")]
     public async Task<ActionResult> SetStatusSeen(int reportId)
     {
         await mediator.Send(new SetReportStatusCommand(reportId, ReportStatus.Seen));

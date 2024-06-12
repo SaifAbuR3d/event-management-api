@@ -44,4 +44,17 @@ public class ReviewsController(IMediator mediator) : ControllerBase
         return Ok(reviews);
     }
 
+    /// <summary>
+    /// delete a review
+    /// </summary>
+    /// <param name="eventId"></param>
+    /// <param name="reviewId"></param>
+    /// <returns></returns>
+    [HttpDelete("{eventId}/reviews/{reviewId}")]
+    public async Task<ActionResult> DeleteReview(int eventId, int reviewId)
+    {
+        await mediator.Send(new DeleteReviewCommand(eventId, reviewId));
+        return NoContent();
+    }
+
 }
