@@ -62,7 +62,18 @@ public class SortingHelper
         };
     }
 
-    public static Expression<Func<Report, object>> ReportsSortingKeySelector(string? sortColumn)
+    public static Expression<Func<EventReport, object>> EventReportsSortingKeySelector(string? sortColumn)
+    {
+        return sortColumn?.ToLower() switch
+        {
+            "status" => r => r.Status,
+            "creationdate" => r => r.CreationDate,
+            "lastmodified" => r => r.LastModified,
+            "content" => r => r.Content,
+            _ => r => r.Id
+        };
+    }
+    public static Expression<Func<ReviewReport, object>> ReviewReportsSortingKeySelector(string? sortColumn)
     {
         return sortColumn?.ToLower() switch
         {
