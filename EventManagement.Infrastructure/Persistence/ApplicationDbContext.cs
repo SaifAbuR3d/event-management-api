@@ -40,8 +40,10 @@ public class ApplicationDbContext
     public DbSet<Like> Likes { get; set; } = default!;
 
     public DbSet<Review> Reviews { get; set; } = default!;
-    public DbSet<Report> Reports { get; set; } = default!;
 
+    public DbSet<Report> Reports { get; set; }
+    public DbSet<EventReport> EventReports { get; set; }
+    public DbSet<ReviewReport> ReviewReports { get; set; }
 
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -61,6 +63,16 @@ public class ApplicationDbContext
         //ConfigureEnumToString(modelBuilder); if needed
 
         AddIndexed(modelBuilder); 
+
+        ConfigureTPH(modelBuilder);
+    }
+
+    private void ConfigureTPH(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Report>()
+            .HasDiscriminator<string>("ReportType")
+            .HasValue<EventReport>(nameof(Event))
+            .HasValue<ReviewReport>(nameof(Review));
     }
 
     private void AddIndexed(ModelBuilder modelBuilder)
