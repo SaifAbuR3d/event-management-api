@@ -7,46 +7,49 @@ using MediatR;
 
 namespace EventManagement.Application.Features.Reports.GetReports;
 
-public record GetAllReportsQuery(GetAllReportsQueryParameters Parameters)
-    : IRequest<(IEnumerable<ReportDto> Reports, PaginationMetadata PaginationMetadata)>;
+public record GetAllReviewReportsQuery(GetAllReviewReportsQueryParameters Parameters)
+    : IRequest<(IEnumerable<ReviewReportDto> Reports, PaginationMetadata PaginationMetadata)>;
 
-public class GetAllReportsQueryHandler(ICurrentUser currentUser, IReportRepository reportRepository
-    , IUserRepository userRepository)
-    : IRequestHandler<GetAllReportsQuery, (IEnumerable<ReportDto> Reports, PaginationMetadata PaginationMetadata)>
+public class GetAllReviewReportsQueryHandler(ICurrentUser currentUser,
+    IReportRepository reportRepository, IUserRepository userRepository)
+    : IRequestHandler<GetAllReviewReportsQuery,
+        (IEnumerable<ReviewReportDto> Reports, PaginationMetadata PaginationMetadata)>
 {
 
-    public async Task<(IEnumerable<ReportDto> Reports, PaginationMetadata PaginationMetadata)> Handle(GetAllReportsQuery request, CancellationToken cancellationToken)
+    public async Task<(IEnumerable<ReviewReportDto> Reports, PaginationMetadata PaginationMetadata)> Handle(GetAllReviewReportsQuery request, CancellationToken cancellationToken)
     {
-        if(!currentUser.IsAdmin)
+        if (!currentUser.IsAdmin)
         {
             throw new UnauthorizedException("Only admins can view reports");
         }
 
-        var (reports, paginationMetadata) = await reportRepository.GetAllReportsAsync(
+        var (reports, paginationMetadata) = await reportRepository.GetAllReviewReportsAsync(
             request.Parameters, cancellationToken);
 
-        List<ReportDto> reportDtos = [];
+        List<ReviewReportDto> reportDtos = [];
 
-        foreach(var report in reports)
+        foreach (var report in reports)
         {
-            var reportDto = new ReportDto
+            var reportDto = new ReviewReportDto
             {
                 Id = report.Id,
                 Content = report.Content,
                 Status = report.Status,
-                EventId = report.EventId,
                 CreationDate = report.CreationDate,
                 LastModified = report.LastModified,
+
+                EventId = report.Review.EventId,
+                ReviewWriterId = report.Review.AttendeeId,
+                ReviewWriterUserName = await userRepository.GetUserNameByUserId(report.Review.Attendee.UserId, cancellationToken)
+                    ?? throw new CustomException("Invalid State: Review Writer has no UserName"),
+                ReviewContent = report.Review.Comment,
+
                 AttendeeId = report.AttendeeId,
                 AttendeeName = await userRepository.GetFullNameByUserId(report.Attendee.UserId, cancellationToken)
                     ?? throw new CustomException("Invalid State: Attendee has no Name"),
                 AttendeeUserName = await userRepository.GetUserNameByUserId(report.Attendee.UserId, cancellationToken)
                     ?? throw new CustomException("Invalid State: Attendee has no UserName"),
                 AttendeeImageUrl = await userRepository.GetProfilePictureByUserId(report.Attendee.UserId, cancellationToken),
-                EventName = report.Event.Name,
-                OrganizerId = report.Event.OrganizerId,
-                OrganizerUserName = await userRepository.GetUserNameByUserId(report.Event.Organizer.UserId, cancellationToken)
-                    ?? throw new CustomException("Invalid State: Organizer has no UserName")
             };
 
             reportDtos.Add(reportDto);

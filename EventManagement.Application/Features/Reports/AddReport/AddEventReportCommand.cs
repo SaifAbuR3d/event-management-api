@@ -6,16 +6,17 @@ using MediatR;
 
 namespace EventManagement.Application.Features.Reports.AddReport;
 
-public record AddReportCommand(string Content, int EventId) : IRequest<int>;
+public record AddEventReportCommand(string Content, int EventId) : IRequest<int>;
 
 public class AddReportCommandHandler(ICurrentUser currentUser,
     IReportRepository reportRepository, IEventRepository eventRepository, 
     IAttendeeRepository attendeeRepository, 
     IUnitOfWork unitOfWork)
-    : IRequestHandler<AddReportCommand, int>
+    : IRequestHandler<AddEventReportCommand, int>
 {
 
-    public async Task<int> Handle(AddReportCommand request, CancellationToken cancellationToken)
+    public async Task<int> Handle(AddEventReportCommand request,
+        CancellationToken cancellationToken)
     {
         if(!currentUser.IsAttendee)
         {
@@ -29,9 +30,9 @@ public class AddReportCommandHandler(ICurrentUser currentUser,
             currentUser.UserId, cancellationToken) 
             ?? throw new NotFoundException(nameof(Attendee), currentUser.UserId);
 
-        var report = new Report(request.Content, request.EventId, attendee.Id);
+        var report = new EventReport(request.Content, request.EventId, attendee.Id);
 
-        await reportRepository.AddReportAsync(report, cancellationToken);
+        await reportRepository.AddEventReportAsync(report, cancellationToken);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
