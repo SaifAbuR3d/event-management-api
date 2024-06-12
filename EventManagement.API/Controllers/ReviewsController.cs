@@ -1,6 +1,7 @@
 ﻿using EventManagement.Application.Contracts.Requests;
 using EventManagement.Application.Contracts.Responses;
 using EventManagement.Application.Features.Reviews.AddReview;
+using EventManagement.Application.Features.Reviews.DeleteReview;
 using EventManagement.Application.Features.Reviews.GetReviews;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

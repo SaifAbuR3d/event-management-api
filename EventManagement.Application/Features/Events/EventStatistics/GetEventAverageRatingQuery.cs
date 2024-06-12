@@ -21,7 +21,7 @@ public class GetEventAverageRatingQueryHandler(IEventRepository eventRepository,
             //throw new BadRequestException("The Event Is Still Running, No Ratings"); 
         }
 
-        double? avg = await reviewRepository.GetEventAvgRating(@event.Id, cancellationToken);
+        double? avg = await reviewRepository.GetEventAvgRatingAsync(@event.Id, cancellationToken);
 
         // if avg is null, there is no ratings for this event yet, return -1 to indicate that
 

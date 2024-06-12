@@ -45,7 +45,6 @@ public class ApplicationDbContext
     public DbSet<EventReport> EventReports { get; set; }
     public DbSet<ReviewReport> ReviewReports { get; set; }
 
-
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
 
@@ -65,6 +64,14 @@ public class ApplicationDbContext
         AddIndexed(modelBuilder); 
 
         ConfigureTPH(modelBuilder);
+
+        ConfigureSoftDelete(modelBuilder);
+    }
+
+    private void ConfigureSoftDelete(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Review>()
+            .HasQueryFilter(r => !r.IsDeleted);
     }
 
     private void ConfigureTPH(ModelBuilder modelBuilder)

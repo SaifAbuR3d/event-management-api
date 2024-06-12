@@ -1,4 +1,7 @@
 ﻿using EventManagement.Application.Abstractions.Persistence;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore;
+using EventManagement.Domain.Entities;
 
 namespace EventManagement.Infrastructure.Persistence.Repositories;
 
@@ -30,6 +33,13 @@ public class UnitOfWork(ApplicationDbContext context) : IUnitOfWork
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
     {
+        foreach (var entry in context.ChangeTracker.Entries()
+            .Where(e => e.State == EntityState.Deleted && e.Entity is Review))
+        {
+            entry.State = EntityState.Modified;
+            entry.CurrentValues["IsDeleted"] = true;
+        }
+
         return await context.SaveChangesAsync(cancellationToken);
     }
 }
