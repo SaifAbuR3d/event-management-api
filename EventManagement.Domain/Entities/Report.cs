@@ -6,20 +6,16 @@ public enum ReportStatus
     Seen
 }
 
-public class Report : Entity
+public abstract class Report : Entity
 {
     internal Report() { }
-
-    public Report(string content, int eventId, int attendeeId)
+    public Report(string content)
     {
         Content = content;
-        EventId = eventId;
-        AttendeeId = attendeeId;
 
         Status = ReportStatus.Pending;
         CreationDate = DateTime.UtcNow;
         LastModified = DateTime.UtcNow;
-
     }
 
     public void Seen()
@@ -34,9 +30,7 @@ public class Report : Entity
     }
 
     public string Content { get; set; } = default!;
-    public ReportStatus Status { get; private set; }
-    public int EventId { get; set; }
-    public Event Event { get; set; } = default!;
+    public ReportStatus Status { get; protected set; }
     public int AttendeeId { get; set; }
     public Attendee Attendee { get; set; } = default!;
 }

@@ -29,4 +29,6 @@ public class Review : Entity
     public Event Event { get; set; } = default!;
     public int AttendeeId { get; set; }
     public Attendee Attendee { get; set; } = default!;
+
+    public bool IsDeleted { get; set; }
 }

@@ -1,6 +1,7 @@
 ﻿using EventManagement.Application.Contracts.Requests;
 using EventManagement.Application.Contracts.Responses;
 using EventManagement.Application.Features.Reviews.AddReview;
+using EventManagement.Application.Features.Reviews.DeleteReview;
 using EventManagement.Application.Features.Reviews.GetReviews;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -42,6 +43,19 @@ public class ReviewsController(IMediator mediator) : ControllerBase
             new GetReviewsQuery(eventId, parameters));
         Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(paginationMetadata));
         return Ok(reviews);
+    }
+
+    /// <summary>
+    /// delete a review
+    /// </summary>
+    /// <param name="eventId"></param>
+    /// <param name="reviewId"></param>
+    /// <returns></returns>
+    [HttpDelete("{eventId}/reviews/{reviewId}")]
+    public async Task<ActionResult> DeleteReview(int eventId, int reviewId)
+    {
+        await mediator.Send(new DeleteReviewCommand(eventId, reviewId));
+        return NoContent();
     }
 
 }

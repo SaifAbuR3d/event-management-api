@@ -49,7 +49,7 @@ public class ReviewRepository(ApplicationDbContext context) : IReviewRepository
         return (result, paginationMetadata);
     }
 
-    public async Task<double?> GetEventAvgRating(int EventId, CancellationToken cancellationToken)
+    public async Task<double?> GetEventAvgRatingAsync(int EventId, CancellationToken cancellationToken)
     {
         bool isThereAny = await context.Reviews.AnyAsync(r => r.EventId == EventId, cancellationToken);
         if (!isThereAny)
@@ -60,5 +60,10 @@ public class ReviewRepository(ApplicationDbContext context) : IReviewRepository
         return await context.Reviews
             .Where(r => r.EventId == EventId)
             .AverageAsync(r => r.Rating, cancellationToken);
+    }
+
+    public void DeleteReview(Review review)
+    {
+        context.Reviews.Remove(review);
     }
 }

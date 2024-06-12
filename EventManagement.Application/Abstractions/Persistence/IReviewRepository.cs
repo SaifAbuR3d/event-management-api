@@ -12,5 +12,7 @@ public interface IReviewRepository
         CancellationToken cancellationToken);
     Task<(IEnumerable<Review>, PaginationMetadata)> GetReviewsByEventIdAsync(int eventId,
         GetAllQueryParameters queryParameters, CancellationToken cancellationToken);
-    Task<double?> GetEventAvgRating(int EventId, CancellationToken cancellationToken);
+    Task<double?> GetEventAvgRatingAsync(int EventId, CancellationToken cancellationToken);
+
+    void DeleteReview(Review review);
 }

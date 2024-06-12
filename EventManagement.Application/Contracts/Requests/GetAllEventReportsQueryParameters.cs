@@ -2,9 +2,8 @@
 
 namespace EventManagement.Application.Contracts.Requests;
 
-public class GetAllReportsQueryParameters : GetAllQueryParameters
+public class GetAllEventReportsQueryParameters : GetAllQueryParameters
 {
-    public string? Content { get; set; }
     public int? EventId { get; set; }
     public int? OrganizerId { get; set; }
     public int? AttendeeId { get; set; }

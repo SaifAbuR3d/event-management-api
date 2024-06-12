@@ -4,6 +4,7 @@ using EventManagement.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventManagement.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240611223318_AddReviewReport")]
+    partial class AddReviewReport
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -683,8 +686,8 @@ namespace EventManagement.Infrastructure.Migrations
 
                     b.Property<string>("ReportType")
                         .IsRequired()
-                        .HasMaxLength(8)
-                        .HasColumnType("nvarchar(8)");
+                        .HasMaxLength(13)
+                        .HasColumnType("nvarchar(13)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -720,9 +723,6 @@ namespace EventManagement.Infrastructure.Migrations
 
                     b.Property<int>("EventId")
                         .HasColumnType("int");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
 
                     b.Property<DateTime>("LastModified")
                         .HasColumnType("datetime2");
@@ -1039,7 +1039,7 @@ namespace EventManagement.Infrastructure.Migrations
 
                     b.HasIndex("EventId");
 
-                    b.HasDiscriminator().HasValue("Event");
+                    b.HasDiscriminator().HasValue("EventReport");
                 });
 
             modelBuilder.Entity("EventManagement.Domain.Entities.ReviewReport", b =>
@@ -1051,7 +1051,7 @@ namespace EventManagement.Infrastructure.Migrations
 
                     b.HasIndex("ReviewId");
 
-                    b.HasDiscriminator().HasValue("Review");
+                    b.HasDiscriminator().HasValue("ReviewReport");
                 });
 
             modelBuilder.Entity("AttendeeCategory", b =>
