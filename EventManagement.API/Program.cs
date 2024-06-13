@@ -23,11 +23,11 @@ builder.Services.AddApplication(builder.Configuration);
 
 var app = builder.Build();
 
-if (isDevelopment)
-{
+//if (isDevelopment)
+//{
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+//}
 
 
 app.UseExceptionHandler();
