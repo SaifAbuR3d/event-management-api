@@ -29,13 +29,14 @@ if (isDevelopment)
     app.UseSwaggerUI();
 }
 
-app.Migrate(); // apply any pending migration
 
 app.UseExceptionHandler();
 
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
+
+app.Migrate(); // apply any pending migration
 
 app.UseCors("AllowOrigin");
 

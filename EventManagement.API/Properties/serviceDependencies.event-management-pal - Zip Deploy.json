@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "apis1": {
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.ApiManagement/service/event-management-api/apis/EventManagementAPI",
+      "type": "apis.azure"
+    },
+    "mssql1": {
+      "serviceConnectorResourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Web/sites/event-management-pal/providers/Microsoft.ServiceLinker/linkers/ConnectionStringsSqlServer_AB816530A4",
+      "secretStore": "AzureAppSettings",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourcegroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/eventmanagement-apidbserver/databases/EventManagement.API_db",
+      "type": "mssql.azure",
+      "connectionId": "ConnectionStrings:SqlServer",
+      "dynamicId": null
+    }
+  }
+}
