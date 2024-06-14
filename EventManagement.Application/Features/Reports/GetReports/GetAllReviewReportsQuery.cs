@@ -33,7 +33,7 @@ public class GetAllReviewReportsQueryHandler(ICurrentUser currentUser,
             var reportDto = new ReviewReportDto
             {
                 Id = report.Id,
-                Content = report.Content,
+                ReportContent = report.Content,
                 Status = report.Status,
                 CreationDate = report.CreationDate,
                 LastModified = report.LastModified,
@@ -44,12 +44,12 @@ public class GetAllReviewReportsQueryHandler(ICurrentUser currentUser,
                     ?? throw new CustomException("Invalid State: Review Writer has no UserName"),
                 ReviewContent = report.Review.Comment,
 
-                AttendeeId = report.AttendeeId,
-                AttendeeName = await userRepository.GetFullNameByUserId(report.Attendee.UserId, cancellationToken)
+                ReportWriterId = report.AttendeeId,
+                ReportWriterName = await userRepository.GetFullNameByUserId(report.Attendee.UserId, cancellationToken)
                     ?? throw new CustomException("Invalid State: Attendee has no Name"),
-                AttendeeUserName = await userRepository.GetUserNameByUserId(report.Attendee.UserId, cancellationToken)
+                ReportWriterUserName = await userRepository.GetUserNameByUserId(report.Attendee.UserId, cancellationToken)
                     ?? throw new CustomException("Invalid State: Attendee has no UserName"),
-                AttendeeImageUrl = await userRepository.GetProfilePictureByUserId(report.Attendee.UserId, cancellationToken),
+                ReportWriterImageUrl = await userRepository.GetProfilePictureByUserId(report.Attendee.UserId, cancellationToken),
             };
 
             reportDtos.Add(reportDto);
