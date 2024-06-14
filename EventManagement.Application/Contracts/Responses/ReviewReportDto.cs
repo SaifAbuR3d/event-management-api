@@ -4,7 +4,7 @@ namespace EventManagement.Application.Contracts.Responses;
 public class ReviewReportDto
 {
     public int Id { get; set; }
-    public string Content { get; set; } = default!;
+    public string ReportContent { get; set; } = default!;
     public ReportStatus Status { get; set; } = default!;
 
     public int EventId { get; set; }
@@ -14,10 +14,10 @@ public class ReviewReportDto
     public string ReviewContent { get; set; } = default!;
 
 
-    public int AttendeeId { get; set; }
-    public string AttendeeName { get; set; } = default!;
-    public string AttendeeUserName { get; set; } = default!;
-    public string? AttendeeImageUrl { get; set; } = default!;
+    public int ReportWriterId { get; set; }
+    public string ReportWriterName { get; set; } = default!;
+    public string ReportWriterUserName { get; set; } = default!;
+    public string? ReportWriterImageUrl { get; set; } = default!;
 
     public DateTime CreationDate { get; set; }
     public DateTime LastModified { get; set; }
