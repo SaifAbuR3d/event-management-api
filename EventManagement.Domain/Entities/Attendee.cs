@@ -20,6 +20,16 @@ public class Attendee : Entity
         Likes.Add(new Like(this, @event));
     }
 
+    public void AddInterest(Category category)
+    {
+        Categories.Add(category);
+    }
+
+    public void ResetInterests()
+    {
+        Categories.Clear();
+    }
+
     public DateOnly DateOfBirth { get; set; }
     public Gender Gender { get; set; } = default!;
     public bool IsVerified { get; set; }

@@ -2,6 +2,7 @@
 using EventManagement.Application.Contracts.Responses;
 using EventManagement.Application.Features.Attendees.GetAttendee;
 using EventManagement.Application.Features.Attendees.GetAttendees;
+using EventManagement.Application.Features.Attendees.SetAttendeeInterests;
 using EventManagement.Application.Features.Follow.FollowAnOrganizer;
 using EventManagement.Application.Features.Follow.GetFollowings;
 using EventManagement.Application.Features.Follow.UnfollowAnOrganizer;
@@ -138,6 +139,18 @@ public class AttendeesController(IMediator mediator,
     {
         var command = request.ToCommand(username);
         await mediator.Send(command, cancellationToken);
+        return Ok(new { message = "Operation Successful" });
+    }
+
+    /// <summary>
+    /// Sets the interests(categories) of the logged in attendee
+    /// </summary>
+    /// <param name="command"></param>
+    /// <returns></returns>
+    [HttpPut("my/interests")]
+    public async Task<ActionResult> SetAttendeeInterests(SetAttendeeInterestsCommand command)
+    {
+        await mediator.Send(command);
         return Ok(new { message = "Operation Successful" });
     }
 }
