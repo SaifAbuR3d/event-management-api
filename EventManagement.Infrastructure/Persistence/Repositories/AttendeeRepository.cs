@@ -99,15 +99,28 @@ public class AttendeeRepository(ApplicationDbContext context)
     }
 
     public async Task<Attendee?> GetAttendeeByUserIdAsync(int userId,
-        CancellationToken cancellationToken, bool includeFollowings = false)
+        CancellationToken cancellationToken,
+        bool includeFollowings = false, bool includeCategories = false)
     {
         var query = context.Attendees.AsQueryable();
         if(includeFollowings)
         {
             query.Include(a => a.Followings);
         }
+        if (includeCategories)
+        {
+            query.Include(a => a.Categories);
+        }
 
         return await query
+            .FirstOrDefaultAsync(a => a.UserId == userId, cancellationToken);
+    }
+
+    public async Task<Attendee?> GetAttendeeByUserIdWithCategoriesAsync(int userId,
+        CancellationToken cancellationToken)
+    {
+        return await context.Attendees
+            .Include(a => a.Categories)
             .FirstOrDefaultAsync(a => a.UserId == userId, cancellationToken);
     }
 

@@ -8,7 +8,7 @@ public interface IAttendeeRepository
 {
     Task<Attendee> AddAttendeeAsync(Attendee attendee, CancellationToken cancellationToken);
     Task<Attendee?> GetAttendeeByUserIdAsync(int userId, CancellationToken cancellationToken,
-        bool includeFollowings = false);
+        bool includeFollowings = false, bool includeCategories = false);
     Task<Attendee?> GetAttendeeByUserNameAsync(string userName, CancellationToken cancellationToken);
     Task<(IEnumerable<Attendee>, PaginationMetadata)> GetAttendeesFollowingAnOrganizerAsync(int organizerId,
     GetAllQueryParameters parameters, CancellationToken cancellationToken);
@@ -22,4 +22,5 @@ public interface IAttendeeRepository
 
     Task<Attendee> UpdateAttendeeAsync(Attendee attendee, CancellationToken cancellationToken);
     Task<Attendee> DeleteAttendeeAsync(Attendee attendee, CancellationToken cancellationToken);
+    Task<Attendee?> GetAttendeeByUserIdWithCategoriesAsync(int userId, CancellationToken cancellationToken);
 }
