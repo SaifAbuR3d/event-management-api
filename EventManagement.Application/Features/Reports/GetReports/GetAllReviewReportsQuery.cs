@@ -39,6 +39,7 @@ public class GetAllReviewReportsQueryHandler(ICurrentUser currentUser,
                 LastModified = report.LastModified,
 
                 EventId = report.Review.EventId,
+                ReviewId = report.Review.Id,
                 ReviewWriterId = report.Review.AttendeeId,
                 ReviewWriterUserName = await userRepository.GetUserNameByUserId(report.Review.Attendee.UserId, cancellationToken)
                     ?? throw new CustomException("Invalid State: Review Writer has no UserName"),

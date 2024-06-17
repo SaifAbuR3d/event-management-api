@@ -9,6 +9,7 @@ public class ReviewReportDto
 
     public int EventId { get; set; }
 
+    public int ReviewId { get; set; }
     public int ReviewWriterId { get; set; } // AttendeeId
     public string ReviewWriterUserName { get; set; } = default!;
     public string ReviewContent { get; set; } = default!;
