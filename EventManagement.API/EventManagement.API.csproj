@@ -26,7 +26,8 @@
   <ItemGroup>
     <Folder Include="wwwroot\images\" />
     <Folder Include="wwwroot\ivr-documents\" />
-    <Folder Include="wwwroot\common\" />
+	<Folder Include="wwwroot\common\" />
+
   </ItemGroup>
 
 </Project>
