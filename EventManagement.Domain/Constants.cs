@@ -32,7 +32,7 @@ public class Constants
         public const int MaxQuantity = 1000;
         public const int MinTicketTypes = 1; 
         public const int MaxTicketTypes = 5;
-        public const decimal MinPrice = 0.01m;
+        public const decimal MinPrice = 0m;
         public const decimal MaxPrice = 9999.99m;
     }
 
