@@ -91,13 +91,11 @@ public class CreateEventCommandHandler(IValidator<CreateEventCommand> validator,
 
     private void SetLimitations(CreateEventCommand request, Organizer organizer, Event addedEvent)
     {
+        if (!organizer.IsVerified)
+            throw new BadRequestException("Organizer is not verified.");
+
         if (request.IsManaged)
         {
-            // TODO: add logic for verification, then uncomment the following lines
-
-            //if (!organizer.IsVerified)
-            //    throw new BadRequestException("Organizer is not verified.");
-
             addedEvent.SetLimitations(request.MinAge, request.MaxAge, request.AllowedGender);
         }
     }

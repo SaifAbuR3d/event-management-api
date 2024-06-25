@@ -13,7 +13,6 @@ public class CreateEventCommandValidator : AbstractValidator<CreateEventCommand>
             .NotEmpty()
             .Length(3, 7000).WithMessage("Title must be between 3 and 7000 characters");
 
-
         RuleFor(x => x.Description)
             .NotEmpty()
             .Length(3, 7000).WithMessage("Description must be between 3 and 7000 characters");
@@ -27,15 +26,13 @@ public class CreateEventCommandValidator : AbstractValidator<CreateEventCommand>
 
         RuleFor(x => x.EndDate)
             .NotEmpty()
-            .GreaterThanOrEqualTo(x => x.StartDate).WithMessage("End date must be after than or equal to start date");
+            .GreaterThanOrEqualTo(x => x.StartDate).WithMessage("End date must be after or equal to start date");
 
         RuleFor(x => x.StartTime)
             .NotEmpty();
 
         RuleFor(x => x.EndTime)
             .NotEmpty();
-
-        // TODO - validate date time together 
 
         When(x => !x.IsOnline, () =>
         {
@@ -67,6 +64,25 @@ public class CreateEventCommandValidator : AbstractValidator<CreateEventCommand>
 
             RuleForEach(x => x.Tickets)
                 .SetValidator(new TicketDtoValidator());
+
+            RuleFor(x => x.Tickets)
+                .Custom((tickets, context) =>
+                {
+                    var eventStartDateTime = context.InstanceToValidate.StartDate.Add(context.InstanceToValidate.StartTime.ToTimeSpan());
+
+                    foreach (var ticket in tickets)
+                    {
+                        if (ticket.StartSale >= eventStartDateTime)
+                        {
+                            context.AddFailure($"Ticket {ticket.Name} start sale date must be before event start date and time.");
+                        }
+
+                        if (ticket.EndSale >= eventStartDateTime)
+                        {
+                            context.AddFailure($"Ticket {ticket.Name} end sale date must be before event start date and time.");
+                        }
+                    }
+                });
         });
 
         When(x => x.IsManaged == false, () =>
@@ -96,7 +112,6 @@ public class CreateEventCommandValidator : AbstractValidator<CreateEventCommand>
             RuleFor(x => x.AllowedGender)
                 .IsInEnum().WithMessage("Allowed gender should be either Male or Female");
         });
-
     }
 }
 
@@ -107,9 +122,8 @@ public class TicketDtoValidator : AbstractValidator<CreateTicketRequest>
         RuleFor(x => x.Name)
             .NotEmpty()
             .Length(3, 50).WithMessage("Ticket name must be between 3 and 50 characters");
-
+        
         RuleFor(x => x.Price)
-            .NotEmpty()
             .GreaterThanOrEqualTo(MinPrice).WithMessage($"Price must be greater than or equal to {MinPrice}")
             .LessThanOrEqualTo(MaxPrice).WithMessage($"Price must be less than or equal to {MaxPrice}");
 
@@ -119,14 +133,12 @@ public class TicketDtoValidator : AbstractValidator<CreateTicketRequest>
             .LessThanOrEqualTo(MaxQuantity)
             .WithMessage($"Total quantity must be less than or equal to {MaxQuantity}");
 
-
         RuleFor(x => x.StartSale)
             .NotEmpty()
             .GreaterThan(DateTime.UtcNow).WithMessage("Start sale date must be in the future");
 
         RuleFor(x => x.EndSale)
             .NotEmpty()
-            .GreaterThanOrEqualTo(x => x.StartSale)
-            .WithMessage("End sale date must be after than or equal to start sale date");
+            .GreaterThanOrEqualTo(x => x.StartSale).WithMessage("End sale date must be after or equal to start sale date");
     }
 }
