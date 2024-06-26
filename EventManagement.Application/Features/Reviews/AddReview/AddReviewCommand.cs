@@ -54,15 +54,14 @@ public class AddReviewCommandHandler(ICurrentUser currentUser,
             throw new BadRequestException("Attendee has already added a review for this event");
         }
 
-        // commented out for testing purposes
 
-        //var hasAttendedTheEvent = await attendeeRepository.HasAttendedEvent(attendee.Id, @event.Id,
-        //    cancellationToken);
+        var hasAttendedTheEvent = await attendeeRepository.HasAttendedEvent(attendee.Id, @event.Id,
+            cancellationToken);
 
-        //if (!hasAttendedTheEvent)
-        //{
-        //    throw new UnauthorizedException("Attendee has not attended the event");
-        //}
+        if (!hasAttendedTheEvent)
+        {
+            throw new UnauthorizedException("Attendee has not attended the event");
+        }
     }
 
     private static void ValidateDateTime(Event @event)
