@@ -121,7 +121,7 @@ public class EventRepository(ApplicationDbContext context) : IEventRepository
 
         if (queryParameters.UpcomingEvents)
         {
-            query = query.Where(e => e.StartDate > DateOnly.FromDateTime(DateTime.UtcNow));
+            query = query.Where(e => e.StartDate >= DateOnly.FromDateTime(DateTime.UtcNow));
         }
 
         if (queryParameters.RunningEvents)
